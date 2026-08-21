@@ -1,0 +1,21 @@
+# Real secrets
+infrastructure/postgres/secret.yaml
+**/secret.yaml
+**/.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+
+# Temporary files
+*.tmp
+*.log

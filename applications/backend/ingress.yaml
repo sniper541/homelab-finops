@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  name: finops-api
+  namespace: finops
+
+spec:
+  ingressClassName: traefik
+
+  rules:
+    - host: api.sniper541.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: finops-api
+                port:
+                  number: 80
