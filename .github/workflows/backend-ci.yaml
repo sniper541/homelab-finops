@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -42,5 +42,26 @@ jobs:
           context: ./applications/backend
           push: true
           tags: |
-            ghcr.io/sniper541/finops-api:latest
-            ghcr.io/sniper541/finops-api:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Update image version in Kubernetes manifest
+        run: |
+          sed -i \
+            "s#image: ghcr.io/sniper541/finops-api:.*#image: ghcr.io/sniper541/finops-api:${GITHUB_SHA}#" \
+            applications/backend/deployment.yaml
+
+      - name: Commit new image version
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add applications/backend/deployment.yaml
+
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+            exit 0
+          fi
+
+          git commit -m "Deploy finops-api ${GITHUB_SHA}"
+          git push
