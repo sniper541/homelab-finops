@@ -4,9 +4,16 @@ kind: Ingress
 metadata:
   name: finops-api
   namespace: finops
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 
 spec:
   ingressClassName: traefik
+
+  tls:
+    - hosts:
+        - api.sniper541.com
+      secretName: finops-api-tls
 
   rules:
     - host: api.sniper541.com
