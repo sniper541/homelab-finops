@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: finops-api
+  namespace: argocd
+
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/sniper541/homelab-finops.git
+    targetRevision: main
+    path: applications/backend
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: finops
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
