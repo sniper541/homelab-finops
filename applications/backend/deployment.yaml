@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: finops-api
-          image: ghcr.io/sniper541/finops-api:40b7f7c9cd9ead3ba1eb395687f4ff92e1403559
+          image: ghcr.io/sniper541/finops-api:daaa5fa5278e8ec8b1f8b049963302b89c8141f3
           imagePullPolicy: Always
 
           ports:
