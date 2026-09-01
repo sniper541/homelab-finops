@@ -24,10 +24,9 @@ def root():
     }
 
 
-@app.get("/health/live")
-def liveness():
-    return {"status": "alive"}
-
+@app.get("/version")
+def version():
+    return {"version": "auto-cd-test"}
 
 @app.get("/health/ready")
 def readiness():
