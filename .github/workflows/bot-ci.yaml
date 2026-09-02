@@ -55,6 +55,15 @@ jobs:
             ghcr.io/${{ github.repository }}/finops-bot:${{ github.sha }}
             ghcr.io/${{ github.repository }}/finops-bot:latest
 
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/${{ github.repository }}/finops-bot:${{ github.sha }}
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+          ignore-unfixed: true
+
       - name: Update Kubernetes image
         run: |
           sed -i \
