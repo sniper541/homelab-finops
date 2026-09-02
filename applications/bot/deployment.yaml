@@ -55,22 +55,22 @@ spec:
         - name: ssh-proxy
           image: alpine:3.22
 
+          
           command:
             - /bin/sh
-            - -c
-            - |
-              apk add --no-cache openssh-client &&
-              chmod 600 /ssh/id_ed25519 &&
-              exec ssh \
-                -N \
-                -D 0.0.0.0:1080 \
-                -i /ssh/id_ed25519 \
-                -o BatchMode=yes \
-                -o StrictHostKeyChecking=no \
-                -o ExitOnForwardFailure=yes \
-                -o ServerAliveInterval=30 \
-                -o ServerAliveCountMax=3 \
-                finops-proxy@89.110.67.219
+          - -c
+          - |
+            apk add --no-cache openssh-client &&
+            exec ssh \
+              -N \
+              -D 0.0.0.0:1080 \
+              -i /ssh/id_ed25519 \
+              -o BatchMode=yes \
+              -o StrictHostKeyChecking=no \
+              -o ExitOnForwardFailure=yes \
+              -o ServerAliveInterval=30 \
+              -o ServerAliveCountMax=3 \
+              finops-proxy@89.110.67.219
 
           volumeMounts:
             - name: proxy-ssh-key
