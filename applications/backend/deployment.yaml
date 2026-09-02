@@ -18,10 +18,24 @@ spec:
         app: finops-api
 
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: finops-api
           image: ghcr.io/sniper541/finops-api:37d98b89ea8bfb2bb5ef797f6da393b5d9e66eca
           imagePullPolicy: Always
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
 
           ports:
             - name: http
