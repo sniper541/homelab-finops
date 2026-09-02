@@ -1,10 +1,14 @@
 import os
-
 import psycopg
 from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 
 app = FastAPI(title="FinOps API")
 
+class UserRegisterRequest(BaseModel):
+    telegram_id: int
+    telegram_username: str | None = None
+    first_name: str | None = None
 
 def get_connection():
     return psycopg.connect(
@@ -66,4 +70,57 @@ def transactions():
             "created_at": row[3]
         }
         for row in rows
-    ]
+        ]
+@app.post("/users/register")
+def register_user(payload: UserRegisterRequest):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO users (
+                    telegram_id,
+                    telegram_username,
+                    first_name
+                )
+                VALUES (%s, %s, %s)
+                ON CONFLICT (telegram_id)
+                DO UPDATE SET
+                    telegram_username = EXCLUDED.telegram_username,
+                    first_name = EXCLUDED.first_name,
+                    updated_at = now()
+                RETURNING
+                    id,
+                    telegram_id,
+                    telegram_username,
+                    first_name,
+                    is_active,
+                    created_at,
+                    updated_at
+                """,
+                (
+                    payload.telegram_id,
+                    payload.telegram_username,
+                    payload.first_name,
+                ),
+            )
+
+            row = cur.fetchone()
+
+            cur.execute(
+                """
+                INSERT INTO user_settings (user_id)
+                VALUES (%s)
+                ON CONFLICT (user_id) DO NOTHING
+                """,
+                (row[0],),
+            )
+
+    return {
+        "id": row[0],
+        "telegram_id": row[1],
+        "telegram_username": row[2],
+        "first_name": row[3],
+        "is_active": row[4],
+        "created_at": row[5],
+        "updated_at": row[6],
+    }
