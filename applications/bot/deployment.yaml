@@ -1,8 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
   name: finops-bot
   namespace: finops
+
 spec:
   replicas: 1
 
@@ -17,8 +19,8 @@ spec:
 
     spec:
       containers:
-
         - name: finops-bot
+
           image: ghcr.io/sniper541/homelab-finops/finops-bot:591691cda2f1632291bc65bd1a2eb5cda75cd0d0
           imagePullPolicy: Always
 
@@ -51,10 +53,9 @@ spec:
               drop:
                 - ALL
 
-
         - name: ssh-proxy
           image: alpine:3.22
-          
+
           command:
             - /bin/sh
             - -c
