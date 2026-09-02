@@ -46,7 +46,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push image
+      - name: Build and push bot image
         uses: docker/build-push-action@v6
         with:
           context: applications/bot
@@ -55,7 +55,7 @@ jobs:
             ghcr.io/${{ github.repository }}/finops-bot:${{ github.sha }}
             ghcr.io/${{ github.repository }}/finops-bot:latest
 
-      - name: Scan image with Trivy
+      - name: Scan bot image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ghcr.io/${{ github.repository }}/finops-bot:${{ github.sha }}
@@ -64,11 +64,35 @@ jobs:
           exit-code: "1"
           ignore-unfixed: true
 
-      - name: Update Kubernetes image
+      - name: Build and push proxy image
+        uses: docker/build-push-action@v6
+        with:
+          context: applications/bot
+          file: applications/bot/Dockerfile.proxy
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/finops-ssh-proxy:${{ github.sha }}
+            ghcr.io/${{ github.repository }}/finops-ssh-proxy:latest
+
+      - name: Scan proxy image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/${{ github.repository }}/finops-ssh-proxy:${{ github.sha }}
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+          ignore-unfixed: true
+
+      - name: Update Kubernetes images
         run: |
           sed -i \
             "s|image: ghcr.io/sniper541/homelab-finops/finops-bot:.*|image: ghcr.io/sniper541/homelab-finops/finops-bot:${GITHUB_SHA}|" \
             applications/bot/deployment.yaml
+
+          sed -i \
+            "s|image: ghcr.io/sniper541/homelab-finops/finops-ssh-proxy:.*|image: ghcr.io/sniper541/homelab-finops/finops-ssh-proxy:${GITHUB_SHA}|" \
+            applications/bot/deployment.yaml
+
 
       - name: Commit updated image tag
         run: |
@@ -78,6 +102,6 @@ jobs:
           git add applications/bot/deployment.yaml
 
           git diff --cached --quiet || \
-            git commit -m "Update bot image to ${GITHUB_SHA}"
+            git commit -m "Update bot images to ${GITHUB_SHA}"
 
           git push

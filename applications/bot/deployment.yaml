@@ -18,9 +18,14 @@ spec:
         app: finops-bot
 
     spec:
+      securityContext:
+        runAsNonRoot: true
+        fsGroup: 10002
+        seccompProfile:
+          type: RuntimeDefault
+
       containers:
         - name: finops-bot
-
           image: ghcr.io/sniper541/homelab-finops/finops-bot:9e958d17e273b1fd7d83d1c80b684880fd631d87
           imagePullPolicy: Always
 
@@ -47,30 +52,35 @@ spec:
 
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 10001
+            runAsGroup: 10001
             capabilities:
               drop:
                 - ALL
 
         - name: ssh-proxy
-          image: alpine:3.22
+          image: ghcr.io/sniper541/homelab-finops/finops-ssh-proxy:latest
+          imagePullPolicy: Always
 
-          command:
-            - /bin/sh
-            - -c
-            - |
-              apk add --no-cache openssh-client &&
-              exec ssh \
-                -N \
-                -D 0.0.0.0:1080 \
-                -i /ssh/id_ed25519 \
-                -o BatchMode=yes \
-                -o StrictHostKeyChecking=no \
-                -o ExitOnForwardFailure=yes \
-                -o ServerAliveInterval=30 \
-                -o ServerAliveCountMax=3 \
-                finops-proxy@89.110.67.219
+          args:
+            - "-N"
+            - "-D"
+            - "0.0.0.0:1080"
+            - "-i"
+            - "/ssh/id_ed25519"
+            - "-o"
+            - "BatchMode=yes"
+            - "-o"
+            - "StrictHostKeyChecking=no"
+            - "-o"
+            - "ExitOnForwardFailure=yes"
+            - "-o"
+            - "ServerAliveInterval=30"
+            - "-o"
+            - "ServerAliveCountMax=3"
+            - "finops-proxy@89.110.67.219"
 
           volumeMounts:
             - name: proxy-ssh-key
@@ -87,7 +97,10 @@ spec:
 
           securityContext:
             allowPrivilegeEscalation: false
-            runAsNonRoot: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10002
+            runAsGroup: 10002
             capabilities:
               drop:
                 - ALL
@@ -96,4 +109,4 @@ spec:
         - name: proxy-ssh-key
           secret:
             secretName: finops-bot-proxy-ssh
-            defaultMode: 0400
+            defaultMode: 0440
