@@ -84,3 +84,37 @@ def test_register_user():
     
     assert "INSERT INTO user_settings" in settings_query
     assert settings_params == (1,)
+
+def test_create_category():
+    mock_cursor = MagicMock()
+
+    mock_cursor.fetchone.return_value = (
+        10,
+        1,
+        "expense",
+        "Продукты",
+        "🛒",
+        True,
+        "2026-09-02T12:00:00+00:00",
+        "2026-09-02T12:00:00+00:00",
+    )
+
+    mock_connection = MagicMock()
+    mock_connection.__enter__.return_value.cursor.return_value.__enter__.return_value = mock_cursor
+
+    with patch("app.main.get_connection", return_value=mock_connection):
+        response = client.post(
+            "/categories",
+            json={
+                "user_id": 1,
+                "type": "expense",
+                "name": "Продукты",
+                "icon": "🛒",
+            },
+        )
+
+    assert response.status_code == 200
+    assert response.json()["user_id"] == 1
+    assert response.json()["type"] == "expense"
+    assert response.json()["name"] == "Продукты"
+    assert response.json()["icon"] == "🛒"
