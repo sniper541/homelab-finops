@@ -2,6 +2,7 @@
 infrastructure/postgres/secret.yaml
 **/secret.yaml
 **/.env
+applications/bot/secret-proxy.yaml
 
 # Python
 __pycache__/
