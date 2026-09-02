@@ -28,6 +28,10 @@ def root():
 def version():
     return {"version": "auto-cd-test"}
 
+@app.get("/health/live")
+def liveness():
+    return {"status": "alive"}
+
 @app.get("/health/ready")
 def readiness():
     try:

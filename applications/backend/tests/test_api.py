@@ -23,3 +23,11 @@ def test_version():
     assert response.json() == {
         "version": "auto-cd-test",
     }
+
+def test_liveness():
+    response = client.get("/health/live")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "status": "alive",
+    }
