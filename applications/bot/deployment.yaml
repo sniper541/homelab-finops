@@ -19,7 +19,7 @@ spec:
       containers:
 
         - name: finops-bot
-          image: ghcr.io/sniper541/homelab-finops/finops-bot:latest
+          image: ghcr.io/sniper541/homelab-finops/finops-bot:b8f6366b1f3848be9c83a03e2a198917c9437d14
           imagePullPolicy: Always
 
           env:
