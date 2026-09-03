@@ -27,7 +27,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: finops-api
-          image: ghcr.io/sniper541/finops-api:cc0a31306469af38d0e5eb9aa0cc5738d1e38b6f
+          image: ghcr.io/sniper541/finops-api:c75462bbc3777960e64f4e039f4e92bdbf9df0ff
           imagePullPolicy: Always
 
           securityContext:
