@@ -108,4 +108,6 @@ jobs:
           fi
 
           git commit -m "Deploy finops-api ${GITHUB_SHA}"
-          git push
+
+          git pull --rebase origin main
+          git push origin main

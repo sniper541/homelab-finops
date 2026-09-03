@@ -129,7 +129,12 @@ jobs:
 
           git add applications/bot/deployment.yaml
 
-          git diff --cached --quiet || \
-            git commit -m "Update bot images to ${GITHUB_SHA}"
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+            exit 0
+          fi
 
-          git push
+          git commit -m "Update bot images to ${GITHUB_SHA}"
+
+          git pull --rebase origin main
+          git push origin main
