@@ -26,7 +26,7 @@ spec:
 
       containers:
         - name: finops-bot
-          image: ghcr.io/sniper541/homelab-finops/finops-bot:7ab51ed7605b9234fcca6a6aba97553992848fe4
+          image: ghcr.io/sniper541/homelab-finops/finops-bot:c75462bbc3777960e64f4e039f4e92bdbf9df0ff
           imagePullPolicy: Always
 
           env:
@@ -61,7 +61,7 @@ spec:
                 - ALL
 
         - name: ssh-proxy
-          image: ghcr.io/sniper541/homelab-finops/finops-ssh-proxy:7ab51ed7605b9234fcca6a6aba97553992848fe4
+          image: ghcr.io/sniper541/homelab-finops/finops-ssh-proxy:c75462bbc3777960e64f4e039f4e92bdbf9df0ff
           imagePullPolicy: Always
 
           args:
