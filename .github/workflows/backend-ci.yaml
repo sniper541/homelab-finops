@@ -75,6 +75,20 @@ jobs:
           exit-code: "1"
           ignore-unfixed: true
 
+      - name: Generate SBOM
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/sniper541/finops-api:${{ github.sha }}
+          format: cyclonedx
+          output: finops-api-sbom.cdx.json
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: finops-api-sbom-${{ github.sha }}
+          path: finops-api-sbom.cdx.json
+          retention-days: 30
+
       - name: Update image version in Kubernetes manifest
         run: |
           sed -i \
