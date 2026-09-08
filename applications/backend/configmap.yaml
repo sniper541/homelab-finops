@@ -8,3 +8,4 @@ metadata:
 data:
   POSTGRES_HOST: postgres
   POSTGRES_PORT: "5432"
+  WEB_CORS_ORIGINS: https://app.sniper541.com,http://localhost:5173

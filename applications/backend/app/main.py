@@ -1,9 +1,27 @@
 import os
 import psycopg
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 app = FastAPI(title="FinOps API")
+
+cors_origins = [
+    origin.strip()
+    for origin in os.getenv(
+        "WEB_CORS_ORIGINS",
+        "https://app.sniper541.com,http://localhost:5173",
+    ).split(",")
+    if origin.strip()
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=cors_origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+)
 
 class UserRegisterRequest(BaseModel):
     telegram_id: int

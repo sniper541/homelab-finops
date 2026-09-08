@@ -1,0 +1,546 @@
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
+import {
+  ArrowDownRight,
+  ArrowRight,
+  ArrowUpRight,
+  BarChart3,
+  Bot,
+  CalendarDays,
+  Check,
+  Clock3,
+  History,
+  LayoutDashboard,
+  LockKeyhole,
+  LogIn,
+  LogOut,
+  PieChart,
+  RefreshCcw,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  UserPlus,
+  Wallet
+} from "lucide-react";
+import { getDashboardData } from "./api";
+import {
+  formatCurrency,
+  formatDate,
+  getCategoryTotals,
+  getMonthlyTrend,
+  getSavingsRate,
+  type Category,
+  type Summary,
+  type Transaction
+} from "./domain";
+import { mockCategories, mockSummary, mockTransactions } from "./mockData";
+
+type DashboardState = {
+  summary: Summary;
+  transactions: Transaction[];
+  categories: Category[];
+  isFallback: boolean;
+};
+
+type AuthMode = "login" | "register";
+
+const defaultState: DashboardState = {
+  summary: mockSummary,
+  transactions: mockTransactions,
+  categories: mockCategories,
+  isFallback: true
+};
+
+function useRevealOnScroll() {
+  useEffect(() => {
+    const elements = document.querySelectorAll<HTMLElement>("[data-reveal]");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.12 }
+    );
+
+    elements.forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
+  }, []);
+}
+
+function Pill({ children }: { children: ReactNode }) {
+  return <span className="pill">{children}</span>;
+}
+
+function AuthScreen({ onLogin }: { onLogin: () => void }) {
+  const [mode, setMode] = useState<AuthMode>("login");
+  const [login, setLogin] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("Для теста сейчас работает вход admin / admin.");
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (mode === "register") {
+      setMessage("Регистрацию подключим позже через Keycloak. Сейчас вход: admin / admin.");
+      return;
+    }
+
+    if (login.trim() === "admin" && password === "admin") {
+      setMessage("Вход выполнен.");
+      onLogin();
+      return;
+    }
+
+    setMessage("Неверный логин или пароль. Временный доступ: admin / admin.");
+  }
+
+  function handleTelegramStub() {
+    setMessage("Telegram Login подключим после Keycloak и связки с ботом.");
+  }
+
+  return (
+    <main className="auth-shell">
+      <section className="auth-hero" data-reveal>
+        <div className="brand brand--auth">
+          <div className="brand__mark">
+            <Wallet aria-hidden="true" />
+          </div>
+          <div>
+            <strong>FinOps</strong>
+            <span>Личные финансы</span>
+          </div>
+        </div>
+
+        <div className="auth-copy">
+          <h1>FinOps</h1>
+          <p>Ваши финансы. Ясная картина.</p>
+        </div>
+
+        <div className="auth-preview" aria-label="Пример аналитики, демонстрационные данные">
+          <div className="auth-preview__top">
+            <span>Демонстрационный обзор</span>
+            <strong>{formatCurrency(mockSummary.balance)}</strong>
+          </div>
+          <div className="auth-preview__line">
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
+          <div className="auth-preview__grid">
+            <span>Доходы</span>
+            <strong>{formatCurrency(mockSummary.income)}</strong>
+            <span>Расходы</span>
+            <strong>{formatCurrency(mockSummary.expense)}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section className="auth-panel" data-reveal>
+        <div className="auth-panel__header">
+          <Pill>
+            <LockKeyhole aria-hidden="true" />
+            Личный кабинет
+          </Pill>
+          <h2>{mode === "login" ? "Вход в кабинет" : "Регистрация"}</h2>
+        </div>
+
+        <div className="auth-switch" role="tablist" aria-label="Режим авторизации">
+          <button className={mode === "login" ? "is-active" : ""} type="button" onClick={() => setMode("login")}>
+            <LogIn aria-hidden="true" />
+            Войти
+          </button>
+          <button
+            className={mode === "register" ? "is-active" : ""}
+            type="button"
+            onClick={() => setMode("register")}
+          >
+            <UserPlus aria-hidden="true" />
+            Регистрация
+          </button>
+        </div>
+
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <label>
+            <span>{mode === "login" ? "Логин" : "Email"}</span>
+            <input
+              autoComplete={mode === "login" ? "username" : "email"}
+              onChange={(event) => setLogin(event.target.value)}
+              placeholder={mode === "login" ? "admin" : "you@example.com"}
+              type={mode === "login" ? "text" : "email"}
+              value={login}
+            />
+          </label>
+
+          <label>
+            <span>Пароль</span>
+            <input
+              autoComplete={mode === "login" ? "current-password" : "new-password"}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="admin"
+              type="password"
+              value={password}
+            />
+          </label>
+
+          <button className="primary-button primary-button--wide" type="submit">
+            {mode === "login" ? <LogIn aria-hidden="true" /> : <UserPlus aria-hidden="true" />}
+            {mode === "login" ? "Войти в кабинет" : "Создать аккаунт"}
+          </button>
+        </form>
+
+        <button className="telegram-button" type="button" onClick={handleTelegramStub}>
+          <Bot aria-hidden="true" />
+          Войти через Telegram
+          <ArrowRight aria-hidden="true" />
+        </button>
+
+        <p className="auth-message" role="status">{message}</p>
+      </section>
+    </main>
+  );
+}
+
+function StatCard({
+  label,
+  value,
+  helper,
+  tone,
+  icon
+}: {
+  label: string;
+  value: string;
+  helper: string;
+  tone: "income" | "expense" | "balance";
+  icon: ReactNode;
+}) {
+  return (
+    <article className={`stat-card stat-card--${tone}`} data-reveal>
+      <div className="stat-card__icon">{icon}</div>
+      <div>
+        <p>{label}</p>
+        <strong>{value}</strong>
+        <span>{helper}</span>
+      </div>
+    </article>
+  );
+}
+
+function TrendChart({ transactions }: { transactions: Transaction[] }) {
+  const trend = getMonthlyTrend(transactions);
+  const maxValue = Math.max(...trend.flatMap((item) => [item.income, item.expense]), 1);
+
+  return (
+    <section className="panel panel--wide" id="analytics" data-reveal>
+      <div className="panel__header">
+        <div>
+          <span className="eyebrow">Analytics</span>
+          <h2>Динамика за 6 месяцев</h2>
+        </div>
+        <BarChart3 aria-hidden="true" />
+      </div>
+
+      <div className="trend-chart">
+        {trend.map((item) => (
+          <div className="trend-chart__item" key={item.label}>
+            <div className="trend-chart__bars">
+              <span
+                className="trend-chart__bar trend-chart__bar--income"
+                style={{ height: `${Math.max((item.income / maxValue) * 100, 4)}%` }}
+                title={`Доход: ${formatCurrency(item.income)}`}
+              />
+              <span
+                className="trend-chart__bar trend-chart__bar--expense"
+                style={{ height: `${Math.max((item.expense / maxValue) * 100, 4)}%` }}
+                title={`Расход: ${formatCurrency(item.expense)}`}
+              />
+            </div>
+            <span>{item.label}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function CategoryBreakdown({ transactions }: { transactions: Transaction[] }) {
+  const totals = getCategoryTotals(transactions).filter((item) => item.type === "expense").slice(0, 5);
+  const topShare = Math.round((totals[0]?.share ?? 0) * 100);
+
+  return (
+    <section className="panel" data-reveal>
+      <div className="panel__header">
+        <div>
+          <span className="eyebrow">Categories</span>
+          <h2>Куда уходят деньги</h2>
+        </div>
+        <PieChart aria-hidden="true" />
+      </div>
+
+      <div className="category-orbit" style={{ "--share": `${topShare}%` } as React.CSSProperties}>
+        <span>{topShare}%</span>
+        <small>главная категория</small>
+      </div>
+
+      <div className="category-list">
+        {totals.map((item) => (
+          <div className="category-row" key={item.name}>
+            <div className="category-row__meta">
+              <span>{item.name}</span>
+              <strong>{formatCurrency(item.amount)}</strong>
+            </div>
+            <div className="category-row__track">
+              <span style={{ width: `${Math.round(item.share * 100)}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function RecentTransactions({ transactions }: { transactions: Transaction[] }) {
+  return (
+    <section className="panel panel--wide" id="history" data-reveal>
+      <div className="panel__header">
+        <div>
+          <span className="eyebrow">History</span>
+          <h2>Последние операции</h2>
+        </div>
+        <History aria-hidden="true" />
+      </div>
+
+      <div className="transactions">
+        {transactions.slice(0, 8).map((transaction) => {
+          const isIncome = transaction.category.type === "income";
+
+          return (
+            <div className="transaction-row" key={transaction.id}>
+              <div className={`transaction-row__icon ${isIncome ? "is-income" : "is-expense"}`}>
+                {isIncome ? <ArrowUpRight aria-hidden="true" /> : <ArrowDownRight aria-hidden="true" />}
+              </div>
+              <div className="transaction-row__main">
+                <strong>{transaction.description || transaction.category.name}</strong>
+                <span>
+                  {transaction.category.name} · {formatDate(transaction.occurred_at)}
+                </span>
+              </div>
+              <strong className={isIncome ? "amount income" : "amount expense"}>
+                {isIncome ? "+" : "-"}
+                {formatCurrency(transaction.amount)}
+              </strong>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function Dashboard({
+  dashboard,
+  isLoading,
+  onLogout,
+  onRefresh
+}: {
+  dashboard: DashboardState;
+  isLoading: boolean;
+  onLogout: () => void;
+  onRefresh: () => void;
+}) {
+  const savingsRate = getSavingsRate(dashboard.summary);
+  const operationCount = dashboard.transactions.length;
+  const activeCategories = useMemo(
+    () => dashboard.categories.filter((category) => category.is_active !== false).length,
+    [dashboard.categories]
+  );
+
+  return (
+    <main className="app-shell">
+      <aside className="sidebar" aria-label="Основная навигация">
+        <div className="brand">
+          <div className="brand__mark">
+            <Wallet aria-hidden="true" />
+          </div>
+          <div>
+            <strong>FinOps</strong>
+            <span>Private analytics</span>
+          </div>
+        </div>
+
+        <nav className="nav-list">
+          <a href="#dashboard" className="is-active">
+            <LayoutDashboard aria-hidden="true" />
+            Обзор
+          </a>
+          <a href="#analytics">
+            <BarChart3 aria-hidden="true" />
+            Аналитика
+          </a>
+          <a href="#history">
+            <Clock3 aria-hidden="true" />
+            История
+          </a>
+          <a href="#reports">
+            <ShieldCheck aria-hidden="true" />
+            Отчеты
+          </a>
+        </nav>
+
+        <div className="bot-card">
+          <Bot aria-hidden="true" />
+          <strong>Telegram остается быстрым вводом</strong>
+          <span>Web отвечает за обзор, отчеты и контроль бюджета.</span>
+        </div>
+      </aside>
+
+      <section className="content" id="dashboard">
+        <header className="topbar">
+          <div>
+            <span className="eyebrow">FinOps web · premium MVP</span>
+            <h1>Финансовый cockpit</h1>
+          </div>
+
+          <div className="topbar__actions">
+            <div className="search-box">
+              <Search aria-hidden="true" />
+              <span>История, категории, отчеты</span>
+            </div>
+            <button className="primary-button" type="button" onClick={onRefresh}>
+              <RefreshCcw aria-hidden="true" className={isLoading ? "is-spinning" : ""} />
+              Обновить
+            </button>
+            <button className="ghost-button" type="button" onClick={onLogout}>
+              <LogOut aria-hidden="true" />
+              Выйти
+            </button>
+          </div>
+        </header>
+
+        <section className="hero-band" data-reveal>
+          <div className="hero-band__copy">
+            <Pill>
+              <Sparkles aria-hidden="true" />
+              {dashboard.isFallback ? "Demo data" : "FastAPI online"}
+            </Pill>
+            <h2>Один экран, чтобы понять месяц без лишнего шума.</h2>
+            <p>
+              Ввод остается в Telegram, а здесь собраны баланс, динамика, категории, последние операции и статус
+              отчетов.
+            </p>
+          </div>
+          <div className="hero-meter" aria-label="Процент накоплений">
+            <span>{savingsRate}%</span>
+            <small>остается после расходов</small>
+          </div>
+        </section>
+
+        <section className="stats-grid" aria-label="Финансовая сводка">
+          <StatCard
+            label="Доходы"
+            value={formatCurrency(dashboard.summary.income)}
+            helper="За выбранный период"
+            tone="income"
+            icon={<ArrowUpRight aria-hidden="true" />}
+          />
+          <StatCard
+            label="Расходы"
+            value={formatCurrency(dashboard.summary.expense)}
+            helper="Контроль бюджета"
+            tone="expense"
+            icon={<ArrowDownRight aria-hidden="true" />}
+          />
+          <StatCard
+            label="Баланс"
+            value={formatCurrency(dashboard.summary.balance)}
+            helper={`${savingsRate}% остается после расходов`}
+            tone="balance"
+            icon={<Wallet aria-hidden="true" />}
+          />
+        </section>
+
+        <section className="dashboard-grid">
+          <TrendChart transactions={dashboard.transactions} />
+          <CategoryBreakdown transactions={dashboard.transactions} />
+          <RecentTransactions transactions={dashboard.transactions} />
+
+          <section className="panel" id="reports" data-reveal>
+            <div className="panel__header">
+              <div>
+                <span className="eyebrow">Reports</span>
+                <h2>MVP-отчеты</h2>
+              </div>
+              <ShieldCheck aria-hidden="true" />
+            </div>
+
+            <div className="report-list">
+              <div>
+                <span>Операций в выборке</span>
+                <strong>{operationCount}</strong>
+              </div>
+              <div>
+                <span>Активных категорий</span>
+                <strong>{activeCategories}</strong>
+              </div>
+              <div>
+                <span>Источник данных</span>
+                <strong>{dashboard.isFallback ? "Fallback" : "FastAPI"}</strong>
+              </div>
+              <div>
+                <span>Текущий период</span>
+                <strong>
+                  <CalendarDays aria-hidden="true" />
+                  Месяц
+                </strong>
+              </div>
+              <div className="report-list__ready">
+                <span>Готово к Keycloak</span>
+                <strong>
+                  <Check aria-hidden="true" />
+                  UI stub
+                </strong>
+              </div>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+  );
+}
+
+export default function App() {
+  const [dashboard, setDashboard] = useState<DashboardState>(defaultState);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  async function refreshDashboard() {
+    setIsLoading(true);
+    const nextDashboard = await getDashboardData();
+    setDashboard(nextDashboard);
+    setIsLoading(false);
+  }
+
+  useEffect(() => {
+    refreshDashboard();
+  }, []);
+
+  useRevealOnScroll();
+
+  if (!isAuthenticated) {
+    return <AuthScreen onLogin={() => setIsAuthenticated(true)} />;
+  }
+
+  return (
+    <Dashboard
+      dashboard={dashboard}
+      isLoading={isLoading}
+      onLogout={() => setIsAuthenticated(false)}
+      onRefresh={refreshDashboard}
+    />
+  );
+}
