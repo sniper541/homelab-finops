@@ -34,7 +34,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: applications/web
-        run: npm install
+        run: npm ci
 
       - name: Run tests
         working-directory: applications/web

@@ -11,6 +11,8 @@ spec:
     repoURL: https://github.com/sniper541/homelab-finops.git
     targetRevision: main
     path: applications/web
+    directory:
+      include: '*.yaml'
 
   destination:
     server: https://kubernetes.default.svc
