@@ -22,7 +22,8 @@ import {
   Wallet
 } from "lucide-react";
 import { getDashboardData } from "./api";
-import { keycloak, login, logout } from "./auth";
+import { keycloak, logout } from "./auth";
+import AuthScreen from "./AuthScreen";
 import {
   formatCurrency,
   formatDate,
@@ -73,72 +74,6 @@ function useRevealOnScroll(isAuthenticated: boolean) {
 
 function Pill({ children }: { children: ReactNode }) {
   return <span className="pill">{children}</span>;
-}
-
-function AuthScreen({ message }: { message: string }) {
-  const [loginError, setLoginError] = useState("");
-  const [isRedirecting, setIsRedirecting] = useState(false);
-  async function handleLogin() {
-    setIsRedirecting(true);
-    try { await login(); }
-    catch { setLoginError("Не удалось открыть страницу входа. Попробуйте снова."); }
-    finally { setIsRedirecting(false); }
-  }
-  return (
-    <main className="auth-shell">
-      <section className="auth-hero" data-reveal>
-        <div className="brand brand--auth">
-          <div className="brand__mark">
-            <Wallet aria-hidden="true" />
-          </div>
-          <div>
-            <strong>FinOps</strong>
-            <span>Личные финансы</span>
-          </div>
-        </div>
-
-        <div className="auth-copy">
-          <h1>FinOps</h1>
-          <p>Ваши финансы. Ясная картина.</p>
-        </div>
-
-        <div className="auth-preview" aria-label="Пример аналитики, демонстрационные данные">
-          <div className="auth-preview__top">
-            <span>Демонстрационный обзор</span>
-            <strong>{formatCurrency(mockSummary.balance)}</strong>
-          </div>
-          <div className="auth-preview__line">
-            <span />
-            <span />
-            <span />
-            <span />
-          </div>
-          <div className="auth-preview__grid">
-            <span>Доходы</span>
-            <strong>{formatCurrency(mockSummary.income)}</strong>
-            <span>Расходы</span>
-            <strong>{formatCurrency(mockSummary.expense)}</strong>
-          </div>
-        </div>
-      </section>
-
-      <section className="auth-panel" data-reveal>
-        <div className="auth-panel__header">
-          <Pill>
-            <LockKeyhole aria-hidden="true" />
-            Личный кабинет
-          </Pill>
-          <h2>Вход в кабинет</h2>
-        </div>
-        <p>Войдите в свой аккаунт, чтобы открыть личный кабинет.</p>
-        <button className="primary-button primary-button--wide" type="button" disabled={isRedirecting} onClick={handleLogin}>
-          <LogIn aria-hidden="true" />
-          {isRedirecting ? "Переходим ко входу…" : "Войти"}
-        </button>
-        <p className="auth-message" role="status">{loginError || message}</p>
-      </section>
-    </main>
-  );
 }
 
 function StatCard({

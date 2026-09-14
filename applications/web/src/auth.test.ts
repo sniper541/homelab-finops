@@ -1,7 +1,7 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 
 const adapter = vi.hoisted(() => ({
-  init: vi.fn(), login: vi.fn(), logout: vi.fn(), updateToken: vi.fn(),
+  init: vi.fn(), login: vi.fn(), register: vi.fn(), logout: vi.fn(), updateToken: vi.fn(),
   clearToken: vi.fn(), authenticated: true, token: "access-token"
 }));
 vi.mock("keycloak-js", () => ({ default: vi.fn(function () { return adapter; }) }));
@@ -55,5 +55,11 @@ describe("Keycloak session", () => {
     const options = { redirectUri: "https://app.sniper541.com/" };
     expect(adapter.login).toHaveBeenCalledWith(options);
     expect(adapter.logout).toHaveBeenCalledWith(options);
+  });
+
+  it("delegates registration to the standard adapter without collecting credentials", async () => {
+    const { register } = await import("./auth");
+    await register();
+    expect(adapter.register).toHaveBeenCalledWith({ redirectUri: "https://app.sniper541.com/" });
   });
 });

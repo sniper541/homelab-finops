@@ -1,0 +1,70 @@
+/* Scoped to the public welcome screen; dashboard styling remains independent. */
+.finops-welcome { width: min(1180px, 100%); grid-template-columns: minmax(0, 1fr) minmax(360px, 440px); gap: clamp(40px, 7vw, 100px); padding: 56px 32px; }
+.finops-welcome .auth-hero { text-align: left; display: grid; gap: 36px; padding: 0; }
+.finops-welcome { position: relative; isolation: isolate; }
+.finops-welcome::before { content: ""; position: fixed; z-index: -1; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 15% 30%, #428ac30c, transparent 55%), radial-gradient(ellipse at 85% 60%, #547eb908, transparent 45%); }
+.finops-welcome .brand--auth { justify-content: flex-start; text-decoration: none; }
+.finops-welcome .brand__mark { color: #081724; }
+.finops-welcome .welcome-brand-name { color: var(--text); font-size: 24px; font-weight: 700; letter-spacing: -.6px; }
+.welcome-brand-name small { display: block; color: var(--muted); font-size: 12px; font-weight: 400; letter-spacing: .2px; margin-top: 3px; }
+.welcome-eyebrow { display: flex; align-items: center; gap: 8px; color: #b0dcff; font-size: 10px; font-weight: 650; letter-spacing: 1.6px; line-height: 1.7; }
+.welcome-eyebrow svg { width: 14px; height: 14px; }
+.finops-welcome .auth-copy h1 { margin: 14px 0 18px; font-size: clamp(36px, 4.2vw, 54px); line-height: 1.12; font-weight: 600; letter-spacing: -1.8px; }
+.finops-welcome .auth-copy h1 span { color: #b0dcff; }
+.finops-welcome .auth-copy p { max-width: 440px; font-size: 15px; line-height: 1.8; }
+.welcome-preview { max-width: 420px; padding: 26px; border: 1px solid #8ac9ff21; border-radius: 20px; background: linear-gradient(145deg, #1c2630cc, #101820cc); box-shadow: 0 24px 80px #0003, inset 0 1px 0 #e0f2ff08; }
+.welcome-preview-heading { display: flex; align-items: center; justify-content: space-between; color: #c7ccd0; font-size: 12px; }
+.welcome-preview-heading > span { display: flex; align-items: center; gap: 8px; }
+.welcome-preview-heading svg { width: 16px; }
+.welcome-preview-heading small { font-size: 10px; color: #b9c0c5; padding: 4px 8px; border: 1px solid #454c51; border-radius: 5px; }
+.welcome-balance { margin-top: 24px; display: grid; gap: 8px; }
+.welcome-balance > span { color: var(--muted); font-size: 12px; }
+.welcome-balance strong { font-size: 34px; font-weight: 600; letter-spacing: -1px; }
+.welcome-balance small { color: var(--muted); font-weight: 400; font-size: 23px; }
+.welcome-bars { display: flex; height: 84px; gap: 10px; align-items: end; margin: 22px 0; }
+.welcome-bars i { flex: 1; height: 35%; background: linear-gradient(180deg, #b2dfff, #428ac366); border-radius: 4px 4px 0 0; opacity: .65; }
+.welcome-bars i:nth-child(3n) { background: linear-gradient(180deg, #8faef5, #426aa366); }
+.welcome-bars i:nth-child(2) { height: 48%; }.welcome-bars i:nth-child(3) { height: 41%; }.welcome-bars i:nth-child(4) { height: 65%; }.welcome-bars i:nth-child(5) { height: 53%; }.welcome-bars i:nth-child(6) { height: 77%; }.welcome-bars i:nth-child(7) { height: 70%; }.welcome-bars i:nth-child(8) { height: 87%; }.welcome-bars i:nth-child(9) { height: 100%; opacity: 1; }
+.welcome-totals { display: flex; gap: 40px; border-top: 1px solid var(--line); padding-top: 18px; }
+.welcome-totals > span { display: grid; gap: 5px; color: var(--muted); font-size: 11px; }
+.welcome-totals strong { color: var(--text); font-size: 15px; font-weight: 500; }
+.welcome-caption, .welcome-footnote { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 11px; margin: 0; }
+.welcome-caption svg, .welcome-footnote svg { width: 14px; height: 14px; flex-shrink: 0; }
+.welcome-caption svg { color: #8fc9a5; }
+.finops-welcome .auth-panel { border-color: #bddfff1c; border-radius: 24px; padding: 36px; gap: 26px; background: linear-gradient(155deg, #1b242ded, #131a21f5); box-shadow: 0 32px 100px #0005, inset 0 1px 0 #e0f2ff08; }
+.finops-welcome .auth-panel h2 { margin-top: 14px; font-size: 25px; }
+.finops-welcome .auth-panel__header p { color: var(--muted); font-size: 13px; line-height: 1.75; margin: 12px 0 0; }
+.finops-welcome .auth-switch { border: 1px solid var(--line); border-radius: 10px; padding: 4px; gap: 4px; background: #121517; }
+.finops-welcome .auth-switch button { padding: 10px 6px; border: 0; border-radius: 7px; font-size: 12px; }
+.finops-welcome .auth-switch button.is-active { background: #303538; color: #f0f2f3; }
+.welcome-account-step { text-align: center; }
+.welcome-step-icon { display: grid; place-items: center; width: 44px; height: 44px; margin: 0 auto 14px; border: 1px solid #314d65; background: #172b3b; color: #b0dcff; border-radius: 13px; }
+.welcome-step-icon svg { width: 20px; }
+.welcome-account-step h3 { font-size: 15px; margin: 0 0 10px; font-weight: 550; }
+.welcome-account-step p { color: var(--muted); font-size: 12px; line-height: 1.8; margin: 0 0 20px; }
+.finops-welcome .primary-button { display: flex; justify-content: center; gap: 10px; border-radius: 9px; min-height: 50px; }
+.finops-welcome .primary-button:not(:disabled) { background: linear-gradient(120deg, #a5d9ff, #79bfff); color: #081724; box-shadow: 0 6px 24px #338ac31c, inset 0 1px 0 #ffffff40; }
+.finops-welcome .primary-button:not(:disabled):hover { background: linear-gradient(120deg, #bce4ff, #91ceff); box-shadow: 0 8px 28px #338ac32e; }
+.finops-welcome .primary-button svg { width: 17px; }
+.finops-welcome button:disabled { cursor: not-allowed; transform: none; box-shadow: none; }
+.finops-welcome .primary-button:disabled { background: #373c40; color: #c3c8cc; }
+.welcome-divider { display: flex; align-items: center; gap: 12px; font-size: 10px; color: var(--muted); }
+.welcome-divider::before, .welcome-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.finops-welcome .telegram-button { width: 100%; min-height: 48px; gap: 10px; padding: 12px; color: #bcc5cb; background: #1c2226; border: 1px solid #384149; border-radius: 9px; font-size: 12px; }
+.finops-welcome .telegram-button svg { width: 18px; color: #91a8c9; flex-shrink: 0; }
+.welcome-soon { margin-left: auto; padding: 3px 7px; background: #303940; color: #c0cbd3; font-size: 10px; border-radius: 5px; }
+.welcome-telegram p { text-align: center; color: var(--muted); margin: 10px 0 0; font-size: 10px; line-height: 1.6; }
+.welcome-footnote { justify-content: center; text-align: center; border-top: 1px solid var(--line); padding-top: 20px; font-size: 10px; }
+@media (max-width: 800px) {
+  .finops-welcome { max-width: 520px; grid-template-columns: minmax(0, 1fr); padding: 32px 20px; gap: 28px; }
+  .finops-welcome .auth-hero { gap: 22px; }
+  .finops-welcome .auth-copy h1 { font-size: 36px; }
+  .finops-welcome .auth-copy p { font-size: 13px; }
+  .welcome-preview, .welcome-caption { display: none; }
+  .finops-welcome .auth-panel { padding: 24px; }
+}
+@media (max-width: 360px) {
+  .finops-welcome { padding: 24px 14px; }
+  .finops-welcome .auth-panel { padding: 20px 16px; }
+  .finops-welcome .auth-copy h1 { font-size: 32px; }
+}

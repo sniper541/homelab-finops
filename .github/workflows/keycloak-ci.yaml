@@ -1,0 +1,108 @@
+name: Keycloak theme CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "applications/keycloak/**"
+      - ".github/workflows/keycloak-ci.yaml"
+  pull_request:
+    paths:
+      - "applications/keycloak/**"
+      - ".github/workflows/keycloak-ci.yaml"
+  workflow_dispatch:
+
+concurrency:
+  group: keycloak-theme-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Build theme image
+        run: docker build -t finops-keycloak:test applications/keycloak
+      - name: Exercise real Keycloak login, registration and recovery pages
+        run: python3 applications/keycloak/tests/smoke.py --image finops-keycloak:test
+      - name: Scan image before publication
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: finops-keycloak:test
+          version: v0.74.0
+          timeout: 15m
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+          ignore-unfixed: true
+      - name: Generate SBOM
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: finops-keycloak:test
+          version: v0.74.0
+          timeout: 15m
+          format: cyclonedx
+          output: finops-keycloak-sbom.cdx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: finops-keycloak-sbom-${{ github.sha }}
+          path: finops-keycloak-sbom.cdx.json
+      - name: Log in to GHCR
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish immutable image and record digest
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        id: publish
+        env:
+          IMAGE: ghcr.io/${{ github.repository }}/finops-keycloak
+        run: |
+          image="${IMAGE,,}"
+          tag="$image:sha-$GITHUB_SHA"
+          # A rerun may reuse an existing SHA tag, but must never overwrite it.
+          if docker manifest inspect "$tag" >/dev/null 2>&1; then
+            docker pull "$tag"
+          else
+            docker tag finops-keycloak:test "$tag"
+            docker push "$tag"
+          fi
+          digest=$(docker image inspect "$tag" --format '{{index .RepoDigests 0}}' | cut -d@ -f2)
+          test -n "$digest"
+          echo "reference=$tag@$digest" >> "$GITHUB_OUTPUT"
+      - name: Update only Keycloak's manifest after successful checks
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        env:
+          IMAGE_REFERENCE: ${{ steps.publish.outputs.reference }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git checkout main
+          git pull --ff-only origin main
+          # Do not promote a build if newer theme sources have already reached main.
+          git diff --exit-code "$GITHUB_SHA" HEAD -- applications/keycloak .github/workflows/keycloak-ci.yaml
+          python3 - <<'PY'
+          import os, pathlib, re
+          path = pathlib.Path('infrastructure/keycloak/deployment.yaml')
+          text = path.read_text()
+          text, count = re.subn(r'(?m)^(\s+image:) (?:quay.io/keycloak/keycloak|ghcr.io/[^\s]+/finops-keycloak):[^\s]+$',
+                                lambda m: m[1] + ' ' + os.environ['IMAGE_REFERENCE'], text)
+          assert count == 1, 'Expected exactly one Keycloak image reference'
+          path.write_text(text)
+          PY
+          git add infrastructure/keycloak/deployment.yaml
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Update Keycloak theme image to $GITHUB_SHA"
+          # Web/API workflows may also advance main; rebase without touching their changes.
+          for attempt in 1 2 3; do
+            git pull --rebase origin main
+            if git push origin main; then exit 0; fi
+          done
+          exit 1

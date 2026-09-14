@@ -3,6 +3,8 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import { initializeAuth } from "./auth";
 import "./styles.css";
+import "./brand.css";
+import "./welcome.css";
 
 const root = createRoot(document.getElementById("root")!);
 root.render(<p role="status">Проверяем сессию…</p>);

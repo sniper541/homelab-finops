@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: finops-keycloak
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sniper541/homelab-finops.git
+    targetRevision: main
+    path: infrastructure/keycloak
+    directory:
+      include: '{deployment,service,ingress}.yaml'
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: keycloak
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

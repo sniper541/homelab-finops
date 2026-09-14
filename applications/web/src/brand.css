@@ -1,0 +1,15 @@
+/* Shared FinOps blue accent, including the authenticated dashboard. */
+:root {
+  --bg: #0e141a;
+  --panel: #172029;
+  --panel-strong: #202c37;
+  --line: #ffffff16;
+  --text: #edf4f9;
+  --muted: #a6b2bd;
+  --terracotta: #609dcc;
+  --terracotta-strong: #a5d9ff;
+}
+.brand__mark { background: #83c9ff; color: #081724; }
+.primary-button { background: #83c9ff; color: #081724; }
+.primary-button:hover { background: #a5d9ff; }
+.auth-switch button.is-active { border-bottom-color: #83c9ff; }

@@ -24,6 +24,10 @@ export function login() {
   return keycloak.login({ redirectUri: window.location.origin + "/" });
 }
 
+export function register() {
+  return keycloak.register({ redirectUri: window.location.origin + "/" });
+}
+
 export function logout() {
   return keycloak.logout({ redirectUri: window.location.origin + "/" });
 }

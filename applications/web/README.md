@@ -40,3 +40,18 @@ For cross-origin API requests, the API must allow the app origin and Authorizati
 header in its CORS preflight response.
 
 Adapter documentation: https://www.keycloak.org/securing-apps/javascript-adapter
+
+## Welcome screen and registration
+
+`AuthScreen.tsx` and `welcome.css` provide the responsive public welcome screen.
+Login continues through the existing OIDC adapter. React has no username/password
+inputs. Telegram is explicitly disabled until real authentication is implemented.
+
+Registration is off by default. After enabling **finops → Realm settings → Login →
+User registration**, set the non-secret GitHub Actions repository variable
+`FINOPS_REGISTRATION_ENABLED=true` and rerun Web CI. For local Vite, set
+`VITE_REGISTRATION_ENABLED=true`. The enabled CTA calls `keycloak.register()`;
+the flag alone does not enable registration on the server.
+
+Theme build, initial ArgoCD adoption, realm settings and rollback:
+[Keycloak theme instructions](../keycloak/README.md).
