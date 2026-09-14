@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import {
   ArrowDownRight,
@@ -19,10 +19,10 @@ import {
   Search,
   ShieldCheck,
   Sparkles,
-  UserPlus,
   Wallet
 } from "lucide-react";
 import { getDashboardData } from "./api";
+import { keycloak, login, logout } from "./auth";
 import {
   formatCurrency,
   formatDate,
@@ -42,7 +42,6 @@ type DashboardState = {
   isFallback: boolean;
 };
 
-type AuthMode = "login" | "register";
 
 const defaultState: DashboardState = {
   summary: mockSummary,
@@ -51,7 +50,7 @@ const defaultState: DashboardState = {
   isFallback: true
 };
 
-function useRevealOnScroll() {
+function useRevealOnScroll(isAuthenticated: boolean) {
   useEffect(() => {
     const elements = document.querySelectorAll<HTMLElement>("[data-reveal]");
     const observer = new IntersectionObserver(
@@ -69,40 +68,22 @@ function useRevealOnScroll() {
     elements.forEach((element) => observer.observe(element));
 
     return () => observer.disconnect();
-  }, []);
+  }, [isAuthenticated]);
 }
 
 function Pill({ children }: { children: ReactNode }) {
   return <span className="pill">{children}</span>;
 }
 
-function AuthScreen({ onLogin }: { onLogin: () => void }) {
-  const [mode, setMode] = useState<AuthMode>("login");
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("Для теста сейчас работает вход admin / admin.");
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    if (mode === "register") {
-      setMessage("Регистрацию подключим позже через Keycloak. Сейчас вход: admin / admin.");
-      return;
-    }
-
-    if (login.trim() === "admin" && password === "admin") {
-      setMessage("Вход выполнен.");
-      onLogin();
-      return;
-    }
-
-    setMessage("Неверный логин или пароль. Временный доступ: admin / admin.");
+function AuthScreen({ message }: { message: string }) {
+  const [loginError, setLoginError] = useState("");
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  async function handleLogin() {
+    setIsRedirecting(true);
+    try { await login(); }
+    catch { setLoginError("Не удалось открыть страницу входа. Попробуйте снова."); }
+    finally { setIsRedirecting(false); }
   }
-
-  function handleTelegramStub() {
-    setMessage("Telegram Login подключим после Keycloak и связки с ботом.");
-  }
-
   return (
     <main className="auth-shell">
       <section className="auth-hero" data-reveal>
@@ -147,60 +128,14 @@ function AuthScreen({ onLogin }: { onLogin: () => void }) {
             <LockKeyhole aria-hidden="true" />
             Личный кабинет
           </Pill>
-          <h2>{mode === "login" ? "Вход в кабинет" : "Регистрация"}</h2>
+          <h2>Вход в кабинет</h2>
         </div>
-
-        <div className="auth-switch" role="tablist" aria-label="Режим авторизации">
-          <button className={mode === "login" ? "is-active" : ""} type="button" onClick={() => setMode("login")}>
-            <LogIn aria-hidden="true" />
-            Войти
-          </button>
-          <button
-            className={mode === "register" ? "is-active" : ""}
-            type="button"
-            onClick={() => setMode("register")}
-          >
-            <UserPlus aria-hidden="true" />
-            Регистрация
-          </button>
-        </div>
-
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <label>
-            <span>{mode === "login" ? "Логин" : "Email"}</span>
-            <input
-              autoComplete={mode === "login" ? "username" : "email"}
-              onChange={(event) => setLogin(event.target.value)}
-              placeholder={mode === "login" ? "admin" : "you@example.com"}
-              type={mode === "login" ? "text" : "email"}
-              value={login}
-            />
-          </label>
-
-          <label>
-            <span>Пароль</span>
-            <input
-              autoComplete={mode === "login" ? "current-password" : "new-password"}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="admin"
-              type="password"
-              value={password}
-            />
-          </label>
-
-          <button className="primary-button primary-button--wide" type="submit">
-            {mode === "login" ? <LogIn aria-hidden="true" /> : <UserPlus aria-hidden="true" />}
-            {mode === "login" ? "Войти в кабинет" : "Создать аккаунт"}
-          </button>
-        </form>
-
-        <button className="telegram-button" type="button" onClick={handleTelegramStub}>
-          <Bot aria-hidden="true" />
-          Войти через Telegram
-          <ArrowRight aria-hidden="true" />
+        <p>Войдите в свой аккаунт, чтобы открыть личный кабинет.</p>
+        <button className="primary-button primary-button--wide" type="button" disabled={isRedirecting} onClick={handleLogin}>
+          <LogIn aria-hidden="true" />
+          {isRedirecting ? "Переходим ко входу…" : "Войти"}
         </button>
-
-        <p className="auth-message" role="status">{message}</p>
+        <p className="auth-message" role="status">{loginError || message}</p>
       </section>
     </main>
   );
@@ -515,32 +450,52 @@ function Dashboard({
 
 export default function App() {
   const [dashboard, setDashboard] = useState<DashboardState>(defaultState);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(Boolean(keycloak.authenticated));
+  const [message, setMessage] = useState("");
 
   async function refreshDashboard() {
     setIsLoading(true);
-    const nextDashboard = await getDashboardData();
-    setDashboard(nextDashboard);
-    setIsLoading(false);
+    try {
+      const nextDashboard = await getDashboardData();
+      if (keycloak.authenticated) setDashboard(nextDashboard);
+    } catch (error) {
+      setDashboard(defaultState);
+      setMessage(error instanceof Error ? error.message : "Не удалось загрузить данные.");
+      setIsAuthenticated(false);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleLogout() {
+    try { await logout(); }
+    catch { setMessage("Не удалось завершить сессию. Попробуйте выйти ещё раз."); }
   }
 
   useEffect(() => {
-    refreshDashboard();
-  }, []);
+    keycloak.onAuthLogout = () => {
+      setIsAuthenticated(false);
+      setDashboard(defaultState);
+      setMessage("Сессия завершена. Войдите снова.");
+    };
+    if (isAuthenticated) void refreshDashboard();
+    return () => { keycloak.onAuthLogout = undefined; };
+  }, [isAuthenticated]);
 
-  useRevealOnScroll();
+  useRevealOnScroll(isAuthenticated);
 
-  if (!isAuthenticated) {
-    return <AuthScreen onLogin={() => setIsAuthenticated(true)} />;
-  }
+  if (!isAuthenticated) return <AuthScreen message={message} />;
 
   return (
-    <Dashboard
-      dashboard={dashboard}
-      isLoading={isLoading}
-      onLogout={() => setIsAuthenticated(false)}
-      onRefresh={refreshDashboard}
-    />
+    <>
+      {message && <p role="alert">{message}</p>}
+      <Dashboard
+        dashboard={dashboard}
+        isLoading={isLoading}
+        onLogout={handleLogout}
+        onRefresh={refreshDashboard}
+      />
+    </>
   );
 }
