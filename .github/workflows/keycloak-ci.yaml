@@ -5,11 +5,16 @@ on:
     branches: [main]
     paths:
       - "applications/keycloak/**"
+      - "infrastructure/keycloak/**"
       - ".github/workflows/keycloak-ci.yaml"
+
   pull_request:
+    branches: [main]
     paths:
       - "applications/keycloak/**"
+      - "infrastructure/keycloak/**"
       - ".github/workflows/keycloak-ci.yaml"
+
   workflow_dispatch:
 
 concurrency:
