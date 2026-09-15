@@ -31,30 +31,30 @@ jobs:
       - name: Exercise real Keycloak login, registration and recovery pages
         run: python3 applications/keycloak/tests/smoke.py --image finops-keycloak:test
       - name: Scan image before publication
-        uses: aquasecurity/trivy-action@0.35.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
-          image-ref: finops-keycloak:test
           version: v0.74.0
           timeout: 15m
+          image-ref: finops-keycloak:test
           format: table
           severity: CRITICAL,HIGH
           exit-code: "1"
           ignore-unfixed: true
       - name: Generate SBOM
-        uses: aquasecurity/trivy-action@0.35.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
-          image-ref: finops-keycloak:test
           version: v0.74.0
           timeout: 15m
+          image-ref: finops-keycloak:test
           format: cyclonedx
           output: finops-keycloak-sbom.cdx.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7.0.1
         with:
           name: finops-keycloak-sbom-${{ github.sha }}
           path: finops-keycloak-sbom.cdx.json
       - name: Log in to GHCR
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}

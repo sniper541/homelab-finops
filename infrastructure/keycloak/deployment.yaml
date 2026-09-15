@@ -15,6 +15,7 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
+        fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
 
@@ -26,6 +27,7 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             - start
+            - --optimized
 
           ports:
             - name: http
@@ -112,7 +114,22 @@ spec:
               memory: 1Gi
 
           securityContext:
+            readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
+
+          volumeMounts:
+            - name: data
+              mountPath: /opt/keycloak/data
+            - name: tmp
+              mountPath: /tmp
+
+      volumes:
+        - name: data
+          emptyDir:
+            sizeLimit: 256Mi
+        - name: tmp
+          emptyDir:
+            sizeLimit: 128Mi

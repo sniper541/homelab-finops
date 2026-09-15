@@ -1,4 +1,4 @@
-"""Test the actual image in an isolated, disposable H2 realm; no production credentials."""
+"""Test the optimized read-only image with disposable PostgreSQL; no production credentials."""
 import argparse
 import html
 import base64
@@ -22,6 +22,8 @@ parser.add_argument("--port", type=int, default=0)
 parser.add_argument("--existing-origin", help="Reuse a disposable QA container already started by this script")
 args = parser.parse_args()
 name = f"finops-theme-smoke-{int(time.time())}"
+db_name = name + "-db"
+db_password = secrets.token_urlsafe(32)
 with socket.socket() as sock:
     sock.bind(("127.0.0.1", args.port))
     port = sock.getsockname()[1]
@@ -66,10 +68,29 @@ def link(body, fragment):
 
 try:
     if not args.existing_origin:
+        subprocess.run(["docker", "network", "create", name], check=True, stdout=subprocess.DEVNULL)
+        subprocess.run(["docker", "run", "-d", "--name", db_name, "--network", name,
+            "--memory=256m", "--cpus=1", "--tmpfs", "/var/lib/postgresql/data",
+            "-e", "POSTGRES_DB=keycloak", "-e", "POSTGRES_USER=keycloak",
+            "-e", "POSTGRES_PASSWORD=" + db_password, "postgres:17-alpine"], check=True, stdout=subprocess.DEVNULL)
+        for attempt in range(60):
+            ready = subprocess.run(["docker", "exec", db_name, "pg_isready", "-U", "keycloak"],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            if ready.returncode == 0:
+                break
+            time.sleep(1)
+        else:
+            raise RuntimeError("Disposable PostgreSQL failed to start")
         subprocess.run(["docker", "run", "-d", "--name", name, "--memory=768m", "--cpus=1",
             "--security-opt=no-new-privileges", "--cap-drop=ALL",
+            "--read-only", "--tmpfs", "/tmp:uid=1000,gid=0,mode=1777,size=128m",
+            "--tmpfs", "/opt/keycloak/data:uid=1000,gid=0,mode=0770,size=256m",
+            "--network", name, "-e", "KC_DB=postgres",
+            "-e", f"KC_DB_URL=jdbc:postgresql://{db_name}:5432/keycloak",
+            "-e", "KC_DB_USERNAME=keycloak", "-e", "KC_DB_PASSWORD=" + db_password,
             "-p", f"127.0.0.1:{port}:8080", "-v", f"{fixture}:/opt/keycloak/data/import/realm.json:ro",
-            args.image, "start-dev", "--import-realm", "--http-port=8080"], check=True, stdout=subprocess.DEVNULL)
+            args.image, "start", "--optimized", "--import-realm", "--http-enabled=true",
+            "--hostname=" + origin, "--http-port=8080"], check=True, stdout=subprocess.DEVNULL)
     deadline = time.monotonic() + 600
     while True:
         try:
@@ -150,6 +171,8 @@ finally:
     if not args.keep or args.existing_origin:
         if not args.existing_origin:
             subprocess.run(["docker", "rm", "-f", name], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(["docker", "rm", "-f", db_name], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(["docker", "network", "rm", name], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         fixture.unlink(missing_ok=True)
         fixture_dir.rmdir()
     else:
