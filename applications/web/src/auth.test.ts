@@ -10,7 +10,7 @@ describe("Keycloak session", () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
-    vi.stubGlobal("window", { location: { origin: "https://app.sniper541.com" } });
+    vi.stubGlobal("window", { location: { origin: "https://app.sniper541.com", search: "", hash: "" }, sessionStorage: { getItem: vi.fn().mockReturnValue(null), setItem: vi.fn(), removeItem: vi.fn() } });
     adapter.authenticated = true;
     adapter.token = "access-token";
     adapter.init.mockResolvedValue(true);
@@ -23,8 +23,39 @@ describe("Keycloak session", () => {
     await Promise.all([initializeAuth(), initializeAuth()]);
     expect(adapter.init).toHaveBeenCalledTimes(1);
     expect(adapter.init).toHaveBeenCalledWith(expect.objectContaining({
-      flow: "standard", pkceMethod: "S256", onLoad: "check-sso"
+      flow: "standard", pkceMethod: "S256", onLoad: "login-required"
     }));
+  });
+
+  it("does not restart authentication on an OAuth error callback", async () => {
+    window.location.hash = "#error=access_denied&state=opaque";
+    const { initializeAuth } = await import("./auth");
+    await initializeAuth();
+    expect(adapter.init.mock.calls[0][0]).not.toHaveProperty("onLoad");
+  });
+
+  it("processes authorization callbacks without initiating a second flow", async () => {
+    window.location.search = "?code=opaque&state=opaque";
+    const { initializeAuth } = await import("./auth");
+    await initializeAuth();
+    expect(adapter.init.mock.calls[0][0]).not.toHaveProperty("onLoad");
+  });
+
+  it("keeps an explicit signed-out tab on its landing page", async () => {
+    vi.mocked(window.sessionStorage.getItem).mockReturnValue("true");
+    const { initializeAuth, login } = await import("./auth");
+    await initializeAuth();
+    expect(adapter.init.mock.calls[0][0]).not.toHaveProperty("onLoad");
+    await login();
+    expect(window.sessionStorage.removeItem).toHaveBeenCalledWith("finops.signed-out");
+  });
+
+  it("marks logout before navigation and clears the marker on failure", async () => {
+    adapter.logout.mockRejectedValueOnce(new Error("offline"));
+    const { logout } = await import("./auth");
+    await expect(logout()).rejects.toThrow("offline");
+    expect(window.sessionStorage.setItem).toHaveBeenCalledWith("finops.signed-out", "true");
+    expect(window.sessionStorage.removeItem).toHaveBeenCalledWith("finops.signed-out");
   });
 
   it("uses the refreshed access token", async () => {

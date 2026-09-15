@@ -58,3 +58,10 @@ a:focus-visible, button:focus-visible, input[type="submit"]:focus-visible { outl
   #kc-content-wrapper .row { margin-left: 0; margin-right: 0; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+
+.finops-tabs { display: flex; gap: 8px; padding: 5px; margin-bottom: 26px; border: 1px solid var(--finops-line); border-radius: 12px; }
+.finops-tabs > * { flex: 1; padding: 10px; text-align: center; border-radius: 8px; }
+.finops-tabs [aria-current] { background: #83c9ff20; color: #b0dcff; }
+[aria-disabled="true"] { color: var(--finops-muted); cursor: not-allowed; }
+.finops-telegram { width: 100%; padding: 13px; margin: 10px 0 22px; border: 1px solid #637582; border-radius: 10px; background: #202d38; color: #c8d6e0; cursor: not-allowed; }
+.finops-telegram span { display: block; font-size: 11px; color: #a6b2bd; }

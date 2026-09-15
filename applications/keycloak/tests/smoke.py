@@ -17,6 +17,7 @@ import urllib.request
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--image", default="finops-keycloak:test")
+parser.add_argument("--theme-dir", type=pathlib.Path, help="Mount reviewed theme files read-only, independently of the image")
 parser.add_argument("--keep", action="store_true", help="Keep loopback-only test container for visual QA")
 parser.add_argument("--port", type=int, default=0)
 parser.add_argument("--existing-origin", help="Reuse a disposable QA container already started by this script")
@@ -100,6 +101,7 @@ try:
             "-e", f"KC_DB_URL=jdbc:postgresql://{db_name}:5432/keycloak",
             "-e", "KC_DB_USERNAME=keycloak", "-e", "KC_DB_PASSWORD=" + db_password,
             "-p", f"127.0.0.1:{backend_port if args.public_prefix else port}:8080", "-v", f"{fixture}:/opt/keycloak/data/import/realm.json:ro",
+            *(["-v", f"{args.theme_dir.resolve()}:/opt/keycloak/themes/finops:ro"] if args.theme_dir else []),
             args.image, "start", "--optimized", "--import-realm", "--http-enabled=true",
             "--hostname=" + direct_origin, "--http-port=8080"], check=True, stdout=subprocess.DEVNULL)
         if args.public_prefix:
