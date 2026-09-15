@@ -22,7 +22,7 @@ import {
   Wallet
 } from "lucide-react";
 import { getDashboardData } from "./api";
-import { keycloak, logout } from "./auth";
+import { AuthenticationError, keycloak, logout } from "./auth";
 import AuthScreen from "./AuthScreen";
 import {
   formatCurrency,
@@ -34,7 +34,6 @@ import {
   type Summary,
   type Transaction
 } from "./domain";
-import { mockCategories, mockSummary, mockTransactions } from "./mockData";
 
 type DashboardState = {
   summary: Summary;
@@ -45,10 +44,10 @@ type DashboardState = {
 
 
 const defaultState: DashboardState = {
-  summary: mockSummary,
-  transactions: mockTransactions,
-  categories: mockCategories,
-  isFallback: true
+  summary: { income: 0, expense: 0, balance: 0 },
+  transactions: [],
+  categories: [],
+  isFallback: false
 };
 
 function useRevealOnScroll(isAuthenticated: boolean) {
@@ -369,10 +368,10 @@ function Dashboard({
                 </strong>
               </div>
               <div className="report-list__ready">
-                <span>Готово к Keycloak</span>
+                <span>Защита аккаунта</span>
                 <strong>
                   <Check aria-hidden="true" />
-                  UI stub
+                  Keycloak
                 </strong>
               </div>
             </div>
@@ -391,13 +390,14 @@ export default function App() {
 
   async function refreshDashboard() {
     setIsLoading(true);
+    setMessage("");
     try {
       const nextDashboard = await getDashboardData();
       if (keycloak.authenticated) setDashboard(nextDashboard);
     } catch (error) {
       setDashboard(defaultState);
       setMessage(error instanceof Error ? error.message : "Не удалось загрузить данные.");
-      setIsAuthenticated(false);
+      if (error instanceof AuthenticationError) setIsAuthenticated(false);
     } finally {
       setIsLoading(false);
     }

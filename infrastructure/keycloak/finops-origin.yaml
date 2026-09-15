@@ -1,0 +1,43 @@
+# Public finops realm routes only. The master realm/admin API keep their existing host.
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: finops-auth-prefix
+  namespace: keycloak
+spec:
+  stripPrefix:
+    prefixes:
+      - /auth
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: finops-auth
+  namespace: keycloak
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.middlewares: keycloak-finops-auth-prefix@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: app.sniper541.com
+      http:
+        paths:
+          - path: /auth/realms/finops
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 80
+          - path: /auth/resources
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - app.sniper541.com
+      secretName: finops-auth-tls

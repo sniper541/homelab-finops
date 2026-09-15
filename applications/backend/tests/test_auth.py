@@ -1,52 +1,66 @@
-"""Exercise real RS256 verification after the PyJWT security upgrade, without network access."""
-import time
+import uuid
 
 import jwt
 import pytest
-from cryptography.hazmat.primitives.asymmetric import rsa
 from fastapi import HTTPException
 from fastapi.security import HTTPAuthorizationCredentials
-from fastapi.testclient import TestClient
 
 from app import auth
-from app.main import app
+from app.database import get_connection
 
 
-@pytest.fixture
-def signing_key(monkeypatch):
-    key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-    public_jwk = jwt.algorithms.RSAAlgorithm.to_jwk(key.public_key(), as_dict=True)
-    public_jwk.update(kid="test-only", use="sig", alg="RS256")
-    monkeypatch.setattr(auth.jwks_client, "fetch_data", lambda: {"keys": [public_jwk]})
-    return key
+def verify(value):
+    return auth.verify_access_token(HTTPAuthorizationCredentials(scheme="Bearer",credentials=value))
 
 
-def token(key, **claims):
-    payload = {"iss": auth.KEYCLOAK_ISSUER, "sub": "test-subject", "exp": int(time.time()) + 60}
-    payload.update(claims)
-    return HTTPAuthorizationCredentials(scheme="Bearer", credentials=jwt.encode(
-        payload, key, algorithm="RS256", headers={"kid": "test-only"}))
+def test_correct_signed_token(issue_token):
+    sub=str(uuid.uuid4())
+    assert verify(issue_token(sub))["sub"] == sub
 
 
-def test_valid_rs256_token(signing_key):
-    assert auth.verify_access_token(token(signing_key))["sub"] == "test-subject"
-
-
-@pytest.mark.parametrize("claims", [{"iss": "https://invalid.example/realm"}, {"exp": 1}, {"sub": ""}])
-def test_invalid_claims_rejected(signing_key, claims):
+@pytest.mark.parametrize("claims", [{"iss":"https://wrong.invalid"},{"exp":1},{"aud":"another-api"},
+    {"sub":"not-a-uuid"},{"sub":""},{"aud":None},{"iss":None},{"exp":None}])
+def test_invalid_claims(issue_token,claims):
     with pytest.raises(HTTPException) as error:
-        auth.verify_access_token(token(signing_key, **claims))
+        verify(issue_token(**claims))
     assert error.value.status_code == 401
 
 
-def test_forged_signature_rejected(signing_key):
-    other_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+@pytest.mark.parametrize("value", ["malformed", "a.b.c", ""])
+def test_malformed_token(issue_token,value):
     with pytest.raises(HTTPException) as error:
-        auth.verify_access_token(token(other_key))
+        verify(value)
     assert error.value.status_code == 401
 
 
-def test_auth_me_requires_bearer():
-    response = TestClient(app).get("/auth/me")
-    assert response.status_code == 401
-    assert response.headers["www-authenticate"] == "Bearer"
+def test_signature_and_algorithm(issue_token):
+    value=issue_token()
+    head,payload,signature=value.split('.')
+    altered=('a' if signature[0]!='a' else 'b')+signature[1:]
+    for token in [f'{head}.{payload}.{altered}',jwt.encode({'sub':str(uuid.uuid4())},None,algorithm='none',headers={'kid':'test-only'})]:
+        with pytest.raises(HTTPException) as error:
+            verify(token)
+        assert error.value.status_code == 401
+
+
+def test_audience_list(issue_token):
+    assert verify(issue_token(aud=['account','finops-api']))
+
+
+@pytest.mark.anyio
+async def test_linked_unknown_inactive(client,users,issue_token):
+    headers={'Authorization':'Bearer '+issue_token(users[0]['sub'])}
+    response=await client.get('/auth/me',headers=headers)
+    assert response.status_code == 200 and response.json()['id'] == users[0]['id']
+    assert (await client.get('/auth/me',headers={'Authorization':'Bearer '+issue_token()})).status_code == 403
+    with get_connection() as conn:
+        conn.execute('UPDATE users SET is_active=false WHERE id=%s',(users[0]['id'],))
+    assert (await client.get('/auth/me',headers=headers)).status_code == 403
+
+
+def test_realm_role_authorization():
+    payload={'realm_access':{'roles':['user','admin']}}
+    user={'id':123}
+    assert auth.require_roles('admin')(payload,user) is user
+    with pytest.raises(HTTPException): auth.require_roles('admin')({'realm_access':{'roles':['user']}})
+    assert auth.realm_roles({'realm_access':{'roles':'admin'}}) == frozenset()

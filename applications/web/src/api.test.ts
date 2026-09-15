@@ -15,13 +15,13 @@ describe("authenticated dashboard requests", () => {
   });
   afterEach(() => vi.unstubAllGlobals());
 
-  it("sends Bearer on every existing endpoint while preserving user_id=1", async () => {
+  it("sends Bearer without letting the browser choose a user identity", async () => {
     const result = await getDashboardData();
     expect(result.isFallback).toBe(false);
     expect(getAccessToken).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledTimes(3);
     for (const [url, options] of fetchMock.mock.calls) {
-      expect(url).toContain("user_id=1");
+      expect(url).not.toContain("user_id");
       expect(options.headers).toEqual({ Accept: "application/json", Authorization: "Bearer test-access-token" });
     }
   });
@@ -37,10 +37,8 @@ describe("authenticated dashboard requests", () => {
     await expect(getDashboardData()).rejects.toBeInstanceOf(AuthenticationError);
   });
 
-  it("preserves the existing fallback on API outage", async () => {
-    const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
+  it("reports an API outage instead of displaying made-up financial data", async () => {
     fetchMock.mockRejectedValue(new Error("offline"));
-    expect((await getDashboardData()).isFallback).toBe(true);
-    warning.mockRestore();
+    await expect(getDashboardData()).rejects.toThrow("Не удалось загрузить данные");
   });
 });

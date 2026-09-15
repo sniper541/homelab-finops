@@ -2,7 +2,6 @@ export type CategoryType = "income" | "expense";
 
 export type Category = {
   id: number;
-  user_id: number;
   type: CategoryType;
   name: string;
   icon?: string | null;

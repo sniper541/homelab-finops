@@ -1,13 +1,25 @@
 import os
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
+from decimal import Decimal
+from typing import Literal
 
-from app.auth import get_current_user
+from app.auth import bot_telegram_id, get_bot_user, get_current_user
 from app.database import get_connection
 
-app = FastAPI(title="FinOps API")
+def reject_identity_override(request: Request):
+    if "user_id" in request.query_params:
+        raise HTTPException(status_code=422, detail="user_id is not a client-selectable identity")
+
+
+app = FastAPI(title="FinOps API", dependencies=[Depends(reject_identity_override)])
+bot = APIRouter(prefix="/bot", tags=["Telegram service"])
+
+
+class RequestModel(BaseModel):
+    model_config = ConfigDict(extra="forbid")
 
 
 cors_origins = [
@@ -27,27 +39,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class UserRegisterRequest(BaseModel):
-    telegram_id: int
-    telegram_username: str | None = None
-    first_name: str | None = None
+class UserRegisterRequest(RequestModel):
+    telegram_username: str | None = Field(default=None, max_length=64)
+    first_name: str | None = Field(default=None, max_length=128)
 
-class CategoryCreateRequest(BaseModel):
-    user_id: int
-    type: str
-    name: str
-    icon: str | None = None
-
-class CategoryUpdateRequest(BaseModel):
-    user_id: int
-    name: str | None = None
-    icon: str | None = None
+class CategoryCreateRequest(RequestModel):
+    type: Literal["income", "expense"]
+    name: str = Field(min_length=1, max_length=100)
+    icon: str | None = Field(default=None, max_length=32)
 
 
-class TransactionCreateRequest(BaseModel):
-    user_id: int
+class CategoryUpdateRequest(RequestModel):
+    name: str | None = Field(default=None, min_length=1, max_length=100)
+    icon: str | None = Field(default=None, max_length=32)
+
+
+class TransactionCreateRequest(RequestModel):
     category_id: int
-    amount: float
+    amount: Decimal = Field(gt=0, max_digits=14, decimal_places=2)
     description: str | None = None
 
 
@@ -78,11 +87,11 @@ def readiness():
         return {"status": "ready"}
 
     except Exception as exc:
-        raise HTTPException(status_code=503, detail=str(exc))
+        raise HTTPException(status_code=503, detail="Database unavailable")
 
 
 @app.post("/transactions")
-def create_transaction(payload: TransactionCreateRequest):
+def create_transaction(payload: TransactionCreateRequest, current_user: dict = Depends(get_current_user)):
     if payload.amount <= 0:
         raise HTTPException(status_code=400, detail="Amount must be greater than zero")
 
@@ -111,11 +120,11 @@ def create_transaction(payload: TransactionCreateRequest):
                     created_at
                 """,
                 (
-                    payload.user_id,
+                    current_user["id"],
                     payload.amount,
                     payload.description,
                     payload.category_id,
-                    payload.user_id,
+                    current_user["id"],
                 ),
             )
 
@@ -137,8 +146,8 @@ def create_transaction(payload: TransactionCreateRequest):
 
 @app.get("/transactions")
 def get_transactions(
-    user_id: int,
     limit: int = 100,
+    current_user: dict = Depends(get_current_user),
 ):
     if limit < 1 or limit > 500:
         raise HTTPException(status_code=400, detail="Limit must be between 1 and 500")
@@ -157,12 +166,12 @@ def get_transactions(
                     c.icon,
                     c.type
                 FROM transactions t
-                JOIN categories c ON c.id = t.category_id
+                JOIN categories c ON c.id = t.category_id AND c.user_id = t.user_id
                 WHERE t.user_id = %s
                 ORDER BY t.occurred_at DESC
                 LIMIT %s
                 """,
-                (user_id, limit),
+                (current_user["id"], limit),
             )
 
             rows = cur.fetchall()
@@ -185,7 +194,7 @@ def get_transactions(
 
 
 @app.delete("/transactions/{transaction_id}")
-def delete_transaction(transaction_id: int, user_id: int):
+def delete_transaction(transaction_id: int, current_user: dict = Depends(get_current_user)):
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -195,7 +204,7 @@ def delete_transaction(transaction_id: int, user_id: int):
                   AND user_id = %s
                 RETURNING id
                 """,
-                (transaction_id, user_id),
+                (transaction_id, current_user["id"]),
             )
 
             row = cur.fetchone()
@@ -205,8 +214,8 @@ def delete_transaction(transaction_id: int, user_id: int):
 
     return {"status": "deleted"}
 
-@app.post("/users/register")
-def register_user(payload: UserRegisterRequest):
+@bot.post("/users/register")
+def register_user(payload: UserRegisterRequest, telegram_id: int = Depends(bot_telegram_id)):
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -222,6 +231,7 @@ def register_user(payload: UserRegisterRequest):
                     telegram_username = EXCLUDED.telegram_username,
                     first_name = EXCLUDED.first_name,
                     updated_at = now()
+                WHERE users.is_active = TRUE
                 RETURNING
                     id,
                     telegram_id,
@@ -232,13 +242,15 @@ def register_user(payload: UserRegisterRequest):
                     updated_at
                 """,
                 (
-                    payload.telegram_id,
+                    telegram_id,
                     payload.telegram_username,
                     payload.first_name,
                 ),
             )
 
             row = cur.fetchone()
+            if row is None:
+                raise HTTPException(status_code=403, detail="User is inactive")
 
             cur.execute(
                 """
@@ -259,12 +271,17 @@ def register_user(payload: UserRegisterRequest):
         "updated_at": row[6],
     }
 @app.post("/categories")
-def create_category(payload: CategoryCreateRequest):
+def create_category(
+    payload: CategoryCreateRequest,
+    current_user: dict = Depends(get_current_user),
+):
     if payload.type not in ("income", "expense"):
         raise HTTPException(
             status_code=400,
             detail="Category type must be income or expense",
         )
+
+    user_id = current_user["id"]
 
     with get_connection() as conn:
         with conn.cursor() as cur:
@@ -288,7 +305,7 @@ def create_category(payload: CategoryCreateRequest):
                     updated_at
                 """,
                 (
-                    payload.user_id,
+                    user_id,
                     payload.type,
                     payload.name,
                     payload.icon,
@@ -309,7 +326,8 @@ def create_category(payload: CategoryCreateRequest):
     }
 
 @app.get("/categories")
-def get_categories(user_id: int, type: str | None = None):
+def get_categories(type: str | None = None, current_user: dict = Depends(get_current_user)):
+    user_id = current_user["id"]
     if type is not None and type not in ("income", "expense"):
         raise HTTPException(status_code=400, detail="Invalid category type")
 
@@ -355,7 +373,7 @@ def get_categories(user_id: int, type: str | None = None):
 
 
 @app.patch("/categories/{category_id}")
-def update_category(category_id: int, payload: CategoryUpdateRequest):
+def update_category(category_id: int, payload: CategoryUpdateRequest, current_user: dict = Depends(get_current_user)):
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -374,7 +392,7 @@ def update_category(category_id: int, payload: CategoryUpdateRequest):
                     payload.name,
                     payload.icon,
                     category_id,
-                    payload.user_id,
+                    current_user["id"],
                 ),
             )
 
@@ -394,7 +412,7 @@ def update_category(category_id: int, payload: CategoryUpdateRequest):
 
 
 @app.delete("/categories/{category_id}")
-def delete_category(category_id: int, user_id: int):
+def delete_category(category_id: int, current_user: dict = Depends(get_current_user)):
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -407,7 +425,7 @@ def delete_category(category_id: int, user_id: int):
                   AND is_active = true
                 RETURNING id
                 """,
-                (category_id, user_id),
+                (category_id, current_user["id"]),
             )
 
             row = cur.fetchone()
@@ -418,7 +436,8 @@ def delete_category(category_id: int, user_id: int):
     return {"status": "deleted"}
 
 @app.get("/reports/summary")
-def report_summary(user_id: int):
+def report_summary(current_user: dict = Depends(get_current_user)):
+    user_id = current_user["id"]
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -433,7 +452,7 @@ def report_summary(user_id: int):
                         THEN t.amount ELSE 0 END
                     ), 0)
                 FROM transactions t
-                JOIN categories c ON c.id = t.category_id
+                JOIN categories c ON c.id = t.category_id AND c.user_id = t.user_id
                 WHERE t.user_id = %s
                 """,
                 (user_id,),
@@ -452,3 +471,28 @@ def report_summary(user_id: int):
 @app.get("/auth/me")
 def auth_me(current_user: dict = Depends(get_current_user)):
     return current_user
+
+
+# Separate authenticated service routes reuse the same ownership-enforcing operations.
+# Neither browsers nor the bot can choose an internal FinOps user_id.
+@bot.get("/categories")
+def bot_categories(type: str | None = None, user: dict = Depends(get_bot_user)):
+    return get_categories(type=type, current_user=user)
+
+
+@bot.get("/transactions")
+def bot_transactions(limit: int = 100, user: dict = Depends(get_bot_user)):
+    return get_transactions(limit=limit, current_user=user)
+
+
+@bot.post("/transactions")
+def bot_create_transaction(payload: TransactionCreateRequest, user: dict = Depends(get_bot_user)):
+    return create_transaction(payload, current_user=user)
+
+
+@bot.get("/reports/summary")
+def bot_summary(user: dict = Depends(get_bot_user)):
+    return report_summary(current_user=user)
+
+
+app.include_router(bot)

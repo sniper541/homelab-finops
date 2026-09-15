@@ -109,10 +109,10 @@ in this repository. Email delivery is not tested by the isolated smoke test.
 ## Browser checks after deployment
 
 - Private window: full FinOps welcome screen; Telegram visibly unavailable.
-- Login redirects to `auth.sniper541.com`, themed form uses the same palette/logo.
+- Login stays on `app.sniper541.com/auth`; custom theme styling waits for the upstream image fix.
 - Authorization request: `response_type=code`, `code_challenge_method=S256`.
 - Correct account login returns to dashboard; reload, access-token refresh and
-  logout still work. API requests retain Bearer and temporary `user_id=1`.
+  logout still work. API requests use Bearer; the API derives ownership from the verified subject.
 - Incorrect credentials show a readable error. Check keyboard focus, show-password,
   registration/recovery (when enabled), and mobile widths 320/390 px.
 - Verify master/admin console remains stock. Never include real tokens in screenshots.

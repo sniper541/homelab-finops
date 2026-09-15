@@ -1,6 +1,7 @@
 import os
 
 import httpx
+from service_auth import access_token
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
     Application,
@@ -42,11 +43,13 @@ def main_menu():
     )
 
 
-async def api_request(method: str, path: str, **kwargs):
+async def api_request(method: str, path: str, *, telegram_id: int, **kwargs):
+    token = await access_token()
     async with httpx.AsyncClient(timeout=10) as client:
         response = await client.request(
             method,
-            f"{API_URL}{path}",
+            f"{API_URL}/bot{path}",
+            headers={"Authorization": f"Bearer {token}", "X-Telegram-User-ID": str(telegram_id)},
             **kwargs,
         )
         response.raise_for_status()
@@ -57,8 +60,8 @@ async def get_or_create_user(telegram_user):
     return await api_request(
         "POST",
         "/users/register",
+        telegram_id=telegram_user.id,
         json={
-            "telegram_id": telegram_user.id,
             "telegram_username": telegram_user.username,
             "first_name": telegram_user.first_name,
         },
@@ -96,7 +99,7 @@ async def ensure_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user = await get_or_create_user(update.effective_user)
         context.user_data["user_id"] = user["id"]
 
-    return context.user_data["user_id"]
+    return update.effective_user.id
 
 
 async def begin_transaction(
@@ -135,14 +138,14 @@ async def receive_amount(
 
     context.user_data["amount"] = amount
 
-    user_id = await ensure_user(update, context)
+    telegram_id = await ensure_user(update, context)
     transaction_type = context.user_data["transaction_type"]
 
     categories = await api_request(
         "GET",
         "/categories",
+        telegram_id=telegram_id,
         params={
-            "user_id": user_id,
             "type": transaction_type,
         },
     )
@@ -205,14 +208,14 @@ async def receive_description(
     if description == "-":
         description = None
 
-    user_id = await ensure_user(update, context)
+    telegram_id = await ensure_user(update, context)
 
     try:
         transaction = await api_request(
             "POST",
             "/transactions",
+            telegram_id=telegram_id,
             json={
-                "user_id": user_id,
                 "category_id": context.user_data["category_id"],
                 "amount": context.user_data["amount"],
                 "description": description,
@@ -243,13 +246,13 @@ async def categories(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-    user_id = await ensure_user(update, context)
+    telegram_id = await ensure_user(update, context)
 
     try:
         result = await api_request(
             "GET",
             "/categories",
-            params={"user_id": user_id},
+            telegram_id=telegram_id,
         )
 
         if not result:
@@ -292,13 +295,13 @@ async def report(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-    user_id = await ensure_user(update, context)
+    telegram_id = await ensure_user(update, context)
 
     try:
         result = await api_request(
             "GET",
             "/reports/summary",
-            params={"user_id": user_id},
+            telegram_id=telegram_id,
         )
 
         await query.message.reply_text(
@@ -323,15 +326,15 @@ async def transactions(
     query = update.callback_query
     await query.answer()
 
-    user_id = await ensure_user(update, context)
+    telegram_id = await ensure_user(update, context)
 
     try:
         result = await api_request(
             "GET",
             "/transactions",
+            telegram_id=telegram_id,
             params={
-                "user_id": user_id,
-                "limit": 10,
+                    "limit": 10,
             },
         )
 

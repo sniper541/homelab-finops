@@ -45,7 +45,6 @@ jobs:
         run: npm run build
         env:
           VITE_API_BASE_URL: https://api.sniper541.com
-          VITE_USER_ID: "1"
           VITE_REGISTRATION_ENABLED: ${{ vars.FINOPS_REGISTRATION_ENABLED || 'false' }}
 
       - name: Log in to GHCR
@@ -65,7 +64,6 @@ jobs:
           push: true
           build-args: |
             VITE_API_BASE_URL=https://api.sniper541.com
-            VITE_USER_ID=1
             VITE_REGISTRATION_ENABLED=${{ vars.FINOPS_REGISTRATION_ENABLED || 'false' }}
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}

@@ -39,6 +39,15 @@ spec:
             - name: FINOPS_API_URL
               value: "https://api.sniper541.com"
 
+            - name: KEYCLOAK_TOKEN_URL
+              value: "https://app.sniper541.com/auth/realms/finops/protocol/openid-connect/token"
+
+            - name: KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: finops-bot-oidc
+                  key: client-secret
+
             - name: TELEGRAM_PROXY_URL
               value: "socks5://127.0.0.1:1080"
 

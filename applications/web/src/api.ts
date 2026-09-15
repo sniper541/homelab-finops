@@ -1,9 +1,7 @@
 import type { Category, Summary, Transaction } from "./domain";
-import { mockCategories, mockSummary, mockTransactions } from "./mockData";
 import { AuthenticationError, getAccessToken } from "./auth";
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "/api";
-const defaultUserId = Number(import.meta.env.VITE_USER_ID ?? "1");
 
 type DashboardData = {
   summary: Summary;
@@ -30,15 +28,13 @@ async function getJson<T>(path: string, token: string): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-export async function getDashboardData(userId = defaultUserId): Promise<DashboardData> {
+export async function getDashboardData(): Promise<DashboardData> {
   const token = await getAccessToken();
   try {
-    // Temporary compatibility until FastAPI derives the user from a verified JWT.
-    const query = `user_id=${encodeURIComponent(userId)}`;
     const [summary, transactions, categories] = await Promise.all([
-      getJson<Summary>(`/reports/summary?${query}`, token),
-      getJson<Transaction[]>(`/transactions?${query}&limit=100`, token),
-      getJson<Category[]>(`/categories?${query}`, token)
+      getJson<Summary>("/reports/summary", token),
+      getJson<Transaction[]>("/transactions?limit=100", token),
+      getJson<Category[]>("/categories", token)
     ]);
 
     return {
@@ -49,13 +45,6 @@ export async function getDashboardData(userId = defaultUserId): Promise<Dashboar
     };
   } catch (error) {
     if (error instanceof AuthenticationError) throw error;
-    console.warn("Using dashboard fallback data", error);
-
-    return {
-      summary: mockSummary,
-      transactions: mockTransactions,
-      categories: mockCategories,
-      isFallback: true
-    };
+    throw new Error("Не удалось загрузить данные. Попробуйте обновить страницу позже.");
   }
 }

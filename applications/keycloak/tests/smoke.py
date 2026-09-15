@@ -20,6 +20,7 @@ parser.add_argument("--image", default="finops-keycloak:test")
 parser.add_argument("--keep", action="store_true", help="Keep loopback-only test container for visual QA")
 parser.add_argument("--port", type=int, default=0)
 parser.add_argument("--existing-origin", help="Reuse a disposable QA container already started by this script")
+parser.add_argument("--public-prefix", default="", help="Test a reverse-proxied realm frontend URL, e.g. /auth")
 args = parser.parse_args()
 name = f"finops-theme-smoke-{int(time.time())}"
 db_name = name + "-db"
@@ -28,12 +29,20 @@ with socket.socket() as sock:
     sock.bind(("127.0.0.1", args.port))
     port = sock.getsockname()[1]
 origin = args.existing_origin or f"http://127.0.0.1:{port}"
+direct_origin = origin
+if args.public_prefix:
+    with socket.socket() as sock:
+        sock.bind(("127.0.0.1", 0))
+        backend_port = sock.getsockname()[1]
+    direct_origin = f"http://127.0.0.1:{backend_port}"
+    origin += args.public_prefix
 assert urllib.parse.urlparse(origin).hostname in ("127.0.0.1", "localhost"), "Only disposable loopback instances are allowed"
 fixture_dir = pathlib.Path(tempfile.mkdtemp(prefix="finops-theme-test-"))
 fixture = fixture_dir / "realm.json"
 test_password = secrets.token_urlsafe(32)
 fixture.write_text(json.dumps({
     "realm": "finops", "enabled": True, "loginTheme": "finops",
+    "attributes": {"frontendUrl": origin} if args.public_prefix else {},
     "registrationAllowed": True, "resetPasswordAllowed": True,
     "internationalizationEnabled": True, "supportedLocales": ["ru", "en"], "defaultLocale": "ru",
     "users": [{"username": "theme-smoke-user", "enabled": True, "firstName": "Theme", "lastName": "Test",
@@ -42,6 +51,8 @@ fixture.write_text(json.dumps({
     "clients": [{"clientId": "finops-web", "enabled": True, "publicClient": True,
         "standardFlowEnabled": True, "directAccessGrantsEnabled": False,
         "redirectUris": ["http://localhost:5173/*", origin + "/*"],
+        "protocolMappers": [{"name":"api-audience","protocol":"openid-connect","protocolMapper":"oidc-audience-mapper",
+            "config":{"included.custom.audience":"finops-api","access.token.claim":"true","id.token.claim":"false"}}],
         "webOrigins": ["http://localhost:5173", origin],
         "attributes": {"pkce.code.challenge.method": "S256", "post.logout.redirect.uris": "+"}}]
 }), encoding="utf-8")
@@ -88,9 +99,18 @@ try:
             "--network", name, "-e", "KC_DB=postgres",
             "-e", f"KC_DB_URL=jdbc:postgresql://{db_name}:5432/keycloak",
             "-e", "KC_DB_USERNAME=keycloak", "-e", "KC_DB_PASSWORD=" + db_password,
-            "-p", f"127.0.0.1:{port}:8080", "-v", f"{fixture}:/opt/keycloak/data/import/realm.json:ro",
+            "-p", f"127.0.0.1:{backend_port if args.public_prefix else port}:8080", "-v", f"{fixture}:/opt/keycloak/data/import/realm.json:ro",
             args.image, "start", "--optimized", "--import-realm", "--http-enabled=true",
-            "--hostname=" + origin, "--http-port=8080"], check=True, stdout=subprocess.DEVNULL)
+            "--hostname=" + direct_origin, "--http-port=8080"], check=True, stdout=subprocess.DEVNULL)
+        if args.public_prefix:
+            config = fixture_dir / "nginx.conf"
+            config.write_text('events {}\nhttp { server { listen 8080; location ' + args.public_prefix + '/ { '
+                + 'proxy_pass http://' + name + ':8080/; proxy_set_header Host $http_host; '
+                + 'proxy_set_header X-Forwarded-Proto http; proxy_set_header X-Forwarded-Host $http_host; } } }')
+            config.chmod(0o644)
+            subprocess.run(["docker","run","-d","--name",name+"-proxy","--network",name,
+                "-p",f"127.0.0.1:{port}:8080","--memory=128m","--cpus=0.5",
+                "-v",f"{config}:/etc/nginx/nginx.conf:ro","nginx:1.30.4-alpine"],check=True,stdout=subprocess.DEVNULL)
     deadline = time.monotonic() + 600
     while True:
         try:
@@ -124,8 +144,8 @@ try:
     themed(error_page)
     assert 'aria-invalid="true"' in error_page or 'id="input-error"' in error_page
     # The stock master theme must not inherit FinOps resources.
-    master = page(origin + "/realms/master/protocol/openid-connect/auth?" + urllib.parse.urlencode({
-        "client_id": "account-console", "redirect_uri": origin + "/realms/master/account/",
+    master = page(direct_origin + "/realms/master/protocol/openid-connect/auth?" + urllib.parse.urlencode({
+        "client_id": "account-console", "redirect_uri": direct_origin + "/realms/master/account/",
         "response_type": "code", "scope": "openid", "code_challenge": "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG", "code_challenge_method": "S256"}))
     assert "css/finops.css" not in master
     checks = ["login", "registration", "recovery", "invalid-login error", "theme assets", "master unchanged"]
@@ -153,6 +173,10 @@ try:
         tokens = json.loads(page(token_url, urllib.parse.urlencode({"grant_type": "authorization_code", "client_id": "finops-web",
             "code": code, "code_verifier": verifier, "redirect_uri": origin + "/"}).encode()))
         assert tokens.get("access_token") and tokens.get("refresh_token") and tokens.get("id_token")
+        payload_segment = tokens["access_token"].split(".")[1]
+        claims = json.loads(base64.urlsafe_b64decode(payload_segment + "=" * (-len(payload_segment) % 4)))
+        assert claims["iss"] == origin + "/realms/finops"
+        assert claims["aud"] == "finops-api" or "finops-api" in claims["aud"]
         refreshed = json.loads(page(token_url, urllib.parse.urlencode({"grant_type": "refresh_token", "client_id": "finops-web",
             "refresh_token": tokens["refresh_token"]}).encode()))
         assert refreshed.get("access_token")
@@ -172,7 +196,9 @@ finally:
         if not args.existing_origin:
             subprocess.run(["docker", "rm", "-f", name], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             subprocess.run(["docker", "rm", "-f", db_name], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(["docker", "rm", "-f", name+"-proxy"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             subprocess.run(["docker", "network", "rm", name], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        (fixture_dir / "nginx.conf").unlink(missing_ok=True)
         fixture.unlink(missing_ok=True)
         fixture_dir.rmdir()
     else:

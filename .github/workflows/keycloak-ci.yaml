@@ -34,7 +34,7 @@ jobs:
       - name: Build theme image
         run: docker build -t finops-keycloak:test applications/keycloak
       - name: Exercise real Keycloak login, registration and recovery pages
-        run: python3 applications/keycloak/tests/smoke.py --image finops-keycloak:test
+        run: python3 applications/keycloak/tests/smoke.py --image finops-keycloak:test --public-prefix /auth
       - name: Scan image before publication
         uses: aquasecurity/trivy-action@v0.36.0
         with:

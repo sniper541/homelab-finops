@@ -21,3 +21,6 @@ venv/
 # Temporary files
 *.tmp
 *.log
+node_modules/
+dist/
+.pytest_cache/

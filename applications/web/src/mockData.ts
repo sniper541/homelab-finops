@@ -13,12 +13,12 @@ export const mockSummary: Summary = {
 };
 
 export const mockCategories: Category[] = [
-  { id: 1, user_id: 1, type: "expense", name: "Products", icon: "cart" },
-  { id: 2, user_id: 1, type: "expense", name: "Transport", icon: "car" },
-  { id: 3, user_id: 1, type: "expense", name: "Home", icon: "home" },
-  { id: 4, user_id: 1, type: "expense", name: "Subscriptions", icon: "card" },
-  { id: 5, user_id: 1, type: "income", name: "Salary", icon: "briefcase" },
-  { id: 6, user_id: 1, type: "income", name: "Freelance", icon: "laptop" }
+  { id: 1, type: "expense", name: "Products", icon: "cart" },
+  { id: 2, type: "expense", name: "Transport", icon: "car" },
+  { id: 3, type: "expense", name: "Home", icon: "home" },
+  { id: 4, type: "expense", name: "Subscriptions", icon: "card" },
+  { id: 5, type: "income", name: "Salary", icon: "briefcase" },
+  { id: 6, type: "income", name: "Freelance", icon: "laptop" }
 ];
 
 export const mockTransactions: Transaction[] = [

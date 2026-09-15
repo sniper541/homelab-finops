@@ -1,7 +1,7 @@
 import Keycloak from "keycloak-js";
 
 export const keycloak = new Keycloak({
-  url: "https://auth.sniper541.com",
+  url: import.meta.env.VITE_KEYCLOAK_URL ?? "https://app.sniper541.com/auth",
   realm: "finops",
   clientId: "finops-web"
 });
