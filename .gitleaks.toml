@@ -1,0 +1,16 @@
+title = "FinOps secret scanning"
+
+[extend]
+useDefault = true
+
+# Proven false positives in historical and CI-generated deployment commits:
+# generic-api-key interprets the public finops-api image's Git SHA as a key.
+# Both the exact file AND the entire image-only line must match. Other fields,
+# credentials, image URLs and all other default rules remain scanned.
+[[allowlists]]
+description = "Public backend image tagged with a full Git commit SHA"
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^applications/backend/deployment\.yaml$''']
+regexTarget = "line"
+regexes = ['''^\s*image: ghcr\.io/sniper541/finops-api:[0-9a-f]{40}\s*$''']
