@@ -1,10 +1,14 @@
 import os
-import psycopg
-from fastapi import FastAPI, HTTPException
+
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from app.auth import get_current_user
+from app.database import get_connection
+
 app = FastAPI(title="FinOps API")
+
 
 cors_origins = [
     origin.strip()
@@ -45,15 +49,6 @@ class TransactionCreateRequest(BaseModel):
     category_id: int
     amount: float
     description: str | None = None
-
-def get_connection():
-    return psycopg.connect(
-        host=os.getenv("POSTGRES_HOST", "postgres"),
-        port=os.getenv("POSTGRES_PORT", "5432"),
-        dbname=os.getenv("POSTGRES_DB", "finops"),
-        user=os.getenv("POSTGRES_USER", "finops"),
-        password=os.environ["POSTGRES_PASSWORD"],
-    )
 
 
 @app.get("/")
@@ -454,3 +449,6 @@ def report_summary(user_id: int):
         "expense": expense,
         "balance": income - expense,
     }
+@app.get("/auth/me")
+def auth_me(current_user: dict = Depends(get_current_user)):
+    return current_user
