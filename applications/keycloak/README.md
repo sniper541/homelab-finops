@@ -6,9 +6,11 @@ templates remain in use. Custom CSS, a local SVG, message bundles and a small
 footer make the pages consistent with the Web welcome screen. There are no
 external fonts, scripts, passwords or admin credentials in this image.
 
-The base image is pinned to the verified 26.7.3 digest. Container args, PostgreSQL
-connection, Secret references, health probes and resources remain as before.
-No `--optimized` flag is introduced: build-time DB settings are not changed.
+The base image is pinned to the verified 26.7.3 digest. The Docker build prepares
+PostgreSQL, health and metrics support for `start --optimized`. The root filesystem
+is read-only; bounded volumes provide writable data and temporary directories.
+PostgreSQL connection and Secret references are unchanged. See
+[SECURITY-STATUS.md](SECURITY-STATUS.md) for the upstream CVE publication blocker.
 
 ## Validate without production changes
 
@@ -20,18 +22,18 @@ docker build -t finops-keycloak:test applications/keycloak
 python3 applications/keycloak/tests/smoke.py --image finops-keycloak:test
 ```
 
-The smoke test creates a disposable H2 realm with a generated test user and no admin credentials, and
+The smoke test creates a disposable PostgreSQL instance and realm with a generated test user and no admin credentials, and
 binds a random loopback port. It exercises actual login/registration/recovery
 pages, invalid-login validation, assets and the unchanged master theme, then verifies
 Authorization Code + PKCE token exchange, refresh and logout with that test user. It removes
-its container and fixture on exit. `--keep --port 18080` is for manual visual QA;
-remove the printed container and fixture afterwards. It never connects to the
+both containers, their Docker network and fixture on exit. `--keep --port 18080` is for manual visual QA;
+remove the printed container, its `-db` companion, same-name network and fixture afterwards. It never connects to the
 production PostgreSQL database. The test password is generated at runtime, used only
 in the disposable native Keycloak form, never printed or committed, and deleted with
 the fixture. There is no password grant. `--existing-origin` only accepts a loopback
 QA instance and runs page checks without generating a second account/session.
 
-## Publication and GitOps (manual approval required before running)
+## Publication and GitOps
 
 `Keycloak theme CI` builds, smoke-tests and scans before publishing to
 `ghcr.io/sniper541/homelab-finops/finops-keycloak:sha-<full-commit>`.
@@ -42,9 +44,11 @@ HIGH/CRITICAL findings; do not bypass this gate just to publish the theme.
 The workflow also uploads a CycloneDX SBOM. It uses only the repository's standard
 `GITHUB_TOKEN` for GHCR/Git, not Keycloak credentials.
 
-The checked-in Deployment initially retains the existing upstream image as a
-safe bootstrap. The first successful pipeline replaces it with the real published
-reference. Do not invent a SHA or deploy an unpublished image.
+The checked-in Deployment retains an upstream bootstrap image reference until
+the first successful pipeline replaces it with the optimized custom image.
+Do not apply this deployment or activate the Keycloak Argo application while the
+bootstrap reference remains: `--optimized` requires the prepared custom image.
+Do not invent a SHA or deploy an unpublished image.
 
 1. Review and commit the explicit file list in the handoff. Push when ready.
 2. Ensure Actions has read/write contents and packages permissions. Wait for
@@ -69,8 +73,6 @@ reference. Do not invent a SHA or deploy an unpublished image.
    manages these resources before bootstrapping. This Application manages only the
    three explicit manifests and uses self-heal, with pruning off for initial adoption.
 6. Only after the custom image is healthy, select the theme as described below.
-
-No command in this work has committed, pushed, published an image or synced ArgoCD.
 
 ## Realm settings (only finops)
 
