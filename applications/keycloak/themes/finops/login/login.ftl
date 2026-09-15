@@ -5,6 +5,27 @@
     <#if section = "header">
         ${msg("loginAccountTitle")}
     <#elseif section = "form">
+        <aside class="finops-story" aria-labelledby="finops-story-title">
+          <span class="finops-kicker"><span></span>${msg("finopsEyebrow")}</span>
+          <h2 id="finops-story-title">${msg("finopsHeadline")}<br/><em>${msg("finopsHeadlineAccent")}</em></h2>
+          <p class="finops-story-copy">${msg("finopsIntro")}</p>
+          <div class="finops-art" aria-hidden="true">
+            <div class="finops-art-orbit"></div>
+            <div class="finops-art-back"></div>
+            <div class="finops-art-card">
+              <div class="finops-art-top"><span>FinOps</span><i></i></div>
+              <svg viewBox="0 0 400 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="finops-area" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#8acfff" stop-opacity=".25"/><stop offset="1" stop-color="#8acfff" stop-opacity="0"/></linearGradient></defs>
+                <path d="M0 112H400M0 70H400M0 28H400" stroke="white" stroke-opacity=".07"/>
+                <path d="M0 104C40 104 43 76 77 80S119 112 154 76S191 95 230 55S274 77 307 37S353 56 400 10V130H0Z" fill="url(#finops-area)"/>
+                <path d="M0 104C40 104 43 76 77 80S119 112 154 76S191 95 230 55S274 77 307 37S353 56 400 10" stroke="#9ed6ff" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+              <div class="finops-art-bottom"><span></span><span></span><span></span></div>
+            </div>
+            <span class="finops-art-spark">✳</span>
+          </div>
+          <p class="finops-story-note">${msg("finopsOverview")}</p>
+        </aside>
         <nav class="finops-tabs" aria-label="${msg('finopsAccess')}">
           <span aria-current="page">${msg("doLogIn")}</span>
           <#if realm.registrationAllowed && !registrationDisabled??>
