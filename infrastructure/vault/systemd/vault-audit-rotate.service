@@ -1,0 +1,8 @@
+[Unit]
+Description=Rotate persistent Vault audit log
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /home/sniper541/homelab-finops/infrastructure/vault/rotate_audit.py
+UMask=0077
+NoNewPrivileges=true

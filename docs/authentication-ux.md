@@ -2,7 +2,8 @@
 
 New visitors use the adapter's normal `login-required` Authorization Code + PKCE
 flow before React mounts. The only login form is the native Keycloak form under
-`app.sniper541.com/auth`, styled as FinOps. React receives no passwords.
+`auth.sniper541.com`, styled as neutral Sniper541 SSO. React receives no passwords.
+The same realm serves FinOps and Vault. See [Stage 16](stage16-vault-sso.md).
 
 Callbacks (including errors) are processed without initiating a second flow.
 An explicit logout records `finops.signed-out=true` in tab-local sessionStorage
@@ -24,11 +25,10 @@ This does NOT remediate the existing runtime CVE; its upstream upgrade remains d
 After tests and Security CI, the operator deploys the reviewed Git revision:
 
 ```sh
-export KUBECONFIG=/home/sniper541/.kube/config
 python3 applications/keycloak/deploy_theme.py --output /tmp/finops-theme-review
 # Review configmap.json and deployment-patch.json before applying.
 python3 applications/keycloak/deploy_theme.py --output /tmp/finops-theme-review --apply
-kubectl -n keycloak rollout status deployment/keycloak
+kubectl --kubeconfig=/home/sniper541/.kube/config -n keycloak rollout status deployment/keycloak
 ```
 
 Then set only the finops realm's loginTheme to `finops` through authenticated

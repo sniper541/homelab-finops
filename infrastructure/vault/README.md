@@ -2,19 +2,29 @@
 
 ## Deployment status
 
-Work in progress, not a completion declaration. Verified on 2026-09-16:
+Implemented and verified on 2026-09-16; remaining acceptance items are listed below:
 
 - An encrypted pre-change Raft snapshot was copied off-node and SHA256 verified.
 - Vault OIDC administration now requires the dedicated Keycloak client role
   `vault/vault-admin`, assigned to the designated administrator `mikhail`.
 - Database engine `database/` and role `finops-api` are configured. A disposable
   dynamic user passed connect/data access, denied DDL/migration-table access,
-  renewal and revocation checks. Runtime workloads have not yet been switched.
+  renewal and revocation checks. Both backend replicas now use dynamic leases.
 - Six backend file rotation/fail-closed tests passed.
-- Neutral Sniper541 theme passed isolated OIDC, PKCE, error, refresh and logout
-  smoke checks. Production issuer/theme have not yet been switched.
-- Helm hardening, projected JWT workload manifests, audit PVC and policy changes
-  in this working tree are pending review/deployment and production verification.
+- Neutral Sniper541 theme passed isolated and production Chrome OIDC, PKCE,
+  invalid-password, refresh, logout and repeat-login checks.
+- Canonical issuer is `https://auth.sniper541.com/realms/finops`.
+- Helm hardening, projected JWTs and audit PVC are deployed. Vault restarted and
+  unsealed with unchanged Shamir 5/3. Audit file mode is 0600 with HMAC protection.
+- A regular FinOps user was denied Vault; a dedicated Vault administrator passed
+  OIDC, policy/engine UI, logout, SSO relogin and mobile login checks.
+- Cross-secret access and wrong ServiceAccount/namespace/audience/JWT were denied.
+- Legacy bot secrets and ignored secret.yaml were already absent; TLS and
+  PostgreSQL bootstrap secrets were retained. SSH proxy now pins the trusted key.
+- `vault-init.txt` was removed after external-share confirmation and verified
+  final off-node snapshot. Temporary browser identities and tokens were removed.
+- Hourly audit rotation is prepared but awaits approval to run/install; it has
+  not been represented as active. A real Telegram /start confirmation is pending.
 
 ## Ownership
 
@@ -28,6 +38,9 @@ Apply reviewed Helm values only after an off-node snapshot and confirmation that
 the three required unseal shares are available. Review rendered manifests and
 the existing release first. The StatefulSet uses OnDelete updates; a deliberate
 pod restart requires manual unseal and causes a single-node Vault outage.
+With Helm 4 use `--server-side=false`: Injector owns its dynamic webhook CA,
+which otherwise conflicts with Helm SSA. Keep the chart at 0.34.1; if the chart
+repository is unavailable, use the official hashicorp/vault-helm Git tag v0.34.1.
 The separate audit PVC avoids changing immutable StatefulSet claim templates.
 
 All Kubernetes commands must explicitly use
@@ -35,9 +48,8 @@ All Kubernetes commands must explicitly use
 
 ## Identity and policies
 
-Target human flow: Browser → `auth.sniper541.com` → Keycloak realm `finops` →
-the requesting FinOps or Vault application. The canonical issuer cutover is
-pending; do not assume it has already occurred.
+Human flow: Browser → `auth.sniper541.com` → Keycloak realm `finops` →
+the requesting FinOps or Vault application. The canonical issuer cutover is live.
 
 `configure_oidc_access.py` reconciles a dedicated client role and `vault_roles`
 ID-token claim. Vault binds both the claim and audience `vault`, with subject
@@ -83,11 +95,12 @@ Never replay historical migrations against production to test this integration.
 
 ## Audit and transport
 
-Pending deployment: mount protected `vault-audit` PVC at `/vault/audit`, then
-enable the file audit device at `/vault/audit/audit.json`. Keep `log_raw=false`
-and HMAC protection enabled. Check disk utilization and establish log rotation
-before calling audit operations complete; never remove the only audit device
-as a disk-space workaround. Test a request after enabling audit and after restart.
+Protected `vault-audit` PVC is mounted at `/vault/audit`; file audit is enabled
+at `/vault/audit/audit.json` with `log_raw=false` and HMAC protection. The rotation
+script and user systemd units are prepared: hourly size check, 64 MiB threshold,
+fourteen compressed segments. Their execution/installation awaits explicit
+approval after automatic review blocked SIGHUP/retention/linger changes. Until
+then monitor disk utilization manually; never disable audit as a space workaround.
 
 External traffic uses HTTPS through Traefik and cert-manager. The internal Vault
 listener and current PostgreSQL connection use HTTP/plain PostgreSQL inside the
@@ -105,9 +118,9 @@ A copy on the same VM/PVC is not disaster recovery. A regular backup schedule,
 retention and restore drill remain to be completed.
 
 Shamir configuration is five shares, threshold three. The user confirmed all five
-shares are stored outside the VM. `vault-init.txt` is still retained during this
-bootstrap: remove it only after final backup, successful OIDC validation and any
-planned restart/unseal. Do not put shares in scripts, environment files or Git.
+shares are stored outside the VM. `vault-init.txt` was removed after final off-node
+backup, successful OIDC validation and the planned restart/unseal. Do not put
+shares in scripts, environment files or Git.
 Use the interactive `vault operator unseal` prompt for each of three distinct
 shares. Never append shares to commands. There is no automatic unseal mechanism.
 
