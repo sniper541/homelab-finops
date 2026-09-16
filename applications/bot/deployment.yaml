@@ -17,7 +17,38 @@ spec:
       labels:
         app: finops-bot
 
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/agent-pre-populate-only: "true"
+        vault.hashicorp.com/role: "finops-bot"
+
+        # Telegram Bot Token
+        vault.hashicorp.com/agent-inject-secret-telegram-token: "finops/data/bot"
+        vault.hashicorp.com/agent-inject-template-telegram-token: |
+          {{- with secret "finops/data/bot" -}}
+          {{ .Data.data.TELEGRAM_BOT_TOKEN }}
+          {{- end }}
+        vault.hashicorp.com/agent-inject-perms-telegram-token: "0440"
+
+        # Keycloak client secret
+        vault.hashicorp.com/agent-inject-secret-keycloak-client-secret: "finops/data/bot"
+        vault.hashicorp.com/agent-inject-template-keycloak-client-secret: |
+          {{- with secret "finops/data/bot" -}}
+          {{ .Data.data.KEYCLOAK_CLIENT_SECRET }}
+          {{- end }}
+        vault.hashicorp.com/agent-inject-perms-keycloak-client-secret: "0440"
+
+        # SSH private key for Telegram proxy
+        vault.hashicorp.com/agent-inject-secret-id_ed25519: "finops/data/bot-proxy"
+        vault.hashicorp.com/agent-inject-template-id_ed25519: |
+          {{- with secret "finops/data/bot-proxy" -}}
+          {{ .Data.data.id_ed25519 }}
+          {{- end }}
+        vault.hashicorp.com/agent-inject-perms-id_ed25519: "0440"
+
     spec:
+      serviceAccountName: finops-bot
+
       securityContext:
         runAsNonRoot: true
         fsGroup: 10002
@@ -29,24 +60,20 @@ spec:
           image: ghcr.io/sniper541/homelab-finops/finops-bot:768b376340ed513993cff565bd11916684d07963
           imagePullPolicy: Always
 
-          env:
-            - name: TELEGRAM_BOT_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: finops-bot-secret
-                  key: TELEGRAM_BOT_TOKEN
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              export TELEGRAM_BOT_TOKEN="$(cat /vault/secrets/telegram-token)"
+              export KEYCLOAK_CLIENT_SECRET="$(cat /vault/secrets/keycloak-client-secret)"
+              exec python app/main.py
 
+          env:
             - name: FINOPS_API_URL
               value: "https://api.sniper541.com"
 
             - name: KEYCLOAK_TOKEN_URL
               value: "https://app.sniper541.com/auth/realms/finops/protocol/openid-connect/token"
-
-            - name: KEYCLOAK_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: finops-bot-oidc
-                  key: client-secret
 
             - name: TELEGRAM_PROXY_URL
               value: "socks5://127.0.0.1:1080"
@@ -78,7 +105,7 @@ spec:
             - "-D"
             - "0.0.0.0:1080"
             - "-i"
-            - "/ssh/id_ed25519"
+            - "/vault/secrets/id_ed25519"
             - "-o"
             - "BatchMode=yes"
             - "-o"
@@ -90,11 +117,6 @@ spec:
             - "-o"
             - "ServerAliveCountMax=3"
             - "finops-proxy@89.110.67.219"
-
-          volumeMounts:
-            - name: proxy-ssh-key
-              mountPath: /ssh
-              readOnly: true
 
           resources:
             requests:
@@ -113,9 +135,3 @@ spec:
             capabilities:
               drop:
                 - ALL
-
-      volumes:
-        - name: proxy-ssh-key
-          secret:
-            secretName: finops-bot-proxy-ssh
-            defaultMode: 0440
