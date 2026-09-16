@@ -16,8 +16,31 @@ spec:
     metadata:
       labels:
         app: finops-api
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "finops-api"
+        vault.hashicorp.com/agent-service-account-token-volume-name: "vault-auth"
+        vault.hashicorp.com/agent-run-as-user: "10001"
+        vault.hashicorp.com/agent-run-as-group: "10001"
+        vault.hashicorp.com/agent-inject-secret-database.json: "database/creds/finops-api"
+        vault.hashicorp.com/agent-inject-template-database.json: |
+          {{- with secret "database/creds/finops-api" -}}
+          {{ .Data | toJSON }}
+          {{- end }}
+        vault.hashicorp.com/agent-inject-perms-database.json: "0400"
+        vault.hashicorp.com/error-on-missing-key-database.json: "true"
 
     spec:
+      serviceAccountName: finops-api
+      automountServiceAccountToken: false
+      volumes:
+        - name: vault-auth
+          projected:
+            sources:
+              - serviceAccountToken:
+                  path: token
+                  audience: vault
+                  expirationSeconds: 3600
       securityContext:
         runAsNonRoot: true
         runAsUser: 10001
@@ -45,8 +68,11 @@ spec:
             - configMapRef:
                 name: finops-api-config
 
-            - secretRef:
-                name: postgres-secret
+          env:
+            - name: POSTGRES_DB
+              value: finops
+            - name: POSTGRES_CREDENTIALS_FILE
+              value: /vault/secrets/database.json
 
           readinessProbe:
             httpGet:

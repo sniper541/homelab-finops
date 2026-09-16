@@ -21,6 +21,7 @@ spec:
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/agent-pre-populate-only: "true"
         vault.hashicorp.com/role: "finops-bot"
+        vault.hashicorp.com/agent-service-account-token-volume-name: "vault-auth"
 
         # Telegram Bot Token
         vault.hashicorp.com/agent-inject-secret-telegram-token: "finops/data/bot"
@@ -48,6 +49,15 @@ spec:
 
     spec:
       serviceAccountName: finops-bot
+      automountServiceAccountToken: false
+      volumes:
+        - name: vault-auth
+          projected:
+            sources:
+              - serviceAccountToken:
+                  path: token
+                  audience: vault
+                  expirationSeconds: 3600
 
       securityContext:
         runAsNonRoot: true
