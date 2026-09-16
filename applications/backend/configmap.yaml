@@ -9,6 +9,6 @@ data:
   POSTGRES_HOST: postgres
   POSTGRES_PORT: "5432"
   WEB_CORS_ORIGINS: https://app.sniper541.com,http://localhost:5173
-  KEYCLOAK_ISSUER: https://app.sniper541.com/auth/realms/finops
+  KEYCLOAK_ISSUER: https://auth.sniper541.com/realms/finops
   KEYCLOAK_AUDIENCE: finops-api
   KEYCLOAK_JWKS_URL: http://keycloak.keycloak.svc.cluster.local/realms/finops/protocol/openid-connect/certs

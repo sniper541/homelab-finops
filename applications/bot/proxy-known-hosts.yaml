@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: finops-proxy-known-hosts
+  namespace: finops
+data:
+  # Existing trusted entry from the operator server's ~/.ssh/known_hosts.
+  # This is a public host key, not the SSH client private key.
+  known_hosts: |
+    89.110.67.219 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL3iAxy5VhOiUcuZnKuM8RtsPLIbMvzYDF/zPw8bW58j

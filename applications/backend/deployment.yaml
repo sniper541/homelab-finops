@@ -17,6 +17,7 @@ spec:
       labels:
         app: finops-api
       annotations:
+        finops.sniper541.com/auth-issuer: "https://auth.sniper541.com/realms/finops"
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/role: "finops-api"
         vault.hashicorp.com/agent-service-account-token-volume-name: "vault-auth"

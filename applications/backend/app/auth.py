@@ -13,7 +13,7 @@ from app.database import get_connection
 
 KEYCLOAK_ISSUER = os.getenv(
     "KEYCLOAK_ISSUER",
-    "https://app.sniper541.com/auth/realms/finops",
+    "https://auth.sniper541.com/realms/finops",
 )
 
 KEYCLOAK_JWKS_URL = os.getenv(

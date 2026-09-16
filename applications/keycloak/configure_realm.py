@@ -4,7 +4,7 @@ Credentials belong to the operator's session, never this module. Origin migratio
 is explicit and must follow the reverse-proxy smoke test and route deployment.
 """
 PUBLIC_ORIGIN = "https://app.sniper541.com"
-FRONTEND_URL = PUBLIC_ORIGIN + "/auth"
+FRONTEND_URL = "https://auth.sniper541.com"
 
 
 def configure(kc, *, switch_origin=False):
@@ -54,7 +54,8 @@ def configure(kc, *, switch_origin=False):
     realm=kc("GET","finops")
     realm.update(bruteForceProtected=True,permanentLockout=False,failureFactor=5,waitIncrementSeconds=60,maxFailureWaitSeconds=900)
     if switch_origin:
-        realm.setdefault('attributes',{})['frontendUrl']=FRONTEND_URL
+        # KC_HOSTNAME owns the shared canonical origin for every client.
+        realm.setdefault('attributes',{}).pop('frontendUrl', None)
     kc("PUT","finops",realm)
     print('Configured API audience, PKCE enforcement, bot service role and brute-force protection; origin changed:',switch_origin)
     return bot['id']
