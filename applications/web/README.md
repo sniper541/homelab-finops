@@ -1,7 +1,7 @@
 # FinOps Web authentication
 
 The browser uses `keycloak-js` with Authorization Code Flow (`standard`) and
-PKCE `S256`: https://app.sniper541.com/auth, realm `finops`, public client `finops-web`.
+PKCE `S256`: https://auth.sniper541.com, realm `finops`, public client `finops-web`.
 No client secret is required. Access and refresh tokens remain in memory.
 The adapter initializes once before React mounts. Login and logout redirect via
 Keycloak and return to the current origin's `/`. A page reload checks the SSO session.
