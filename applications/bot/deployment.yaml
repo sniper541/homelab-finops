@@ -66,6 +66,20 @@ spec:
             - |
               export TELEGRAM_BOT_TOKEN="$(cat /vault/secrets/telegram-token)"
               export KEYCLOAK_CLIENT_SECRET="$(cat /vault/secrets/keycloak-client-secret)"
+
+              echo "Waiting for SOCKS proxy on 127.0.0.1:1080..."
+              until python - <<'PY'
+              import socket
+              s = socket.socket()
+              s.settimeout(1)
+              s.connect(("127.0.0.1", 1080))
+              s.close()
+              PY
+              do
+                sleep 1
+              done
+
+              echo "SOCKS proxy is ready"
               exec python app/main.py
 
           env:
