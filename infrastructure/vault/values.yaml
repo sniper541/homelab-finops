@@ -3,6 +3,8 @@ global:
 
 injector:
   enabled: true
+  # One node: required anti-affinity would deadlock a rolling update.
+  affinity: {}
   image:
     repository: hashicorp/vault-k8s
     tag: "1.7.6"
