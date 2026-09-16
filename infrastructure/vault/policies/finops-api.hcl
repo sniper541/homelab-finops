@@ -1,7 +1,3 @@
-path "finops/data/backend" {
-  capabilities = ["read"]
-}
-
-path "finops/metadata/backend" {
+path "database/creds/finops-api" {
   capabilities = ["read"]
 }

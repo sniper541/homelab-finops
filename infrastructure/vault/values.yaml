@@ -3,6 +3,32 @@ global:
 
 injector:
   enabled: true
+  image:
+    repository: hashicorp/vault-k8s
+    tag: "1.7.6"
+  agentImage:
+    repository: hashicorp/vault
+    tag: "2.0.4"
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+  securityContext:
+    pod:
+      runAsNonRoot: true
+      runAsUser: 100
+      runAsGroup: 1000
+      fsGroup: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    container:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop: [ALL]
 
 server:
   image:
@@ -24,7 +50,35 @@ server:
     accessMode: ReadWriteOnce
 
   auditStorage:
+    # Existing StatefulSet claim templates are immutable. Mount a separate PVC.
     enabled: false
+  volumes:
+    - name: persistent-audit
+      persistentVolumeClaim:
+        claimName: vault-audit
+    - name: temporary-config
+      emptyDir:
+        medium: Memory
+        sizeLimit: 32Mi
+  volumeMounts:
+    - name: persistent-audit
+      mountPath: /vault/audit
+    - name: temporary-config
+      mountPath: /tmp
+  statefulSet:
+    securityContext:
+      pod:
+        runAsNonRoot: true
+        runAsUser: 100
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      container:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop: [ALL]
 
   standalone:
     enabled: false

@@ -1,0 +1,135 @@
+# Stage 16 — Vault operations
+
+## Deployment status
+
+Work in progress, not a completion declaration. Verified on 2026-09-16:
+
+- An encrypted pre-change Raft snapshot was copied off-node and SHA256 verified.
+- Vault OIDC administration now requires the dedicated Keycloak client role
+  `vault/vault-admin`, assigned to the designated administrator `mikhail`.
+- Database engine `database/` and role `finops-api` are configured. A disposable
+  dynamic user passed connect/data access, denied DDL/migration-table access,
+  renewal and revocation checks. Runtime workloads have not yet been switched.
+- Six backend file rotation/fail-closed tests passed.
+- Neutral Sniper541 theme passed isolated OIDC, PKCE, error, refresh and logout
+  smoke checks. Production issuer/theme have not yet been switched.
+- Helm hardening, projected JWT workload manifests, audit PVC and policy changes
+  in this working tree are pending review/deployment and production verification.
+
+## Ownership
+
+Keep the existing Helm release `vault` in namespace `vault`. Runtime ownership is
+Helm, reconciled from `values.yaml` with official chart version **0.34.1**. ArgoCD
+application `vault` owns only `manifests/` (ingress and protected audit PVC).
+Do not adopt the existing StatefulSet into a second controller or reinstall it.
+Do not delete `data-vault-0`, initialize Vault again, or change Shamir keys.
+
+Apply reviewed Helm values only after an off-node snapshot and confirmation that
+the three required unseal shares are available. Review rendered manifests and
+the existing release first. The StatefulSet uses OnDelete updates; a deliberate
+pod restart requires manual unseal and causes a single-node Vault outage.
+The separate audit PVC avoids changing immutable StatefulSet claim templates.
+
+All Kubernetes commands must explicitly use
+`kubectl --kubeconfig=/home/sniper541/.kube/config`.
+
+## Identity and policies
+
+Target human flow: Browser → `auth.sniper541.com` → Keycloak realm `finops` →
+the requesting FinOps or Vault application. The canonical issuer cutover is
+pending; do not assume it has already occurred.
+
+`configure_oidc_access.py` reconciles a dedicated client role and `vault_roles`
+ID-token claim. Vault binds both the claim and audience `vault`, with subject
+`sub`, an exact UI callback, one-hour tokens and four-hour maximum lifetime.
+Ordinary FinOps users must not receive this client role. Existing Vault tokens
+are not automatically revoked by changing OIDC bindings; audit prior entities
+and issued tokens during final security validation.
+
+The homelab `vault-admin` policy is explicitly a trusted administrator policy,
+not a restricted application user. It can change policies and read secrets.
+The security boundary excludes ordinary FinOps browser users, not the designated
+Vault administrator. Root tokens are bootstrap/emergency only.
+
+Workload flow: projected Pod ServiceAccount JWT (audience `vault`) → Kubernetes
+Auth → exact ServiceAccount and namespace binding → application policy.
+`configure_workloads.py` must be deployed together with projected-token manifests;
+changing audience before a compatible pod rollout can prevent new pod startup.
+Backend policy reads only `database/creds/finops-api`; bot policy reads its two KV
+paths. Default Vault policy supports self lookup/renewal, not other applications.
+
+## PostgreSQL dynamic credentials
+
+`configure_database.py` accepts authenticated Vault/SQL operator callables. It
+creates `finops_runtime` with data-only privileges and a separate non-superuser
+`vault_db_manager` with CREATEROLE and administration of the runtime role. The
+initial manager password stays in memory and is rotated by Vault. Reruns preserve
+the configured manager password and leases. Protect and audit this manager: it
+is a privileged infrastructure identity, not an application identity.
+
+Role `finops-api` issues credentials with 30-minute TTL and two-hour maximum.
+Vault Agent continuously renews/renders an atomic JSON file. Backend reads it
+for every new psycopg connection; there is no connection pool or environment
+snapshot retaining expired credentials. Missing/invalid files fail closed.
+Revocation disables login, terminates that user's sessions, and removes the role.
+Vault unavailability prevents issuing new leases; do not fall back to bootstrap
+credentials. Alert on Agent renewal failures before lease expiry.
+
+`postgres-secret` remains PostgreSQL's bootstrap/admin source, not the final
+backend runtime source. Alembic runs separately as an authorized migration
+identity, never with the runtime lease. Schema owners must explicitly grant
+needed permissions on future tables; migrations are not run automatically here.
+Never replay historical migrations against production to test this integration.
+
+## Audit and transport
+
+Pending deployment: mount protected `vault-audit` PVC at `/vault/audit`, then
+enable the file audit device at `/vault/audit/audit.json`. Keep `log_raw=false`
+and HMAC protection enabled. Check disk utilization and establish log rotation
+before calling audit operations complete; never remove the only audit device
+as a disk-space workaround. Test a request after enabling audit and after restart.
+
+External traffic uses HTTPS through Traefik and cert-manager. The internal Vault
+listener and current PostgreSQL connection use HTTP/plain PostgreSQL inside the
+cluster. This is a documented single-node trust boundary, not end-to-end TLS.
+NetworkPolicy must be validated with DNS, TokenReview, injector and ingress paths
+before activation. No claim of enforced network isolation is made yet.
+
+## Backup, restore and unseal
+
+Run `snapshot.py DESTINATION.snap` on an off-node operator workstation. Supply a
+short-lived token with `raft-backup` policy through its hidden prompt. The script
+never overwrites an existing recovery point and prints a SHA256 for verification.
+Store backups on encrypted storage with restricted OS access. Do not commit them.
+A copy on the same VM/PVC is not disaster recovery. A regular backup schedule,
+retention and restore drill remain to be completed.
+
+Shamir configuration is five shares, threshold three. The user confirmed all five
+shares are stored outside the VM. `vault-init.txt` is still retained during this
+bootstrap: remove it only after final backup, successful OIDC validation and any
+planned restart/unseal. Do not put shares in scripts, environment files or Git.
+Use the interactive `vault operator unseal` prompt for each of three distinct
+shares. Never append shares to commands. There is no automatic unseal mechanism.
+
+Restore procedure (first rehearse in an isolated recovery environment):
+
+1. Verify snapshot checksum and retrieve at least three original shares from
+   their external custodians. Record the Vault/chart versions used for backup.
+2. Provision isolated compatible Vault/Raft storage; never overwrite the live
+   production PVC during a drill. Block workload access to the recovery instance.
+3. Initialize/unseal the empty recovery cluster only as needed to authenticate
+   a temporary recovery administrator; this step is not for an existing cluster.
+4. Use `vault operator raft snapshot restore -force PATH.snap` only against the
+   verified isolated destination when the snapshot seal differs. For a matching
+   seal use ordinary restore. This overwrites destination Vault state.
+5. Unseal restored state with the original snapshot's Shamir shares. Check
+   storage status, policies, auth methods and audit destination permissions.
+6. Reconcile external credentials carefully: a snapshot does not roll back
+   PostgreSQL passwords or Keycloak client secrets. Validate/reconfigure the
+   database manager connection through an authorized operator; revoke stale
+   leases and issue fresh ones before reconnecting workloads.
+7. Verify OIDC, application isolation and a fresh snapshot before any deliberate
+   production cutover. Keep the former recovery point until validation finishes.
+
+Single replica and local-path storage are not HA. Future stages: off-node
+scheduled backups with restore drills, multi-node Raft and external KMS unseal.

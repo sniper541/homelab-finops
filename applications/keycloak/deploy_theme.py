@@ -33,6 +33,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=pathlib.Path, required=True)
     parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--kubeconfig", default="/home/sniper541/.kube/config")
     args = parser.parse_args()
     config, patch = manifests()
     args.output.mkdir(parents=True, exist_ok=True)
@@ -40,7 +41,7 @@ if __name__ == "__main__":
         (args.output / name).write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print("Theme revision:", config["metadata"]["name"])
     if args.apply:
-        cmd = ["kubectl", "-n", "keycloak"]
+        cmd = ["kubectl", "--kubeconfig=" + args.kubeconfig, "-n", "keycloak"]
         live = json.loads(subprocess.check_output(cmd + ["get", "deployment", "keycloak", "-o", "json"]))
         image = next(c["image"] for c in live["spec"]["template"]["spec"]["containers"] if c["name"] == "keycloak")
         patch["metadata"] = {"resourceVersion": live["metadata"]["resourceVersion"]}

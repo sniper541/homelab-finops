@@ -72,7 +72,7 @@ def page(url, data=None):
 def themed(body):
     assert "css/finops.css" in body, "Custom stylesheet is missing"
     assert 'class="finops-footer"' in body, "Shared footer did not render"
-    assert "FinOps" in body
+    assert "Sniper541" in body
 
 def link(body, fragment):
     candidates = re.findall(r'href="([^"]+)"', body)

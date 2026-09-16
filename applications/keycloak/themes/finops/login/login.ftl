@@ -13,12 +13,13 @@
             <div class="finops-art-orbit"></div>
             <div class="finops-art-back"></div>
             <div class="finops-art-card">
-              <div class="finops-art-top"><span>FinOps</span><i></i></div>
+              <div class="finops-art-top"><span>Sniper541</span><i></i></div>
               <svg viewBox="0 0 400 130" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs><linearGradient id="finops-area" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#8acfff" stop-opacity=".25"/><stop offset="1" stop-color="#8acfff" stop-opacity="0"/></linearGradient></defs>
-                <path d="M0 112H400M0 70H400M0 28H400" stroke="white" stroke-opacity=".07"/>
-                <path d="M0 104C40 104 43 76 77 80S119 112 154 76S191 95 230 55S274 77 307 37S353 56 400 10V130H0Z" fill="url(#finops-area)"/>
-                <path d="M0 104C40 104 43 76 77 80S119 112 154 76S191 95 230 55S274 77 307 37S353 56 400 10" stroke="#9ed6ff" stroke-width="3" stroke-linecap="round"/>
+                <path d="M60 65H340M200 18V112M90 20L310 110M90 110L310 20" stroke="#9ed6ff" stroke-opacity=".25"/>
+                <ellipse cx="200" cy="65" rx="140" ry="46" stroke="#9ed6ff" stroke-opacity=".18"/>
+                <circle cx="200" cy="65" r="30" fill="#8acfff" fill-opacity=".12" stroke="#9ed6ff"/>
+                <path d="M188 64L197 73L213 55" stroke="#bce6ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <g fill="#9ed6ff"><circle cx="60" cy="65" r="5"/><circle cx="340" cy="65" r="5"/><circle cx="200" cy="18" r="4"/><circle cx="200" cy="112" r="4"/></g>
               </svg>
               <div class="finops-art-bottom"><span></span><span></span><span></span></div>
             </div>
