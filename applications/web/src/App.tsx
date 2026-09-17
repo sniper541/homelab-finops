@@ -50,27 +50,6 @@ const defaultState: DashboardState = {
   isFallback: false
 };
 
-function useRevealOnScroll(isAuthenticated: boolean) {
-  useEffect(() => {
-    const elements = document.querySelectorAll<HTMLElement>("[data-reveal]");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target);
-          }
-        }
-      },
-      { rootMargin: "0px 0px -8% 0px", threshold: 0.12 }
-    );
-
-    elements.forEach((element) => observer.observe(element));
-
-    return () => observer.disconnect();
-  }, [isAuthenticated]);
-}
-
 function Pill({ children }: { children: ReactNode }) {
   return <span className="pill">{children}</span>;
 }
@@ -89,7 +68,7 @@ function StatCard({
   icon: ReactNode;
 }) {
   return (
-    <article className={`stat-card stat-card--${tone}`} data-reveal>
+    <article className={`stat-card stat-card--${tone}`}>
       <div className="stat-card__icon">{icon}</div>
       <div>
         <p>{label}</p>
@@ -105,7 +84,7 @@ function TrendChart({ transactions }: { transactions: Transaction[] }) {
   const maxValue = Math.max(...trend.flatMap((item) => [item.income, item.expense]), 1);
 
   return (
-    <section className="panel panel--wide" id="analytics" data-reveal>
+    <section className="panel panel--wide" id="analytics">
       <div className="panel__header">
         <div>
           <span className="eyebrow">Analytics</span>
@@ -114,6 +93,9 @@ function TrendChart({ transactions }: { transactions: Transaction[] }) {
         <BarChart3 aria-hidden="true" />
       </div>
 
+      <div className="chart-legend" aria-label="Легенда графика">
+        <span>Доходы</span><span>Расходы</span>
+      </div>
       <div className="trend-chart">
         {trend.map((item) => (
           <div className="trend-chart__item" key={item.label}>
@@ -142,7 +124,7 @@ function CategoryBreakdown({ transactions }: { transactions: Transaction[] }) {
   const topShare = Math.round((totals[0]?.share ?? 0) * 100);
 
   return (
-    <section className="panel" data-reveal>
+    <section className="panel">
       <div className="panel__header">
         <div>
           <span className="eyebrow">Categories</span>
@@ -175,7 +157,7 @@ function CategoryBreakdown({ transactions }: { transactions: Transaction[] }) {
 
 function RecentTransactions({ transactions }: { transactions: Transaction[] }) {
   return (
-    <section className="panel panel--wide" id="history" data-reveal>
+    <section className="panel panel--wide" id="history">
       <div className="panel__header">
         <div>
           <span className="eyebrow">History</span>
@@ -185,6 +167,7 @@ function RecentTransactions({ transactions }: { transactions: Transaction[] }) {
       </div>
 
       <div className="transactions">
+        {transactions.length === 0 && <p className="empty-state">Пока нет операций.</p>}
         {transactions.slice(0, 8).map((transaction) => {
           const isIncome = transaction.category.type === "income";
 
@@ -280,7 +263,7 @@ function Dashboard({
               <Search aria-hidden="true" />
               <span>История, категории, отчеты</span>
             </div>
-            <button className="primary-button" type="button" onClick={onRefresh}>
+            <button className="primary-button" type="button" onClick={onRefresh} disabled={isLoading} aria-busy={isLoading}>
               <RefreshCcw aria-hidden="true" className={isLoading ? "is-spinning" : ""} />
               Обновить
             </button>
@@ -291,7 +274,7 @@ function Dashboard({
           </div>
         </header>
 
-        <section className="hero-band" data-reveal>
+        <section className="hero-band">
           <div className="hero-band__copy">
             <Pill>
               <Sparkles aria-hidden="true" />
@@ -338,7 +321,7 @@ function Dashboard({
           <CategoryBreakdown transactions={dashboard.transactions} />
           <RecentTransactions transactions={dashboard.transactions} />
 
-          <section className="panel" id="reports" data-reveal>
+          <section className="panel" id="reports">
             <div className="panel__header">
               <div>
                 <span className="eyebrow">Reports</span>
@@ -418,13 +401,11 @@ export default function App() {
     return () => { keycloak.onAuthLogout = undefined; };
   }, [isAuthenticated]);
 
-  useRevealOnScroll(isAuthenticated);
-
   if (!isAuthenticated) return <AuthScreen message={message} />;
 
   return (
     <>
-      {message && <p role="alert">{message}</p>}
+      {message && <p className="dashboard-message" role="alert">{message}</p>}
       <Dashboard
         dashboard={dashboard}
         isLoading={isLoading}

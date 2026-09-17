@@ -91,3 +91,48 @@ input[aria-invalid="true"]:focus { outline-color:#eaa29330; }
 .login-pf-page .finops-story-note { color:#9bafbc; }
 .login-pf-page .finops-footer p { color:#a2b4bf; }
 .login-pf-page .control-label, .login-pf-page .pf-c-form__label, .login-pf-page .pf-c-form__label-text { font-size:13px; }
+
+/* Shared sign-in: quiet glass, with motion confined to arrival and input feedback. */
+:root { --finops-bg:#0d151d; --finops-panel:#182733; --finops-text:#edf4f9; --finops-muted:#adbfcd; --finops-accent:#9ad4fb; }
+html.login-pf { scrollbar-color:#516576 var(--finops-bg); }
+::selection { background:#9ad4fb; color:#0d2030; }
+.login-pf body { background-image:radial-gradient(ellipse at 18% 35%,#28567638,transparent 58%); }
+.login-pf-page { min-height:100svh; isolation:isolate; }
+.login-pf-page::before { content:""; position:fixed; z-index:-1; pointer-events:none; width:85vw; height:32vw; min-height:240px; left:-28vw; top:25%; border:1px solid #9ad4fb20; border-radius:50%; transform:rotate(-32deg); background:linear-gradient(180deg,#7fc9ff08,transparent 45%); }
+.login-pf-page .card-pf { background:#192935ed; border:1px solid #b7d8eb2e; border-radius:24px; box-shadow:0 24px 64px #0003; }
+#kc-page-title { font-size:30px; letter-spacing:-.03em; line-height:1.25; }
+.finops-story h2 { font-size:clamp(40px,4.5vw,64px); letter-spacing:-.035em; line-height:1.12; }
+.finops-story h2 em { font-family:inherit; font-style:normal; font-weight:500; letter-spacing:inherit; }
+.finops-story-copy { max-width:38ch; }
+.finops-art-spark { display:none; }
+.finops-art-card { background:#203745d9; box-shadow:0 18px 42px #0003; }
+.finops-tabs { margin-bottom:28px; background:#0d192355; border-color:#b5d8ed20; }
+.finops-tabs > * { min-height:44px; display:grid; place-items:center; }
+.finops-tabs a { transition:background-color 160ms ease,color 160ms ease; }
+.finops-tabs a:hover { background:#294456; text-decoration:none; }
+.form-group { margin-bottom:24px; }
+.form-control,input.pf-c-form-control,select.pf-c-form-control,textarea.pf-c-form-control { min-height:52px; border-radius:12px; border-color:#9fc4dc38; background:#b5d8ed08; caret-color:#9ad4fb; transition:background-color 160ms ease,border-color 160ms ease,box-shadow 160ms ease; }
+.form-control:focus,input.pf-c-form-control:focus,select.pf-c-form-control:focus,textarea.pf-c-form-control:focus { background:#b5d8ed0e; border-color:#9ad4fb; box-shadow:0 0 0 3px #9ad4fb18; outline:0; }
+.btn-primary,.pf-c-button.pf-m-primary,#kc-login { min-height:50px; border-radius:12px; background:#9ad4fb; border-color:transparent; color:#0d2638; box-shadow:none; transition:background-color 160ms ease,transform 140ms cubic-bezier(.23,1,.32,1); }
+.btn-primary:hover,.btn-primary:focus,.pf-c-button.pf-m-primary:hover,#kc-login:hover { background:#b8e2fc; box-shadow:none; border-color:transparent; }
+.btn-primary:disabled,#kc-login:disabled { opacity:.65; cursor:wait; }
+.alert-success,.pf-c-alert.pf-m-success { background:#173d2d; border-color:#426e56; color:#bfe8ce; }
+.login-pf a { text-underline-offset:4px; }
+.pf-c-button.pf-m-control { border-radius:12px; }
+@media (hover:hover) and (pointer:fine) {
+  #kc-login:not(:disabled):active:not(:focus-visible),.btn-primary:not(:disabled):active:not(:focus-visible) { transform:scale(.98); }
+}
+@media (prefers-reduced-motion:no-preference) {
+  #kc-form { animation:sign-in-arrive 280ms cubic-bezier(.23,1,.32,1); }
+  @keyframes sign-in-arrive { from { opacity:.65; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+}
+@media (prefers-reduced-transparency:reduce) {
+  .login-pf-page .card-pf { background:#192935; backdrop-filter:none; }
+  .form-control,input.pf-c-form-control { background:#203440; }
+}
+@media(max-width:480px) {
+  .login-pf-page { padding:24px 16px 32px; }
+  .login-pf-page .card-pf { padding:26px 22px; border-radius:20px; }
+  #kc-page-title { font-size:27px; }
+  .login-pf-page::before { width:150vw; left:-65vw; top:15%; }
+}
