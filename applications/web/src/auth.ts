@@ -17,13 +17,31 @@ export function isSignedOut() {
 export function initializeAuth() {
   // One initialization, including when React StrictMode mounts twice.
   return initialization ??= keycloak.init({
-    // Process an OIDC callback if present; otherwise wait for an explicit login click.
-    // The realm blocks embedded auth pages, so do not depend on iframe-based SSO.
+    // The embedded native form returns here; the adapter validates state and PKCE.
     flow: "standard",
     pkceMethod: "S256",
     checkLoginIframe: false,
     redirectUri: window.location.origin + "/"
   });
+}
+
+export function createEmbeddedLoginUrl() {
+  return keycloak.createLoginUrl({
+    redirectUri: window.location.origin + "/",
+    ...(isSignedOut() ? { prompt: "login" as const } : {})
+  });
+}
+
+// Accept only our frame's same-origin callback for the flow we started.
+export function embeddedCallback(event: MessageEvent, source: Window | null, state: string): string | undefined {
+  if (!source || event.source !== source || event.origin !== window.location.origin ||
+      event.data?.type !== "finops-auth-callback" || typeof event.data.url !== "string") return;
+  try {
+    const url = new URL(event.data.url);
+    const params = new URLSearchParams(url.hash.slice(1));
+    if (url.origin === window.location.origin && url.pathname === "/" && !url.search &&
+        state && params.get("state") === state && (params.has("code") || params.has("error"))) return url.href;
+  } catch { /* Ignore malformed messages. */ }
 }
 
 export function login() {

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-17T00:00:00Z",
+  "title": "Design System: FinOps",
+  "extensions": {
+    "shadows": [
+      { "name": "entry-panel", "value": "0 28px 65px #0005", "purpose": "Parent glass panel above diagonal light." },
+      { "name": "standalone-identity-panel", "value": "0 32px 80px #0006", "purpose": "Standalone identity only; embedded forms remove their shadow." },
+      { "name": "native-field-focus", "value": "0 0 0 3px #9ed8ff18,inset 0 1px 0 #d1edff12", "purpose": "Native input focus feedback." }
+    ],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(.23,1,.32,1)", "purpose": "Shared easing." },
+      { "name": "panel-morph", "value": "300ms", "purpose": "Panel height, corner radii, and decorative corner movement." },
+      { "name": "field-entry", "value": "400ms", "purpose": "Native fields, with 0ms, 40ms, and 70ms delays." },
+      { "name": "focus-feedback", "value": "160ms", "purpose": "Focus feedback and parent frame switching opacity." },
+      { "name": "entry-light", "value": "1600ms", "purpose": "Parent diagonal light; second layer uses 2000ms." },
+      { "name": "standalone-light", "value": "1800ms", "purpose": "Standalone identity light; second layer uses 2200ms." }
+    ],
+    "breakpoints": [
+      { "name": "registration-name-columns", "value": "420px" },
+      { "name": "native-form-mobile", "value": "480px" },
+      { "name": "workspace-mobile", "value": "580px" },
+      { "name": "entry-form-first", "value": "760px" },
+      { "name": "workspace-single-column", "value": "840px" },
+      { "name": "entry-compact-columns", "value": "960px" },
+      { "name": "workspace-horizontal-navigation", "value": "1080px" }
+    ]
+  }
+}

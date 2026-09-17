@@ -43,6 +43,7 @@ fixture = fixture_dir / "realm.json"
 test_password = secrets.token_urlsafe(32)
 fixture.write_text(json.dumps({
     "realm": "finops", "enabled": True, "loginTheme": "finops",
+    "browserSecurityHeaders": {"contentSecurityPolicy": "frame-src 'self'; frame-ancestors 'self' http://localhost:5173; object-src 'none';", "xFrameOptions": ""},
     "attributes": {"frontendUrl": origin} if args.public_prefix else {},
     "registrationAllowed": True, "resetPasswordAllowed": True,
     "internationalizationEnabled": True, "supportedLocales": ["ru", "en"], "defaultLocale": "ru",

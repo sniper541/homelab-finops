@@ -1,7 +1,7 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 
 const adapter = vi.hoisted(() => ({
-  init: vi.fn(), login: vi.fn(), register: vi.fn(), logout: vi.fn(), updateToken: vi.fn(),
+  init: vi.fn(), createLoginUrl: vi.fn(), login: vi.fn(), register: vi.fn(), logout: vi.fn(), updateToken: vi.fn(),
   clearToken: vi.fn(), authenticated: true, token: "access-token"
 }));
 vi.mock("keycloak-js", () => ({ default: vi.fn(function () { return adapter; }) }));
@@ -17,6 +17,16 @@ describe("Keycloak session", () => {
     adapter.updateToken.mockResolvedValue(false);
   });
   afterEach(() => vi.unstubAllGlobals());
+
+  it("creates an embedded flow without top-level navigation and requires login after logout", async () => {
+    const { createEmbeddedLoginUrl } = await import("./auth");
+    await createEmbeddedLoginUrl();
+    expect(adapter.createLoginUrl).toHaveBeenLastCalledWith({ redirectUri: "https://app.sniper541.com/" });
+    vi.mocked(window.sessionStorage.getItem).mockReturnValue("true");
+    await createEmbeddedLoginUrl();
+    expect(adapter.createLoginUrl).toHaveBeenLastCalledWith({ redirectUri: "https://app.sniper541.com/", prompt: "login" });
+    expect(adapter.login).not.toHaveBeenCalled();
+  });
 
   it("initializes only once with standard flow and PKCE S256", async () => {
     const { initializeAuth } = await import("./auth");

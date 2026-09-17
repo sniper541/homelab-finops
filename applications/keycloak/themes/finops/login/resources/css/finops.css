@@ -75,3 +75,63 @@ input[aria-invalid="true"],.form-control[aria-invalid="true"],.pf-c-form-control
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important; animation:none!important; scroll-behavior:auto!important; } }
 @media(prefers-reduced-transparency:reduce) { .login-pf-page .card-pf { background:#152333; backdrop-filter:none; }.form-control,input.pf-c-form-control { background:#203440; } }
 @media(max-width:480px) { .login-pf-page { padding:24px 16px 32px; gap:22px; justify-content:flex-start; }.login-pf-page .card-pf { padding:26px 22px; border-radius:24px 10px 24px 10px; }#kc-page-title { font-size:29px; }#kc-content-wrapper .row { margin-left:0; margin-right:0; }.login-pf body::before,.login-pf body::after { width:280vw; left:-90vw; }.finops-telegram { font-size:12px; } }
+/* One continuous panel across native login, registration and recovery documents. */
+@view-transition { navigation:auto; }
+.login-pf-page .card-pf { view-transition-name:access-panel; border-radius:32px 12px 32px 12px; background:linear-gradient(135deg,#aacdeb18,#0c142251 45%),#0c172175; backdrop-filter:blur(16px); padding:30px 32px; }
+.login-pf-page .card-pf:has(#kc-register-form) { border-radius:12px 32px 12px 32px; }
+.login-pf-page .card-pf::before { top:12px; left:-7px; right:auto; width:28px; height:28px; border:1px solid #b5dfff75; background:#87cfff18; border-radius:8px 3px 8px 3px; transform:rotate(-12deg); backdrop-filter:blur(12px); }
+.login-pf-page .card-pf::after { content:""; position:absolute; right:-7px; bottom:12px; width:28px; height:28px; border:1px solid #b5dfff75; background:#87cfff18; border-radius:8px 3px 8px 3px; transform:rotate(-12deg); pointer-events:none; }
+.login-pf body::before { background:linear-gradient(180deg,#101b28,#39556c 2%,#b4dfff 2.5%,#203649 4%,#070e17 11%,#6489a4 12%,transparent 13%); }
+.finops-embedded,.finops-embedded body { background:transparent!important; min-height:0; }
+.finops-embedded body::before,.finops-embedded body::after,.finops-embedded #kc-header { display:none; }
+.finops-embedded .login-pf-page { min-height:0; padding:20px 14px 26px; gap:0; justify-content:flex-start; }
+.finops-embedded .card-pf { width:100%; box-shadow:0 14px 24px #0003; }
+.login-pf-page .form-group:focus-within > label { color:#a9ddff; }
+.login-pf-page .form-group > label { transition:color 160ms ease; }
+.login-pf-page .form-control:focus,.login-pf-page input.pf-c-form-control:focus { border-color:#b4e2ff; background:#9ed8ff12; box-shadow:0 0 0 3px #9ed8ff18,inset 0 1px 0 #d1edff12; }
+#kc-page-title { font-size:30px; }
+.login-pf-page .card-pf .access-intro { margin-bottom:20px; }
+.finops-tabs { margin-bottom:24px; }
+.form-group { margin-bottom:20px; }
+.finops-footer { margin-top:22px; }
+.finops-footer p:last-child { padding-top:14px; margin-top:16px; }
+::view-transition-group(access-panel) { animation-duration:400ms; animation-timing-function:var(--ease-out); }
+::view-transition-old(access-panel) { animation:panel-out 160ms ease both; }
+::view-transition-new(access-panel) { animation:panel-in 300ms var(--ease-out) both; }
+::view-transition-old(root),::view-transition-new(root) { animation:none; mix-blend-mode:normal; }
+@keyframes panel-out { to { opacity:0; transform:scale(.97) translateY(-8px); } }
+@keyframes panel-in { from { opacity:0; transform:scale(.97) translateY(14px); } }
+@media(prefers-reduced-motion:no-preference) {
+  .login-pf-page .card-pf { animation:panel-in 400ms var(--ease-out); }
+  .login-pf-page .form-group { animation:field-in 400ms var(--ease-out) both; }
+  .login-pf-page .form-group:nth-child(2) { animation-delay:40ms; }
+  .login-pf-page .form-group:nth-child(3) { animation-delay:70ms; }
+  @keyframes field-in { from { opacity:0; transform:translateY(10px); } }
+}
+.keyboard-navigation::view-transition-group(*),.keyboard-navigation::view-transition-old(*),.keyboard-navigation::view-transition-new(*) { animation:none!important; }
+@media(prefers-reduced-motion:reduce) { ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*) { animation:none!important; } }
+@media(prefers-reduced-transparency:reduce) { .login-pf-page .card-pf { background:#142333; backdrop-filter:none; } }
+@media(max-width:480px) { .login-pf-page .card-pf { padding:24px 22px; }#kc-page-title { font-size:28px; }.finops-embedded .login-pf-page { padding:12px 8px 20px; } }
+/* The parent owns glass: browsers cannot blur the page behind a cross-origin frame. */
+.finops-embedded .card-pf { background:transparent; backdrop-filter:none; border:0; box-shadow:none; border-radius:0; view-transition-name:none; }
+.finops-embedded .card-pf::before,.finops-embedded .card-pf::after { display:none; }
+.finops-embedded .login-pf-page { padding:0; }
+.finops-embedded .card-pf .access-intro,.finops-embedded .card-pf:has(#kc-form-login) #kc-info,.finops-embedded .finops-footer p:last-child { display:none; }
+.finops-embedded #kc-locale { margin-bottom:8px; }
+.finops-embedded .login-pf-header { margin-bottom:20px; }
+.finops-embedded #kc-page-title { margin-top:0; }
+.finops-embedded .card-pf { padding:24px 28px; }
+.finops-embedded .finops-footer { margin-top:20px; }
+.finops-embedded .access-divider { margin-bottom:16px; }
+.finops-embedded #kc-form-buttons { margin-top:18px; }
+@media(max-width:480px) { .finops-embedded .card-pf { padding:20px; } }
+.login-pf-page .card-pf:has(#kc-register-form) .login-pf-header { display:flex; flex-direction:column; align-items:stretch; gap:8px; }
+.login-pf-page .card-pf:has(#kc-register-form) .login-pf-header .row { margin:0; }
+.login-pf-page .card-pf:has(#kc-register-form) .login-pf-header .col-md-10,.login-pf-page .card-pf:has(#kc-register-form) .login-pf-header .col-md-2 { width:100%; padding:0; float:none; text-align:left; }
+.login-pf-page .card-pf:has(#kc-register-form) .subtitle { color:#b1c4d3; margin:0 0 8px; }
+.login-pf-page .required { color:#ffbdc8; }
+@media(min-width:420px) {
+  #kc-register-form { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); column-gap:16px; }
+  #kc-register-form > .form-group { grid-column:1 / -1; }
+  #kc-register-form > .form-group:has(input[name="firstName"]),#kc-register-form > .form-group:has(input[name="lastName"]) { grid-column:auto; }
+}
