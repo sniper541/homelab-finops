@@ -15,15 +15,10 @@ export function isSignedOut() {
 }
 
 export function initializeAuth() {
-  const callback = [window.location.search, window.location.hash.replace(/^#/, "?")]
-    .some(value => {
-      const params = new URLSearchParams(value);
-      return params.has("error") || (params.has("code") && params.has("state"));
-    });
   // One initialization, including when React StrictMode mounts twice.
   return initialization ??= keycloak.init({
-    // Process callbacks once; errors and explicit logout require a deliberate retry.
-    ...(!isSignedOut() && !callback ? { onLoad: "login-required" as const } : {}),
+    // Process an OIDC callback if present; otherwise wait for an explicit login click.
+    // The realm blocks embedded auth pages, so do not depend on iframe-based SSO.
     flow: "standard",
     pkceMethod: "S256",
     checkLoginIframe: false,

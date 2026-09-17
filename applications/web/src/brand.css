@@ -107,9 +107,39 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--terracotta); ou
 .empty-state { color: var(--muted); padding: 24px 0; font-size: 14px; }
 .content section[id] { scroll-margin-top: 24px; }
 @media (prefers-reduced-motion: no-preference) {
-  .hero-band { animation: workspace-enter 260ms var(--ease-out); }
+  .overview-grid { animation: workspace-enter 280ms var(--ease-out); }
   @keyframes workspace-enter { from { opacity: .7; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 }
+
+/* The overview is a single financial summary; supporting panels stay quiet. */
+.app-shell { background:#0a111a; }
+.sidebar { background:#0d1722; border-color:#203345; }
+.content { padding-top:36px; }
+.topbar { margin-bottom:30px; }
+.topbar .eyebrow { text-transform:none; letter-spacing:0; color:#9fb4c7; }
+.overview-grid { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:20px; margin-bottom:28px; }
+.overview-grid .hero-band { position:relative; isolation:isolate; overflow:hidden; display:grid; grid-template-columns:1fr; margin:0; padding:30px; border:1px solid #42637d; border-radius:22px; background:linear-gradient(125deg,#213d53,#132333 75%); }
+.overview-grid .hero-band::after { display:block; content:""; position:absolute; z-index:-1; width:360px; height:180px; right:-180px; bottom:0; border:1px solid #9ed8ff3b; border-radius:50%; transform:rotate(-40deg); background:linear-gradient(180deg,#9ed8ff10,transparent); }
+.balance-label { display:block; font-size:14px; color:#bdd2e1; margin-top:12px; }
+.overview-grid .balance-value { font-size:clamp(38px,4vw,58px); font-weight:500; letter-spacing:-.04em; color:#edf7ff; margin:8px 0 12px; font-variant-numeric:tabular-nums; line-height:1.12; overflow-wrap:anywhere; }
+.balance-caption { display:block; color:#d0e0ec; font-size:13px; }
+.overview-grid .hero-band p { color:#acbfd0; font-size:12px; line-height:1.7; margin-top:14px; }
+.overview-grid .hero-meter { justify-content:flex-start; flex-direction:row; gap:12px; min-height:0; padding-top:18px; border:0; border-top:1px solid #a5d9ff29; }
+.overview-grid .hero-meter span { font-size:24px; }
+.overview-grid .hero-meter small { max-width:none; text-align:left; }
+.overview-grid .stats-grid { grid-template-columns:1fr; gap:16px; margin:0; }
+.overview-grid .stat-card { border-radius:18px; padding:26px; background:#13202d; border-color:#293d4e; align-items:center; gap:20px; }
+.overview-grid .stat-card__icon { display:grid; width:44px; height:44px; border-radius:14px; }
+.overview-grid .stat-card strong { font-size:clamp(25px,2.8vw,38px); }
+.overview-grid .stat-card p { margin-bottom:8px; }
+.dashboard-grid { gap:20px; grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr); }
+.dashboard-grid .panel { padding:26px; border:1px solid #26394a; border-radius:20px; background:#101d2a; }
+.dashboard-grid .panel h2 { font-size:19px; }
+.dashboard-grid .eyebrow { font-size:10px; color:#9db7cc; }
+.dashboard-grid .category-orbit { background:radial-gradient(circle,#101d2a 0 63%,transparent 64%),conic-gradient(var(--terracotta) 0 var(--share),var(--line) var(--share) 100%); }
+.dashboard-grid .report-list div:last-child { border-bottom:0; }
+@media(max-width:840px) { .overview-grid { grid-template-columns:1fr; }.overview-grid .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }.overview-grid .stat-card { padding:22px; gap:14px; }.dashboard-grid { grid-template-columns:1fr; } }
+@media(max-width:580px) { .content { padding:24px 16px; }.overview-grid { gap:14px; }.overview-grid .hero-band { padding:24px; }.overview-grid .balance-value { font-size:42px; }.overview-grid .stats-grid { gap:12px; }.overview-grid .stat-card { padding:18px 14px; display:block; }.overview-grid .stat-card__icon { width:30px; height:30px; margin-bottom:14px; border-radius:9px; }.overview-grid .stat-card strong { font-size:clamp(20px,5.8vw,27px); }.overview-grid .stat-card span { font-size:11px; }.dashboard-grid .panel { padding:22px 18px; border-radius:16px; }.transaction-row__main strong { font-size:13px; } }
 @media (max-width: 1200px) {
   .search-box { flex-basis: 100%; }
   .stat-card { padding: 20px; gap: 10px; }

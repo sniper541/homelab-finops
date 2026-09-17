@@ -7,7 +7,7 @@ import "./brand.css";
 import "./welcome.css";
 
 const root = createRoot(document.getElementById("root")!);
-root.render(<p role="status">Проверяем сессию…</p>);
+root.render(<main className="session-loading"><span>FinOps.</span><p role="status">Проверяем сессию…</p></main>);
 
 // Initialize before React mounts, so callbacks and StrictMode cannot start a second flow.
 initializeAuth().then(() => {

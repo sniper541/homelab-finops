@@ -5,28 +5,7 @@
     <#if section = "header">
         ${msg("loginAccountTitle")}
     <#elseif section = "form">
-        <aside class="finops-story" aria-labelledby="finops-story-title">
-          <span class="finops-kicker"><span></span>${msg("finopsEyebrow")}</span>
-          <h2 id="finops-story-title">${msg("finopsHeadline")}<br/><em>${msg("finopsHeadlineAccent")}</em></h2>
-          <p class="finops-story-copy">${msg("finopsIntro")}</p>
-          <div class="finops-art" aria-hidden="true">
-            <div class="finops-art-orbit"></div>
-            <div class="finops-art-back"></div>
-            <div class="finops-art-card">
-              <div class="finops-art-top"><span>Sniper541</span><i></i></div>
-              <svg viewBox="0 0 400 130" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M60 65H340M200 18V112M90 20L310 110M90 110L310 20" stroke="#9ed6ff" stroke-opacity=".25"/>
-                <ellipse cx="200" cy="65" rx="140" ry="46" stroke="#9ed6ff" stroke-opacity=".18"/>
-                <circle cx="200" cy="65" r="30" fill="#8acfff" fill-opacity=".12" stroke="#9ed6ff"/>
-                <path d="M188 64L197 73L213 55" stroke="#bce6ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                <g fill="#9ed6ff"><circle cx="60" cy="65" r="5"/><circle cx="340" cy="65" r="5"/><circle cx="200" cy="18" r="4"/><circle cx="200" cy="112" r="4"/></g>
-              </svg>
-              <div class="finops-art-bottom"><span></span><span></span><span></span></div>
-            </div>
-            <span class="finops-art-spark">✳</span>
-          </div>
-          <p class="finops-story-note">${msg("finopsOverview")}</p>
-        </aside>
+        <p class="access-intro">${msg("finopsIntro")}</p>
         <nav class="finops-tabs" aria-label="${msg('finopsAccess')}">
           <span aria-current="page">${msg("doLogIn")}</span>
           <#if realm.registrationAllowed && !registrationDisabled??>

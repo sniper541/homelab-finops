@@ -23,14 +23,25 @@ describe("Keycloak session", () => {
     await Promise.all([initializeAuth(), initializeAuth()]);
     expect(adapter.init).toHaveBeenCalledTimes(1);
     expect(adapter.init).toHaveBeenCalledWith(expect.objectContaining({
-      flow: "standard", pkceMethod: "S256", onLoad: "login-required"
+      flow: "standard", pkceMethod: "S256"
     }));
+    expect(adapter.init.mock.calls[0][0]).not.toHaveProperty("onLoad");
+    expect(adapter.init.mock.calls[0][0]).not.toHaveProperty("silentCheckSsoRedirectUri");
   });
 
   it("does not restart authentication on an OAuth error callback", async () => {
     window.location.hash = "#error=access_denied&state=opaque";
     const { initializeAuth } = await import("./auth");
     await initializeAuth();
+    expect(adapter.init.mock.calls[0][0]).not.toHaveProperty("onLoad");
+  });
+
+  it("keeps a new visitor on the app without invoking login", async () => {
+    adapter.authenticated = false;
+    adapter.init.mockResolvedValue(false);
+    const { initializeAuth } = await import("./auth");
+    expect(await initializeAuth()).toBe(false);
+    expect(adapter.login).not.toHaveBeenCalled();
     expect(adapter.init.mock.calls[0][0]).not.toHaveProperty("onLoad");
   });
 

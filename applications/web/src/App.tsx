@@ -87,7 +87,6 @@ function TrendChart({ transactions }: { transactions: Transaction[] }) {
     <section className="panel panel--wide" id="analytics">
       <div className="panel__header">
         <div>
-          <span className="eyebrow">Analytics</span>
           <h2>Динамика за 6 месяцев</h2>
         </div>
         <BarChart3 aria-hidden="true" />
@@ -127,7 +126,6 @@ function CategoryBreakdown({ transactions }: { transactions: Transaction[] }) {
     <section className="panel">
       <div className="panel__header">
         <div>
-          <span className="eyebrow">Categories</span>
           <h2>Куда уходят деньги</h2>
         </div>
         <PieChart aria-hidden="true" />
@@ -160,7 +158,6 @@ function RecentTransactions({ transactions }: { transactions: Transaction[] }) {
     <section className="panel panel--wide" id="history">
       <div className="panel__header">
         <div>
-          <span className="eyebrow">History</span>
           <h2>Последние операции</h2>
         </div>
         <History aria-hidden="true" />
@@ -221,7 +218,7 @@ function Dashboard({
           </div>
           <div>
             <strong>FinOps</strong>
-            <span>Private analytics</span>
+            <span>Личные финансы</span>
           </div>
         </div>
 
@@ -254,8 +251,7 @@ function Dashboard({
       <section className="content" id="dashboard">
         <header className="topbar">
           <div>
-            <span className="eyebrow">FinOps web · premium MVP</span>
-            <h1>Финансовый cockpit</h1>
+            <h1>Обзор финансов</h1>
           </div>
 
           <div className="topbar__actions">
@@ -274,13 +270,16 @@ function Dashboard({
           </div>
         </header>
 
-        <section className="hero-band">
+        <div className="overview-grid">
+        <section className="hero-band" aria-label="Баланс">
           <div className="hero-band__copy">
             <Pill>
               <Sparkles aria-hidden="true" />
-              {dashboard.isFallback ? "Demo data" : "FastAPI online"}
+              Личный кабинет
             </Pill>
-            <h2>Один экран, чтобы понять месяц без лишнего шума.</h2>
+            <span className="balance-label">Баланс</span>
+            <h2 className="balance-value">{formatCurrency(dashboard.summary.balance)}</h2>
+            <span className="balance-caption">Один экран, чтобы понять месяц без лишнего шума.</span>
             <p>
               Ввод остается в Telegram, а здесь собраны баланс, динамика, категории, последние операции и статус
               отчетов.
@@ -307,14 +306,8 @@ function Dashboard({
             tone="expense"
             icon={<ArrowDownRight aria-hidden="true" />}
           />
-          <StatCard
-            label="Баланс"
-            value={formatCurrency(dashboard.summary.balance)}
-            helper={`${savingsRate}% остается после расходов`}
-            tone="balance"
-            icon={<Wallet aria-hidden="true" />}
-          />
         </section>
+        </div>
 
         <section className="dashboard-grid">
           <TrendChart transactions={dashboard.transactions} />
@@ -324,8 +317,7 @@ function Dashboard({
           <section className="panel" id="reports">
             <div className="panel__header">
               <div>
-                <span className="eyebrow">Reports</span>
-                <h2>MVP-отчеты</h2>
+                <h2>Сводка за период</h2>
               </div>
               <ShieldCheck aria-hidden="true" />
             </div>
@@ -340,10 +332,6 @@ function Dashboard({
                 <strong>{activeCategories}</strong>
               </div>
               <div>
-                <span>Источник данных</span>
-                <strong>{dashboard.isFallback ? "Fallback" : "FastAPI"}</strong>
-              </div>
-              <div>
                 <span>Текущий период</span>
                 <strong>
                   <CalendarDays aria-hidden="true" />
@@ -354,7 +342,7 @@ function Dashboard({
                 <span>Защита аккаунта</span>
                 <strong>
                   <Check aria-hidden="true" />
-                  Keycloak
+                  Единый вход
                 </strong>
               </div>
             </div>
