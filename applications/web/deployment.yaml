@@ -28,7 +28,7 @@ spec:
 
       containers:
         - name: finops-web
-          image: ghcr.io/sniper541/homelab-finops/finops-web:d05fda814fd75048238f43c7a9a7304db8298a7b
+          image: ghcr.io/sniper541/homelab-finops/finops-web:8bae6eab7bdfcea4045dad871aa11d060298d8ec
           imagePullPolicy: Always
 
           securityContext:
