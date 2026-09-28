@@ -36,6 +36,11 @@ server:
   image:
     repository: hashicorp/vault
     tag: "2.0.4"
+    
+  extraSecretEnvironmentVars:
+    - envName: VAULT_TRANSIT_SEAL_TOKEN
+      secretName: vault-transit-seal
+      secretKey: VAULT_TRANSIT_SEAL_TOKEN
 
   resources:
     requests:
@@ -103,6 +108,13 @@ server:
 
         storage "raft" {
           path = "/vault/data"
+        }
+        
+        seal "transit" {
+          address    = "https://transit.sniper541.com"
+          token      = "env://VAULT_TRANSIT_SEAL_TOKEN"
+          key_name   = "finops-unseal"
+          mount_path = "transit/"
         }
 
         service_registration "kubernetes" {}
