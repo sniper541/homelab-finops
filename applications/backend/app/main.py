@@ -8,6 +8,7 @@ from typing import Literal
 
 from app.auth import bot_telegram_id, get_bot_user, get_current_user
 from app.database import get_connection
+from app.kafka import publish_transaction_created
 
 def reject_identity_override(request: Request):
     if "user_id" in request.query_params:
@@ -133,7 +134,7 @@ def create_transaction(payload: TransactionCreateRequest, current_user: dict = D
     if row is None:
         raise HTTPException(status_code=400, detail="Invalid category")
 
-    return {
+    transaction = {
         "id": row[0],
         "user_id": row[1],
         "category_id": row[2],
@@ -142,6 +143,10 @@ def create_transaction(payload: TransactionCreateRequest, current_user: dict = D
         "occurred_at": row[5],
         "created_at": row[6],
     }
+
+    publish_transaction_created(transaction)
+
+    return transaction
 
 
 @app.get("/transactions")
@@ -486,7 +491,7 @@ def bot_transactions(limit: int = 100, user: dict = Depends(get_bot_user)):
 
 
 @bot.post("/transactions")
-def bot_create_transaction(payload: TransactionCreateRequest, user: dict = Depends(get_bot_user)):
+def bot_(payload: TransactionCreateRequest, user: dict = Depends(get_bot_user)):
     return create_transaction(payload, current_user=user)
 
 

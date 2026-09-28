@@ -3,3 +3,4 @@ starlette==1.6.0
 uvicorn[standard]==0.35.0
 psycopg[binary]==3.2.9
 PyJWT[crypto]==2.13.0
+confluent-kafka==2.11.1

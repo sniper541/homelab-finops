@@ -61,3 +61,10 @@ def users(migrated_db):
         conn.execute("TRUNCATE users CASCADE")
         ids = [row[0] for row in conn.execute("INSERT INTO users (telegram_id, keycloak_sub) VALUES (10101, %s), (20202, %s) RETURNING id", (a,b)).fetchall()]
     return [{"id": ids[0], "sub": a, "telegram_id":10101}, {"id":ids[1], "sub":b, "telegram_id":20202}]
+    
+@pytest.fixture(autouse=True)
+def mock_kafka_publish(monkeypatch):
+    monkeypatch.setattr(
+        "app.main.publish_transaction_created",
+        lambda transaction: None,
+    )

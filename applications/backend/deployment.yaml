@@ -81,6 +81,10 @@ spec:
               value: finops
             - name: POSTGRES_CREDENTIALS_FILE
               value: /vault/secrets/database.json
+            - name: KAFKA_CREDENTIALS_FILE
+              value: /vault/secrets/kafka.json
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: finops-kafka-kafka-bootstrap.kafka.svc.cluster.local:9092
 
           readinessProbe:
             httpGet:
