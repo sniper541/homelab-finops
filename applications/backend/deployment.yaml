@@ -30,6 +30,13 @@ spec:
           {{- end }}
         vault.hashicorp.com/agent-inject-perms-database.json: "0400"
         vault.hashicorp.com/error-on-missing-key-database.json: "true"
+        vault.hashicorp.com/agent-inject-secret-kafka.json: "finops/data/kafka"
+        vault.hashicorp.com/agent-inject-template-kafka.json: |
+          {{- with secret "finops/data/kafka" -}}
+          {"username":"{{ .Data.data.username }}","password":"{{ .Data.data.password }}"}
+          {{- end }}
+        vault.hashicorp.com/agent-inject-perms-kafka.json: "0400"
+        vault.hashicorp.com/error-on-missing-key-kafka.json: "true"
 
     spec:
       serviceAccountName: finops-api
