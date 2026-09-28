@@ -1,8 +1,23 @@
 [Unit]
 Description=Rotate persistent Vault audit log
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=oneshot
+User=sniper541
+Group=sniper541
 ExecStart=/usr/bin/python3 /home/sniper541/homelab-finops/infrastructure/vault/rotate_audit.py
 UMask=0077
 NoNewPrivileges=true
+
+[Unit]
+Description=Check Vault audit size hourly
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+RandomizedDelaySec=120
+
+[Install]
+WantedBy=timers.target
