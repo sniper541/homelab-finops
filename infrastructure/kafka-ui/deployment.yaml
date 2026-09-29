@@ -63,6 +63,9 @@ spec:
       automountServiceAccountToken: false
 
       volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 128Mi
         - name: vault-auth
           projected:
             sources:
@@ -91,7 +94,15 @@ spec:
               cpu: 500m
               memory: 512Mi
 
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+
           securityContext:
+            runAsNonRoot: true
+            runAsUser: 100
+            runAsGroup: 101
+            readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
             capabilities:
               drop:

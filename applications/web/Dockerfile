@@ -17,7 +17,7 @@ RUN npm run build
 
 FROM nginx:1.30.4-alpine@sha256:dc5069ad14f19660b141b21236140b91656bf89bbc3e2417c70ae650cd66104c
 
-RUN apk add --no-cache libuuid=2.42.3-r1
+RUN apk add --no-cache libuuid=2.42.3-r1 libexpat=2.8.5-r0
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/dist /usr/share/nginx/html
