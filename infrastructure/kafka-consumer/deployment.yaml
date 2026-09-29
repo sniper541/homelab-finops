@@ -63,7 +63,7 @@ spec:
 
       containers:
         - name: kafka-consumer
-          image: ghcr.io/sniper541/finops-kafka-consumer:PLACEHOLDER
+          image: ghcr.io/sniper541/finops-kafka-consumer:192b97e90596ad17e7c74dc9a384447be0ca4c1b
 
           env:
             - name: POSTGRES_HOST
