@@ -82,10 +82,6 @@ input[aria-invalid="true"],.form-control[aria-invalid="true"],.pf-c-form-control
 .login-pf-page .card-pf::before { top:12px; left:-7px; right:auto; width:28px; height:28px; border:1px solid #b5dfff75; background:#87cfff18; border-radius:8px 3px 8px 3px; transform:rotate(-12deg); backdrop-filter:blur(12px); }
 .login-pf-page .card-pf::after { content:""; position:absolute; right:-7px; bottom:12px; width:28px; height:28px; border:1px solid #b5dfff75; background:#87cfff18; border-radius:8px 3px 8px 3px; transform:rotate(-12deg); pointer-events:none; }
 .login-pf body::before { background:linear-gradient(180deg,#101b28,#39556c 2%,#b4dfff 2.5%,#203649 4%,#070e17 11%,#6489a4 12%,transparent 13%); }
-.finops-embedded,.finops-embedded body { background:transparent!important; min-height:0; }
-.finops-embedded body::before,.finops-embedded body::after,.finops-embedded #kc-header { display:none; }
-.finops-embedded .login-pf-page { min-height:0; padding:20px 14px 26px; gap:0; justify-content:flex-start; }
-.finops-embedded .card-pf { width:100%; box-shadow:0 14px 24px #0003; }
 .login-pf-page .form-group:focus-within > label { color:#a9ddff; }
 .login-pf-page .form-group > label { transition:color 160ms ease; }
 .login-pf-page .form-control:focus,.login-pf-page input.pf-c-form-control:focus { border-color:#b4e2ff; background:#9ed8ff12; box-shadow:0 0 0 3px #9ed8ff18,inset 0 1px 0 #d1edff12; }
@@ -111,20 +107,7 @@ input[aria-invalid="true"],.form-control[aria-invalid="true"],.pf-c-form-control
 .keyboard-navigation::view-transition-group(*),.keyboard-navigation::view-transition-old(*),.keyboard-navigation::view-transition-new(*) { animation:none!important; }
 @media(prefers-reduced-motion:reduce) { ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*) { animation:none!important; } }
 @media(prefers-reduced-transparency:reduce) { .login-pf-page .card-pf { background:#142333; backdrop-filter:none; } }
-@media(max-width:480px) { .login-pf-page .card-pf { padding:24px 22px; }#kc-page-title { font-size:28px; }.finops-embedded .login-pf-page { padding:12px 8px 20px; } }
-/* The parent owns glass: browsers cannot blur the page behind a cross-origin frame. */
-.finops-embedded .card-pf { background:transparent; backdrop-filter:none; border:0; box-shadow:none; border-radius:0; view-transition-name:none; }
-.finops-embedded .card-pf::before,.finops-embedded .card-pf::after { display:none; }
-.finops-embedded .login-pf-page { padding:0; }
-.finops-embedded .card-pf .access-intro,.finops-embedded .card-pf:has(#kc-form-login) #kc-info,.finops-embedded .finops-footer p:last-child { display:none; }
-.finops-embedded #kc-locale { margin-bottom:8px; }
-.finops-embedded .login-pf-header { margin-bottom:20px; }
-.finops-embedded #kc-page-title { margin-top:0; }
-.finops-embedded .card-pf { padding:24px 28px; }
-.finops-embedded .finops-footer { margin-top:20px; }
-.finops-embedded .access-divider { margin-bottom:16px; }
-.finops-embedded #kc-form-buttons { margin-top:18px; }
-@media(max-width:480px) { .finops-embedded .card-pf { padding:20px; } }
+@media(max-width:480px) { .login-pf-page .card-pf { padding:24px 22px; }#kc-page-title { font-size:28px; } }
 .login-pf-page .card-pf:has(#kc-register-form) .login-pf-header { display:flex; flex-direction:column; align-items:stretch; gap:8px; }
 .login-pf-page .card-pf:has(#kc-register-form) .login-pf-header .row { margin:0; }
 .login-pf-page .card-pf:has(#kc-register-form) .login-pf-header .col-md-10,.login-pf-page .card-pf:has(#kc-register-form) .login-pf-header .col-md-2 { width:100%; padding:0; float:none; text-align:left; }

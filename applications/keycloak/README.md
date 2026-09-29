@@ -90,17 +90,7 @@ The live login page inspected for this change had no registration/recovery links
 The Web's registration CTA is therefore gated off by default; its tab explains that
 registration is closed. Telegram is disabled with a visible “Скоро” label.
 
-To enable real registration:
-
-1. **finops → Realm settings → Login → User registration = ON → Save.**
-2. Verify the registration link on the Keycloak login page works.
-3. Set GitHub repository **Settings → Secrets and variables → Actions → Variables →
-   FINOPS_REGISTRATION_ENABLED = true**. This is a non-secret UI flag.
-4. Run **Web CI → Run workflow** to rebuild both Vite and the Web image with the flag.
-
-The CTA uses `keycloak.register()` with the same public client and PKCE settings.
-The flag does not change realm policy. If registration is disabled again, set it to
-`false` and rebuild Web. No user credentials are collected in React.
+Registration is controlled centrally by the finops realm Login settings. The app offers a single sign-in action; native Keycloak exposes registration when enabled.
 
 For password recovery, enable **Login → Forgot password**, and configure working
 SMTP in **Realm settings → Email** through the admin UI. Do not put SMTP credentials
@@ -109,7 +99,7 @@ in this repository. Email delivery is not tested by the isolated smoke test.
 ## Browser checks after deployment
 
 - Private window: full FinOps welcome screen; Telegram visibly unavailable.
-- Login stays on `app.sniper541.com/auth`; custom theme styling waits for the upstream image fix.
+- Clicking Sign in navigates to `auth.sniper541.com/realms/finops/...`; success returns to `app.sniper541.com/`.
 - Authorization request: `response_type=code`, `code_challenge_method=S256`.
 - Correct account login returns to dashboard; reload, access-token refresh and
   logout still work. API requests use Bearer; the API derives ownership from the verified subject.

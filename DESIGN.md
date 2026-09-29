@@ -85,7 +85,7 @@ The entry display becomes 40px below 960px and 32px below 760px. Native form tit
 
 Entry is centered in two columns, capped at 1180px, with a 490px form column. Below 960px the form column becomes 440px. Below 760px, the form precedes introductory copy in a single column capped at 490px; the decorative ledger disappears. Embedded form padding follows the frontmatter, switching below 480px.
 
-The native document determines iframe height. Registration places first and last names side by side when the iframe viewport is at least 420px wide; other field groups span the form. Do not force a fixed height that clips validation or recovery content.
+The welcome panel contains a heading, an explanation and the sign-in action. Native credential fields are shown on the central identity page.
 
 The workspace retains its sidebar and responsive navigation. Overview and supporting panels collapse to one column below 840px; income and expense summaries retain their paired layout. Check entry and registration at 320px, 390px, and 1440px, including longer translated labels and validation messages.
 
@@ -103,9 +103,9 @@ The persistent entry panel alternates opposing large and small corners between l
 
 ### Native authentication
 
-Native Keycloak fields appear immediately inside a cross-origin iframe while the top-level address remains app.sniper541.com. The parent owns presentation; native forms own credentials, validation, password visibility, language selection, recovery, and registration. Telegram stays visibly disabled. If embedding fails, expose the explicit standard-login fallback.
+The app presents one primary sign-in button. It navigates to the central Keycloak page at auth.sniper541.com; no credentials or identity form are embedded in React. Telegram remains visibly disabled. Keycloak owns validation, password visibility and any enabled recovery/registration flows.
 
-Preserve existing authentication boundaries: the adapter validates state and uses PKCE S256, tokens remain in memory, and React does not collect passwords. The realm permits framing only from itself and the app; the app's own frame-ancestors policy stays self-only. Vault retains its canonical issuer and callback.
+The adapter validates state and uses PKCE S256; tokens remain in memory. Existing Keycloak sessions are reused without forcing password entry. Keycloak and the app reject cross-origin framing. Separate clients return app, Kafka UI and Vault to their own callbacks.
 
 ### Fields and actions
 
@@ -113,9 +113,9 @@ Native inputs and primary actions have a minimum height of 52px. Tabs provide 44
 
 ### Motion
 
-Panel height and corner radii transition over 300ms using the shared ease-out curve. Fields enter over 400ms with at most 70ms staggering. The parent frame fades during a native form switch over 160ms. Decorative entry light settles within 2 seconds; standalone identity light may take 2.2 seconds. Navigation has no artificial delay or perpetual loop.
+Panel height and corner radii transition over 300ms using the shared ease-out curve. Fields enter over 400ms with at most 70ms staggering. Decorative entry light settles within 2 seconds; standalone identity light may take 2.2 seconds. Navigation has no artificial delay or perpetual loop.
 
-Reduced motion disables spatial animation and panel transitions. The switching iframe remains fully opaque under reduced motion. Keyboard navigation suppresses native document view transitions. Retain native fallback behavior when view transitions are unavailable.
+Reduced motion disables spatial animation and panel transitions. Keyboard navigation suppresses native document view transitions. Retain native fallback behavior when view transitions are unavailable.
 
 ### Financial workspace
 
@@ -124,9 +124,9 @@ Balance leads the overview; income and expense summaries support it. Chart and t
 ## Do's and Don'ts
 
 - **Do** preserve the user's blue identity and existing workspace hierarchy.
-- **Do** render authentication fields immediately and let native validation change panel height.
+- **Do** keep credential entry on the central identity page.
 - **Do** verify login, registration, recovery, callbacks, authenticated API requests, logout, language selection, password visibility, disabled Telegram, and reduced motion.
 - **Do** retain reduced-transparency and keyboard-focus treatments.
 - **Don't** collect credentials in React or introduce client secrets or password grants.
 - **Don't** add perpetual motion, artificial navigation delays, or animated financial values.
-- **Don't** duplicate the parent's glass treatment inside the embedded native form.
+- **Don't** embed identity forms or collect credentials in React.
