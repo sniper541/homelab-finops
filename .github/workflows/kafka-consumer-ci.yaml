@@ -1,0 +1,110 @@
+name: Kafka Consumer CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "applications/kafka-consumer/**"
+      - ".github/workflows/kafka-consumer-ci.yaml"
+
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: sniper541/finops-kafka-consumer
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Check Python syntax
+        run: |
+          python -m py_compile applications/kafka-consumer/consumer.py
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v4.6.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4.4.0
+
+      - name: Build and push image
+        uses: docker/build-push-action@v7.4.0
+        with:
+          context: ./applications/kafka-consumer
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          version: v0.74.0
+          timeout: 15m
+          image-ref: ghcr.io/sniper541/finops-kafka-consumer:${{ github.sha }}
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+          ignore-unfixed: true
+
+      - name: Generate SBOM
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          version: v0.74.0
+          timeout: 15m
+          image-ref: ghcr.io/sniper541/finops-kafka-consumer:${{ github.sha }}
+          format: cyclonedx
+          output: finops-kafka-consumer-sbom.cdx.json
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: finops-kafka-consumer-sbom-${{ github.sha }}
+          path: finops-kafka-consumer-sbom.cdx.json
+          retention-days: 30
+
+      - name: Update image version
+        run: |
+          sed -i \
+            "s#image: ghcr.io/sniper541/finops-kafka-consumer:.*#image: ghcr.io/sniper541/finops-kafka-consumer:${GITHUB_SHA}#" \
+            infrastructure/kafka-consumer/deployment.yaml
+
+      - name: Commit new image version
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add infrastructure/kafka-consumer/deployment.yaml
+
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+            exit 0
+          fi
+
+          git commit -m "Deploy kafka-consumer ${GITHUB_SHA}"
+
+          for attempt in 1 2 3; do
+            git pull --rebase origin main
+            if git push origin main; then exit 0; fi
+            sleep 3
+          done
+
+          exit 1
