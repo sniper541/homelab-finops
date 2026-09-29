@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-ui
+  namespace: kafka
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: kafka-ui
+
+  template:
+    metadata:
+      labels:
+        app: kafka-ui
+
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "finops-kafka-ui"
+        vault.hashicorp.com/agent-service-account-token-volume-name: "vault-auth"
+
+        vault.hashicorp.com/agent-inject-secret-config.yml: "finops/data/kafka-ui"
+        vault.hashicorp.com/agent-inject-template-config.yml: |
+          {{ with secret "finops/data/kafka" }}
+          kafka:
+            clusters:
+              - name: finops
+                bootstrapServers: finops-kafka-kafka-bootstrap.kafka.svc.cluster.local:9092
+                properties:
+                  security.protocol: SASL_PLAINTEXT
+                  sasl.mechanism: SCRAM-SHA-512
+                  sasl.jaas.config: {{ printf "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"%s\" password=\"%s\";" .Data.data.username .Data.data.password | toJSON }}
+          {{ end }}
+
+          {{ with secret "finops/data/kafka-ui" }}
+          auth:
+            type: OAUTH2
+            oauth2:
+              client:
+                keycloak:
+                  clientId: kafka-ui
+                  clientSecret: {{ .Data.data.keycloak_client_secret | toJSON }}
+                  scope: openid
+                  issuer-uri: https://auth.sniper541.com/realms/finops
+                  user-name-attribute: preferred_username
+                  client-name: Keycloak
+                  provider: keycloak
+                  redirect-uri: https://kafka.sniper541.com/login/oauth2/code/keycloak
+                  authorization-grant-type: authorization_code
+                  custom-params:
+                    type: oauth
+          {{ end }}
+
+          server:
+            forward-headers-strategy: native
+
+        vault.hashicorp.com/error-on-missing-key-config.yml: "true"
+
+    spec:
+      serviceAccountName: kafka-ui
+      automountServiceAccountToken: false
+
+      volumes:
+        - name: vault-auth
+          projected:
+            sources:
+              - serviceAccountToken:
+                  path: token
+                  audience: vault
+                  expirationSeconds: 3600
+
+      containers:
+        - name: kafka-ui
+          image: ghcr.io/kafbat/kafka-ui:v1.5.0
+
+          env:
+            - name: SPRING_CONFIG_ADDITIONAL_LOCATION
+              value: /vault/secrets/config.yml
+
+          ports:
+            - name: http
+              containerPort: 8080
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
