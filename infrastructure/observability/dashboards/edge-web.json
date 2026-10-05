@@ -1,7 +1,7 @@
 {
   "uid": "finops-edge-web",
-  "title": "04 Edge & Web Traffic",
-  "description": "Traefik ingress metrics cover web and API traffic. No extra Nginx exporter is needed.",
+  "title": "04 \u0412\u0435\u0431-\u0442\u0440\u0430\u0444\u0438\u043a \u0438 HTTPS",
+  "description": "\u0412\u0435\u0441\u044c \u0432\u043d\u0435\u0448\u043d\u0438\u0439 \u0442\u0440\u0430\u0444\u0438\u043a \u043f\u0440\u043e\u0445\u043e\u0434\u0438\u0442 \u0447\u0435\u0440\u0435\u0437 Traefik. \u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0441\u0435\u0440\u0432\u0438\u0441, \u0447\u0442\u043e\u0431\u044b \u043f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c \u0435\u0433\u043e \u043d\u0430\u0433\u0440\u0443\u0437\u043a\u0443, \u043e\u0448\u0438\u0431\u043a\u0438 \u0438 \u0432\u0440\u0435\u043c\u044f \u043e\u0442\u0432\u0435\u0442\u0430.",
   "tags": [
     "finops",
     "platform"
@@ -26,7 +26,7 @@
     "list": [
       {
         "name": "service",
-        "label": "Service",
+        "label": "\u0421\u0435\u0440\u0432\u0438\u0441",
         "type": "query",
         "datasource": {
           "type": "prometheus",
@@ -52,16 +52,32 @@
   "panels": [
     {
       "id": 1,
-      "title": "Ingress reachable",
+      "type": "text",
+      "title": "",
+      "transparent": true,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 2
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "\u0412\u0435\u0441\u044c \u0432\u043d\u0435\u0448\u043d\u0438\u0439 \u0442\u0440\u0430\u0444\u0438\u043a \u043f\u0440\u043e\u0445\u043e\u0434\u0438\u0442 \u0447\u0435\u0440\u0435\u0437 Traefik. \u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0441\u0435\u0440\u0432\u0438\u0441, \u0447\u0442\u043e\u0431\u044b \u043f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c \u0435\u0433\u043e \u043d\u0430\u0433\u0440\u0443\u0437\u043a\u0443, \u043e\u0448\u0438\u0431\u043a\u0438 \u0438 \u0432\u0440\u0435\u043c\u044f \u043e\u0442\u0432\u0435\u0442\u0430."
+      }
+    },
+    {
+      "id": 2,
+      "title": "\u0412\u0445\u043e\u0434\u043d\u043e\u0439 \u0448\u043b\u044e\u0437 \u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u0420\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u2014 \u043c\u0435\u0442\u0440\u0438\u043a\u0430 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e\u0441\u0442\u0438 \u0440\u0430\u0432\u043d\u0430 1. \u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e \u2014 0. \u041f\u0440\u0438 \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0438\u0438 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439 \u043f\u0440\u043e\u0432\u0435\u0440\u044c\u0442\u0435 \u0441\u0431\u043e\u0440\u0449\u0438\u043a \u043c\u0435\u0442\u0440\u0438\u043a \u0438 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 Pod.",
       "gridPos": {
         "x": 0,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -72,7 +88,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -86,16 +102,17 @@
               }
             ]
           },
+          "decimals": 0,
           "mappings": [
             {
               "type": "value",
               "options": {
                 "0": {
-                  "text": "DOWN",
+                  "text": "\u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e",
                   "color": "red"
                 },
                 "1": {
-                  "text": "UP",
+                  "text": "\u0420\u0430\u0431\u043e\u0442\u0430\u0435\u0442",
                   "color": "green"
                 }
               }
@@ -134,17 +151,17 @@
       ]
     },
     {
-      "id": 2,
-      "title": "Service requests / second",
+      "id": 3,
+      "title": "\u0412\u0435\u0431-\u0437\u0430\u043f\u0440\u043e\u0441\u044b \u0432 \u0441\u0435\u043a\u0443\u043d\u0434\u0443",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u0421\u0440\u0435\u0434\u043d\u0435\u0435 \u0447\u0438\u0441\u043b\u043e \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432 \u0432 \u0441\u0435\u043a\u0443\u043d\u0434\u0443 \u0437\u0430 \u0432\u044b\u0431\u0440\u0430\u043d\u043d\u043e\u0435 \u043e\u043a\u043d\u043e. \u041d\u043e\u043b\u044c \u043f\u0440\u0438 \u0440\u0430\u0431\u043e\u0442\u0430\u044e\u0449\u0435\u043c \u0441\u0431\u043e\u0440\u0449\u0438\u043a\u0435 \u043e\u0437\u043d\u0430\u0447\u0430\u0435\u0442 \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0438\u0435 \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432.",
       "gridPos": {
         "x": 4,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -155,7 +172,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -198,8 +215,8 @@
       ]
     },
     {
-      "id": 3,
-      "title": "Open web connections",
+      "id": 4,
+      "title": "\u041e\u0442\u043a\u0440\u044b\u0442\u044b\u0435 \u0432\u0435\u0431-\u0441\u043e\u0435\u0434\u0438\u043d\u0435\u043d\u0438\u044f",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -208,7 +225,7 @@
       "description": "",
       "gridPos": {
         "x": 8,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -219,7 +236,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -228,7 +245,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -262,17 +280,17 @@
       ]
     },
     {
-      "id": 4,
-      "title": "TLS expiry \u00b7 earliest",
+      "id": 5,
+      "title": "\u0414\u043e \u0438\u0441\u0442\u0435\u0447\u0435\u043d\u0438\u044f HTTPS-\u0441\u0435\u0440\u0442\u0438\u0444\u0438\u043a\u0430\u0442\u0430",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Remaining lifetime of the earliest certificate served by Traefik.",
+      "description": "\u041e\u0441\u0442\u0430\u0442\u043e\u043a \u0441\u0440\u043e\u043a\u0430 \u0441\u0430\u043c\u043e\u0433\u043e \u0440\u0430\u043d\u043d\u0435\u0433\u043e HTTPS-\u0441\u0435\u0440\u0442\u0438\u0444\u0438\u043a\u0430\u0442\u0430. cert-manager \u043f\u0440\u043e\u0434\u043b\u0435\u0432\u0430\u0435\u0442 \u0441\u0435\u0440\u0442\u0438\u0444\u0438\u043a\u0430\u0442\u044b \u0430\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u0435\u0441\u043a\u0438; \u043c\u0435\u043d\u044c\u0448\u0435 7 \u0434\u043d\u0435\u0439 \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0438.",
       "gridPos": {
         "x": 12,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -283,7 +301,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -326,17 +344,17 @@
       ]
     },
     {
-      "id": 5,
-      "title": "Config reload successful",
+      "id": 6,
+      "title": "\u041a\u043e\u043d\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044f \u0448\u043b\u044e\u0437\u0430 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043d\u0430",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u0420\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u2014 \u043c\u0435\u0442\u0440\u0438\u043a\u0430 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e\u0441\u0442\u0438 \u0440\u0430\u0432\u043d\u0430 1. \u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e \u2014 0. \u041f\u0440\u0438 \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0438\u0438 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439 \u043f\u0440\u043e\u0432\u0435\u0440\u044c\u0442\u0435 \u0441\u0431\u043e\u0440\u0449\u0438\u043a \u043c\u0435\u0442\u0440\u0438\u043a \u0438 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 Pod.",
       "gridPos": {
         "x": 16,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -347,7 +365,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -361,16 +379,17 @@
               }
             ]
           },
+          "decimals": 0,
           "mappings": [
             {
               "type": "value",
               "options": {
                 "0": {
-                  "text": "DOWN",
+                  "text": "\u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e",
                   "color": "red"
                 },
                 "1": {
-                  "text": "UP",
+                  "text": "\u0420\u0430\u0431\u043e\u0442\u0430\u0435\u0442",
                   "color": "green"
                 }
               }
@@ -409,17 +428,17 @@
       ]
     },
     {
-      "id": 6,
-      "title": "HTTPS requests / second",
+      "id": 7,
+      "title": "HTTPS-\u0437\u0430\u043f\u0440\u043e\u0441\u044b \u0432 \u0441\u0435\u043a\u0443\u043d\u0434\u0443",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u0421\u0440\u0435\u0434\u043d\u0435\u0435 \u0447\u0438\u0441\u043b\u043e \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432 \u0432 \u0441\u0435\u043a\u0443\u043d\u0434\u0443 \u0437\u0430 \u0432\u044b\u0431\u0440\u0430\u043d\u043d\u043e\u0435 \u043e\u043a\u043d\u043e. \u041d\u043e\u043b\u044c \u043f\u0440\u0438 \u0440\u0430\u0431\u043e\u0442\u0430\u044e\u0449\u0435\u043c \u0441\u0431\u043e\u0440\u0449\u0438\u043a\u0435 \u043e\u0437\u043d\u0430\u0447\u0430\u0435\u0442 \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0438\u0435 \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432.",
       "gridPos": {
         "x": 20,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -430,7 +449,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -473,17 +492,17 @@
       ]
     },
     {
-      "id": 7,
-      "title": "Traffic by service",
+      "id": 8,
+      "title": "\u0422\u0440\u0430\u0444\u0438\u043a \u043f\u043e \u0441\u0435\u0440\u0432\u0438\u0441\u0430\u043c",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u0421\u0440\u0435\u0434\u043d\u0435\u0435 \u0447\u0438\u0441\u043b\u043e \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432 \u0432 \u0441\u0435\u043a\u0443\u043d\u0434\u0443 \u0437\u0430 \u0432\u044b\u0431\u0440\u0430\u043d\u043d\u043e\u0435 \u043e\u043a\u043d\u043e. \u041d\u043e\u043b\u044c \u043f\u0440\u0438 \u0440\u0430\u0431\u043e\u0442\u0430\u044e\u0449\u0435\u043c \u0441\u0431\u043e\u0440\u0449\u0438\u043a\u0435 \u043e\u0437\u043d\u0430\u0447\u0430\u0435\u0442 \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0438\u0435 \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432.",
       "gridPos": {
         "x": 0,
-        "y": 4,
+        "y": 6,
         "w": 12,
         "h": 8
       },
@@ -494,7 +513,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -543,17 +562,17 @@
       ]
     },
     {
-      "id": 8,
-      "title": "Status codes",
+      "id": 9,
+      "title": "\u041e\u0442\u0432\u0435\u0442\u044b \u0441\u0435\u0440\u0432\u0438\u0441\u043e\u0432 \u043f\u043e HTTP-\u043a\u043e\u0434\u0443",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u0421\u0440\u0435\u0434\u043d\u0435\u0435 \u0447\u0438\u0441\u043b\u043e \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432 \u0432 \u0441\u0435\u043a\u0443\u043d\u0434\u0443 \u0437\u0430 \u0432\u044b\u0431\u0440\u0430\u043d\u043d\u043e\u0435 \u043e\u043a\u043d\u043e. \u041d\u043e\u043b\u044c \u043f\u0440\u0438 \u0440\u0430\u0431\u043e\u0442\u0430\u044e\u0449\u0435\u043c \u0441\u0431\u043e\u0440\u0449\u0438\u043a\u0435 \u043e\u0437\u043d\u0430\u0447\u0430\u0435\u0442 \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0438\u0435 \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432.",
       "gridPos": {
         "x": 12,
-        "y": 4,
+        "y": 6,
         "w": 12,
         "h": 8
       },
@@ -564,7 +583,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -613,17 +632,17 @@
       ]
     },
     {
-      "id": 9,
-      "title": "Upstream response time \u00b7 p95",
+      "id": 10,
+      "title": "\u0412\u0440\u0435\u043c\u044f \u043e\u0442\u0432\u0435\u0442\u0430 \u0441\u0435\u0440\u0432\u0438\u0441\u043e\u0432 \u00b7 p95",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "p50 \u2014 \u043c\u0435\u0434\u0438\u0430\u043d\u0430; p95 \u0438 p99 \u2014 \u0432\u0440\u0435\u043c\u044f, \u0431\u044b\u0441\u0442\u0440\u0435\u0435 \u043a\u043e\u0442\u043e\u0440\u043e\u0433\u043e \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u043b\u0438\u0441\u044c 95% \u0438 99% \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432. \u041c\u0435\u043d\u044c\u0448\u0435 \u2014 \u043b\u0443\u0447\u0448\u0435. \u0411\u0435\u0437 \u0442\u0440\u0430\u0444\u0438\u043a\u0430 \u0437\u0430\u0434\u0435\u0440\u0436\u043a\u0430 \u043d\u0435 \u0432\u044b\u0447\u0438\u0441\u043b\u044f\u0435\u0442\u0441\u044f.",
       "gridPos": {
         "x": 0,
-        "y": 12,
+        "y": 14,
         "w": 12,
         "h": 8
       },
@@ -634,7 +653,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No traffic",
+          "noValue": "\u041d\u0435\u0442 \u0442\u0440\u0430\u0444\u0438\u043a\u0430",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -683,17 +702,17 @@
       ]
     },
     {
-      "id": 10,
-      "title": "Upstream 5xx",
+      "id": 11,
+      "title": "\u041e\u0448\u0438\u0431\u043a\u0438 \u0441\u0435\u0440\u0432\u0438\u0441\u043e\u0432 \u00b7 5xx",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u0421\u0440\u0435\u0434\u043d\u0435\u0435 \u0447\u0438\u0441\u043b\u043e \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432 \u0432 \u0441\u0435\u043a\u0443\u043d\u0434\u0443 \u0437\u0430 \u0432\u044b\u0431\u0440\u0430\u043d\u043d\u043e\u0435 \u043e\u043a\u043d\u043e. \u041d\u043e\u043b\u044c \u043f\u0440\u0438 \u0440\u0430\u0431\u043e\u0442\u0430\u044e\u0449\u0435\u043c \u0441\u0431\u043e\u0440\u0449\u0438\u043a\u0435 \u043e\u0437\u043d\u0430\u0447\u0430\u0435\u0442 \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0438\u0435 \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432.",
       "gridPos": {
         "x": 12,
-        "y": 12,
+        "y": 14,
         "w": 12,
         "h": 8
       },
@@ -704,7 +723,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -753,8 +772,8 @@
       ]
     },
     {
-      "id": 11,
-      "title": "Ingress bandwidth",
+      "id": 12,
+      "title": "\u041e\u0431\u044a\u0451\u043c \u0432\u0445\u043e\u0434\u044f\u0449\u0435\u0433\u043e \u0438 \u0438\u0441\u0445\u043e\u0434\u044f\u0449\u0435\u0433\u043e \u0442\u0440\u0430\u0444\u0438\u043a\u0430",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -763,7 +782,7 @@
       "description": "",
       "gridPos": {
         "x": 0,
-        "y": 20,
+        "y": 22,
         "w": 12,
         "h": 8
       },
@@ -774,7 +793,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -811,7 +830,7 @@
         {
           "refId": "A",
           "expr": "sum(rate(traefik_entrypoint_requests_bytes_total{entrypoint=~\"web|websecure\"}[$__rate_interval]))",
-          "legendFormat": "Incoming",
+          "legendFormat": "\u0412\u0445\u043e\u0434\u044f\u0449\u0438\u0439",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -823,7 +842,7 @@
         {
           "refId": "B",
           "expr": "sum(rate(traefik_entrypoint_responses_bytes_total{entrypoint=~\"web|websecure\"}[$__rate_interval]))",
-          "legendFormat": "Outgoing",
+          "legendFormat": "\u0418\u0441\u0445\u043e\u0434\u044f\u0449\u0438\u0439",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -835,8 +854,8 @@
       ]
     },
     {
-      "id": 12,
-      "title": "Open connections",
+      "id": 13,
+      "title": "\u0421\u043e\u0435\u0434\u0438\u043d\u0435\u043d\u0438\u044f \u043f\u043e \u0442\u043e\u0447\u043a\u0435 \u0432\u0445\u043e\u0434\u0430",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -845,7 +864,7 @@
       "description": "",
       "gridPos": {
         "x": 12,
-        "y": 20,
+        "y": 22,
         "w": 12,
         "h": 8
       },
@@ -856,7 +875,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [

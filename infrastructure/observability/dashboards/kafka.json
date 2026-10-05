@@ -1,7 +1,7 @@
 {
   "uid": "finops-kafka",
-  "title": "06 Kafka",
-  "description": "Single combined broker/controller \u00b7 replication factor 1 \u00b7 transactions / finops-analytics. No high availability.",
+  "title": "06 \u041e\u0447\u0435\u0440\u0435\u0434\u044c \u0441\u043e\u0431\u044b\u0442\u0438\u0439 Kafka",
+  "description": "\u041e\u0434\u0438\u043d \u0431\u0440\u043e\u043a\u0435\u0440, \u043e\u0434\u043d\u0430 \u043a\u043e\u043f\u0438\u044f \u0434\u0430\u043d\u043d\u044b\u0445. \u0421\u043e\u0431\u044b\u0442\u0438\u044f transactions \u043e\u0431\u0440\u0430\u0431\u0430\u0442\u044b\u0432\u0430\u0435\u0442 \u0433\u0440\u0443\u043f\u043f\u0430 finops-analytics. \u041e\u0442\u043a\u0430\u0437\u043e\u0443\u0441\u0442\u043e\u0439\u0447\u0438\u0432\u043e\u0433\u043e \u043a\u043b\u0430\u0441\u0442\u0435\u0440\u0430 \u043f\u043e\u043a\u0430 \u043d\u0435\u0442.",
   "tags": [
     "finops",
     "platform"
@@ -28,16 +28,32 @@
   "panels": [
     {
       "id": 1,
-      "title": "Broker reachable",
+      "type": "text",
+      "title": "",
+      "transparent": true,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 2
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "\u041e\u0434\u0438\u043d \u0431\u0440\u043e\u043a\u0435\u0440, \u043e\u0434\u043d\u0430 \u043a\u043e\u043f\u0438\u044f \u0434\u0430\u043d\u043d\u044b\u0445. \u0421\u043e\u0431\u044b\u0442\u0438\u044f transactions \u043e\u0431\u0440\u0430\u0431\u0430\u0442\u044b\u0432\u0430\u0435\u0442 \u0433\u0440\u0443\u043f\u043f\u0430 finops-analytics. \u041e\u0442\u043a\u0430\u0437\u043e\u0443\u0441\u0442\u043e\u0439\u0447\u0438\u0432\u043e\u0433\u043e \u043a\u043b\u0430\u0441\u0442\u0435\u0440\u0430 \u043f\u043e\u043a\u0430 \u043d\u0435\u0442."
+      }
+    },
+    {
+      "id": 2,
+      "title": "\u0411\u0440\u043e\u043a\u0435\u0440 Kafka \u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u0420\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u2014 \u043c\u0435\u0442\u0440\u0438\u043a\u0430 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e\u0441\u0442\u0438 \u0440\u0430\u0432\u043d\u0430 1. \u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e \u2014 0. \u041f\u0440\u0438 \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0438\u0438 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439 \u043f\u0440\u043e\u0432\u0435\u0440\u044c\u0442\u0435 \u0441\u0431\u043e\u0440\u0449\u0438\u043a \u043c\u0435\u0442\u0440\u0438\u043a \u0438 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 Pod.",
       "gridPos": {
         "x": 0,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -48,7 +64,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -62,16 +78,17 @@
               }
             ]
           },
+          "decimals": 0,
           "mappings": [
             {
               "type": "value",
               "options": {
                 "0": {
-                  "text": "DOWN",
+                  "text": "\u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e",
                   "color": "red"
                 },
                 "1": {
-                  "text": "UP",
+                  "text": "\u0420\u0430\u0431\u043e\u0442\u0430\u0435\u0442",
                   "color": "green"
                 }
               }
@@ -110,8 +127,8 @@
       ]
     },
     {
-      "id": 2,
-      "title": "Topics \u00b7 cluster",
+      "id": 3,
+      "title": "\u0422\u043e\u043f\u0438\u043a\u0438 \u00b7 \u0432\u0435\u0441\u044c \u043a\u043b\u0430\u0441\u0442\u0435\u0440",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -120,7 +137,7 @@
       "description": "",
       "gridPos": {
         "x": 4,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -131,7 +148,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -140,7 +157,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -174,8 +192,8 @@
       ]
     },
     {
-      "id": 3,
-      "title": "Partitions \u00b7 transactions",
+      "id": 4,
+      "title": "\u041f\u0430\u0440\u0442\u0438\u0446\u0438\u0438 \u00b7 transactions",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -184,7 +202,7 @@
       "description": "",
       "gridPos": {
         "x": 8,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -195,7 +213,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -204,7 +222,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -238,17 +257,17 @@
       ]
     },
     {
-      "id": 4,
-      "title": "Under-replicated partitions",
+      "id": 5,
+      "title": "\u041f\u0430\u0440\u0442\u0438\u0446\u0438\u0438 \u0441 \u043d\u0435\u043f\u043e\u043b\u043d\u044b\u043c\u0438 \u043a\u043e\u043f\u0438\u044f\u043c\u0438",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u041f\u0440\u0435\u0434\u0443\u043f\u0440\u0435\u0436\u0434\u0435\u043d\u0438\u0435 \u043e\u0442 1, \u0432\u044b\u0441\u043e\u043a\u0438\u0439 \u0443\u0440\u043e\u0432\u0435\u043d\u044c \u043e\u0442 2.",
       "gridPos": {
         "x": 12,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -259,7 +278,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -276,7 +295,8 @@
                 "value": 2
               }
             ]
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -310,17 +330,17 @@
       ]
     },
     {
-      "id": 5,
-      "title": "Offline partitions",
+      "id": 6,
+      "title": "\u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u044b\u0435 \u043f\u0430\u0440\u0442\u0438\u0446\u0438\u0438",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u041f\u0440\u0435\u0434\u0443\u043f\u0440\u0435\u0436\u0434\u0435\u043d\u0438\u0435 \u043e\u0442 1, \u0432\u044b\u0441\u043e\u043a\u0438\u0439 \u0443\u0440\u043e\u0432\u0435\u043d\u044c \u043e\u0442 2.",
       "gridPos": {
         "x": 16,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -331,7 +351,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -348,7 +368,8 @@
                 "value": 2
               }
             ]
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -382,17 +403,17 @@
       ]
     },
     {
-      "id": 6,
-      "title": "Partitions without a commit",
+      "id": 7,
+      "title": "\u041f\u0430\u0440\u0442\u0438\u0446\u0438\u0438 \u0431\u0435\u0437 \u0441\u043e\u0445\u0440\u0430\u043d\u0451\u043d\u043d\u043e\u0439 \u043f\u043e\u0437\u0438\u0446\u0438\u0438",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "An empty partition can legitimately have no committed consumer offset. It is not negative lag.",
+      "description": "\u0423 \u043f\u0443\u0441\u0442\u043e\u0439 \u043f\u0430\u0440\u0442\u0438\u0446\u0438\u0438 \u043c\u043e\u0436\u0435\u0442 \u0435\u0449\u0451 \u043d\u0435 \u0431\u044b\u0442\u044c \u0441\u043e\u0445\u0440\u0430\u043d\u0451\u043d\u043d\u043e\u0439 \u043f\u043e\u0437\u0438\u0446\u0438\u0438. \u042d\u0442\u043e \u043d\u043e\u0440\u043c\u0430\u043b\u044c\u043d\u043e\u0435 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435, \u0430 \u043d\u0435 \u043e\u0442\u0440\u0438\u0446\u0430\u0442\u0435\u043b\u044c\u043d\u043e\u0435 \u043e\u0442\u0441\u0442\u0430\u0432\u0430\u043d\u0438\u0435.",
       "gridPos": {
         "x": 20,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -403,7 +424,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -412,7 +433,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -446,8 +468,8 @@
       ]
     },
     {
-      "id": 7,
-      "title": "Broker message rate \u00b7 all topics",
+      "id": 8,
+      "title": "\u041f\u043e\u0441\u0442\u0443\u043f\u043b\u0435\u043d\u0438\u0435 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0439 \u00b7 \u0432\u0441\u0435 \u0442\u043e\u043f\u0438\u043a\u0438",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -456,7 +478,7 @@
       "description": "",
       "gridPos": {
         "x": 0,
-        "y": 4,
+        "y": 6,
         "w": 12,
         "h": 8
       },
@@ -467,7 +489,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -504,7 +526,7 @@
         {
           "refId": "A",
           "expr": "rate(kafka_server_brokertopicmetrics_messagesin_total{topic=\"\"}[$__rate_interval])",
-          "legendFormat": "Messages",
+          "legendFormat": "\u0421\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -516,8 +538,8 @@
       ]
     },
     {
-      "id": 8,
-      "title": "Broker throughput \u00b7 all topics",
+      "id": 9,
+      "title": "Kafka \u00b7 \u0432\u0445\u043e\u0434\u044f\u0449\u0438\u0439 \u0438 \u0438\u0441\u0445\u043e\u0434\u044f\u0449\u0438\u0439 \u043f\u043e\u0442\u043e\u043a",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -526,7 +548,7 @@
       "description": "",
       "gridPos": {
         "x": 12,
-        "y": 4,
+        "y": 6,
         "w": 12,
         "h": 8
       },
@@ -537,7 +559,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -574,7 +596,7 @@
         {
           "refId": "A",
           "expr": "rate(kafka_server_brokertopicmetrics_bytesin_total{topic=\"\"}[$__rate_interval])",
-          "legendFormat": "In",
+          "legendFormat": "\u0412\u0445\u043e\u0434\u044f\u0449\u0438\u0439",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -586,7 +608,7 @@
         {
           "refId": "B",
           "expr": "rate(kafka_server_brokertopicmetrics_bytesout_total{topic=\"\"}[$__rate_interval])",
-          "legendFormat": "Out",
+          "legendFormat": "\u0418\u0441\u0445\u043e\u0434\u044f\u0449\u0438\u0439",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -598,17 +620,17 @@
       ]
     },
     {
-      "id": 9,
-      "title": "Consumer lag \u00b7 committed partitions",
+      "id": 10,
+      "title": "\u041e\u0442\u0441\u0442\u0430\u0432\u0430\u043d\u0438\u0435 \u043e\u0431\u0440\u0430\u0431\u043e\u0442\u0447\u0438\u043a\u0430 \u00b7 \u043f\u043e \u043f\u0430\u0440\u0442\u0438\u0446\u0438\u044f\u043c",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "No samples means no committed partition. Inspect the offset panels and the uncommitted partition count; do not interpret it as zero lag.",
+      "description": "\u041f\u043e\u043a\u0430\u0437\u0430\u043d\u044b \u043f\u0430\u0440\u0442\u0438\u0446\u0438\u0438 \u0441 \u0441\u043e\u0445\u0440\u0430\u043d\u0451\u043d\u043d\u043e\u0439 \u043f\u043e\u0437\u0438\u0446\u0438\u0435\u0439. \u0415\u0441\u043b\u0438 \u0438\u0445 \u043d\u0435\u0442, \u043f\u0440\u043e\u0432\u0435\u0440\u044c\u0442\u0435 \u0433\u0440\u0430\u0444\u0438\u043a \u043f\u043e\u0437\u0438\u0446\u0438\u0439 \u043d\u0438\u0436\u0435. \u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0438\u0435 \u0434\u0430\u043d\u043d\u044b\u0445 \u043d\u0435 \u043e\u0437\u043d\u0430\u0447\u0430\u0435\u0442 \u043d\u0443\u043b\u0435\u0432\u043e\u0435 \u043e\u0442\u0441\u0442\u0430\u0432\u0430\u043d\u0438\u0435.",
       "gridPos": {
         "x": 0,
-        "y": 12,
+        "y": 14,
         "w": 12,
         "h": 8
       },
@@ -619,7 +641,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -656,7 +678,7 @@
         {
           "refId": "A",
           "expr": "kafka_consumergroup_lag{topic=\"transactions\",consumergroup=\"finops-analytics\"} >= 0",
-          "legendFormat": "Partition {{partition}}",
+          "legendFormat": "\u041f\u0430\u0440\u0442\u0438\u0446\u0438\u044f {{partition}}",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -668,8 +690,8 @@
       ]
     },
     {
-      "id": 10,
-      "title": "Consumer group members",
+      "id": 11,
+      "title": "\u0420\u0430\u0431\u043e\u0442\u0430\u044e\u0449\u0438\u0435 \u043e\u0431\u0440\u0430\u0431\u043e\u0442\u0447\u0438\u043a\u0438 FinOps",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -678,7 +700,7 @@
       "description": "",
       "gridPos": {
         "x": 12,
-        "y": 12,
+        "y": 14,
         "w": 12,
         "h": 8
       },
@@ -689,7 +711,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -738,17 +760,17 @@
       ]
     },
     {
-      "id": 11,
-      "title": "Committed offsets",
+      "id": 12,
+      "title": "\u0421\u043e\u0445\u0440\u0430\u043d\u0451\u043d\u043d\u0430\u044f \u043f\u043e\u0437\u0438\u0446\u0438\u044f \u043e\u0431\u0440\u0430\u0431\u043e\u0442\u0447\u0438\u043a\u0430",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "-1 means no committed offset yet.",
+      "description": "\u0417\u043d\u0430\u0447\u0435\u043d\u0438\u0435 -1: \u043e\u0431\u0440\u0430\u0431\u043e\u0442\u0447\u0438\u043a \u0435\u0449\u0451 \u043d\u0435 \u0441\u043e\u0445\u0440\u0430\u043d\u0438\u043b \u043f\u043e\u0437\u0438\u0446\u0438\u044e \u0432 \u044d\u0442\u043e\u0439 \u043f\u0430\u0440\u0442\u0438\u0446\u0438\u0438. \u041e\u0431\u044b\u0447\u043d\u043e \u044d\u0442\u043e \u043f\u0443\u0441\u0442\u0430\u044f \u043f\u0430\u0440\u0442\u0438\u0446\u0438\u044f.",
       "gridPos": {
         "x": 0,
-        "y": 20,
+        "y": 22,
         "w": 12,
         "h": 8
       },
@@ -758,7 +780,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -795,7 +817,7 @@
         {
           "refId": "A",
           "expr": "kafka_consumergroup_current_offset{topic=\"transactions\",consumergroup=\"finops-analytics\"}",
-          "legendFormat": "Partition {{partition}}",
+          "legendFormat": "\u041f\u0430\u0440\u0442\u0438\u0446\u0438\u044f {{partition}}",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -807,8 +829,8 @@
       ]
     },
     {
-      "id": 12,
-      "title": "Log-end offsets",
+      "id": 13,
+      "title": "\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u044f\u044f \u043f\u043e\u0437\u0438\u0446\u0438\u044f \u0432 \u0436\u0443\u0440\u043d\u0430\u043b\u0435",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -817,7 +839,7 @@
       "description": "",
       "gridPos": {
         "x": 12,
-        "y": 20,
+        "y": 22,
         "w": 12,
         "h": 8
       },
@@ -828,7 +850,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -865,7 +887,7 @@
         {
           "refId": "A",
           "expr": "kafka_topic_partition_current_offset{topic=\"transactions\"}",
-          "legendFormat": "Partition {{partition}}",
+          "legendFormat": "\u041f\u0430\u0440\u0442\u0438\u0446\u0438\u044f {{partition}}",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -877,8 +899,8 @@
       ]
     },
     {
-      "id": 13,
-      "title": "Broker memory",
+      "id": 14,
+      "title": "RAM \u0431\u0440\u043e\u043a\u0435\u0440\u0430 Kafka",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -887,7 +909,7 @@
       "description": "",
       "gridPos": {
         "x": 0,
-        "y": 28,
+        "y": 30,
         "w": 12,
         "h": 8
       },
@@ -898,7 +920,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -935,7 +957,7 @@
         {
           "refId": "A",
           "expr": "container_memory_working_set_bytes{namespace=\"kafka\",container=\"kafka\",pod=\"finops-kafka-combined-0\"}",
-          "legendFormat": "Working set",
+          "legendFormat": "\u0420\u0430\u0431\u043e\u0447\u0430\u044f \u043f\u0430\u043c\u044f\u0442\u044c",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -947,17 +969,17 @@
       ]
     },
     {
-      "id": 14,
-      "title": "Broker CPU",
+      "id": 15,
+      "title": "CPU \u0431\u0440\u043e\u043a\u0435\u0440\u0430 Kafka",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u0418\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d\u0438\u0435 CPU \u0432 \u044f\u0434\u0440\u0430\u0445: 1 \u0441\u043e\u043e\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0443\u0435\u0442 \u043e\u0434\u043d\u043e\u043c\u0443 \u043f\u043e\u043b\u043d\u043e\u0441\u0442\u044c\u044e \u0437\u0430\u043d\u044f\u0442\u043e\u043c\u0443 \u044f\u0434\u0440\u0443. \u0421\u0440\u0430\u0432\u043d\u0438\u0432\u0430\u0439\u0442\u0435 \u0441 \u043b\u0438\u043c\u0438\u0442\u043e\u043c \u043a\u043e\u043d\u0442\u0435\u0439\u043d\u0435\u0440\u0430 \u0438 \u0440\u0435\u0441\u0443\u0440\u0441\u0430\u043c\u0438 \u0441\u0435\u0440\u0432\u0435\u0440\u0430.",
       "gridPos": {
         "x": 12,
-        "y": 28,
+        "y": 30,
         "w": 12,
         "h": 8
       },
@@ -968,7 +990,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [

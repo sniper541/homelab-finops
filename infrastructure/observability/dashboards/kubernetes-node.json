@@ -1,7 +1,7 @@
 {
   "uid": "finops-kubernetes-node",
-  "title": "02 Kubernetes & Node",
-  "description": "Node capacity, workload health and resource consumers.",
+  "title": "02 \u0421\u0435\u0440\u0432\u0435\u0440 \u0438 Kubernetes",
+  "description": "\u0420\u0435\u0441\u0443\u0440\u0441\u044b \u0441\u0435\u0440\u0432\u0435\u0440\u0430 \u0438 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0439. \u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u043f\u0440\u043e\u0441\u0442\u0440\u0430\u043d\u0441\u0442\u0432\u043e \u0438\u043c\u0451\u043d \u0438\u043b\u0438 Pod, \u0447\u0442\u043e\u0431\u044b \u0441\u0443\u0437\u0438\u0442\u044c \u043f\u043e\u0438\u0441\u043a \u043f\u0440\u043e\u0431\u043b\u0435\u043c\u044b.",
   "tags": [
     "finops",
     "platform"
@@ -26,7 +26,7 @@
     "list": [
       {
         "name": "namespace",
-        "label": "Namespace",
+        "label": "\u041f\u0440\u043e\u0441\u0442\u0440\u0430\u043d\u0441\u0442\u0432\u043e \u0438\u043c\u0451\u043d",
         "type": "query",
         "datasource": {
           "type": "prometheus",
@@ -75,16 +75,32 @@
   "panels": [
     {
       "id": 1,
-      "title": "CPU used",
+      "type": "text",
+      "title": "",
+      "transparent": true,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 2
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "\u0420\u0435\u0441\u0443\u0440\u0441\u044b \u0441\u0435\u0440\u0432\u0435\u0440\u0430 \u0438 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0439. \u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u043f\u0440\u043e\u0441\u0442\u0440\u0430\u043d\u0441\u0442\u0432\u043e \u0438\u043c\u0451\u043d \u0438\u043b\u0438 Pod, \u0447\u0442\u043e\u0431\u044b \u0441\u0443\u0437\u0438\u0442\u044c \u043f\u043e\u0438\u0441\u043a \u043f\u0440\u043e\u0431\u043b\u0435\u043c\u044b."
+      }
+    },
+    {
+      "id": 2,
+      "title": "CPU \u00b7 \u0437\u0430\u0433\u0440\u0443\u0437\u043a\u0430",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u041f\u0440\u0435\u0434\u0443\u043f\u0440\u0435\u0436\u0434\u0435\u043d\u0438\u0435 \u043e\u0442 80, \u0432\u044b\u0441\u043e\u043a\u0438\u0439 \u0443\u0440\u043e\u0432\u0435\u043d\u044c \u043e\u0442 90.",
       "gridPos": {
         "x": 0,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -95,7 +111,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -113,7 +129,8 @@
               }
             ]
           },
-          "max": 100
+          "max": 100,
+          "decimals": 1
         },
         "overrides": []
       },
@@ -147,8 +164,8 @@
       ]
     },
     {
-      "id": 2,
-      "title": "Memory available",
+      "id": 3,
+      "title": "RAM \u00b7 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -157,7 +174,7 @@
       "description": "",
       "gridPos": {
         "x": 4,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -168,7 +185,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -211,17 +228,17 @@
       ]
     },
     {
-      "id": 3,
-      "title": "Root disk used",
+      "id": 4,
+      "title": "\u0414\u0438\u0441\u043a \u00b7 \u0437\u0430\u043d\u044f\u0442\u043e",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u041f\u0440\u0435\u0434\u0443\u043f\u0440\u0435\u0436\u0434\u0435\u043d\u0438\u0435 \u043e\u0442 80, \u0432\u044b\u0441\u043e\u043a\u0438\u0439 \u0443\u0440\u043e\u0432\u0435\u043d\u044c \u043e\u0442 90.",
       "gridPos": {
         "x": 8,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -232,7 +249,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -250,7 +267,8 @@
               }
             ]
           },
-          "max": 100
+          "max": 100,
+          "decimals": 1
         },
         "overrides": []
       },
@@ -284,8 +302,8 @@
       ]
     },
     {
-      "id": 4,
-      "title": "Uptime",
+      "id": 5,
+      "title": "\u0412\u0440\u0435\u043c\u044f \u0440\u0430\u0431\u043e\u0442\u044b \u0441\u0435\u0440\u0432\u0435\u0440\u0430",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -294,7 +312,7 @@
       "description": "",
       "gridPos": {
         "x": 12,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -305,7 +323,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -348,8 +366,8 @@
       ]
     },
     {
-      "id": 5,
-      "title": "Running pods",
+      "id": 6,
+      "title": "\u0420\u0430\u0431\u043e\u0442\u0430\u044e\u0449\u0438\u0435 Pod",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -358,7 +376,7 @@
       "description": "",
       "gridPos": {
         "x": 16,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -369,7 +387,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -378,7 +396,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -412,8 +431,8 @@
       ]
     },
     {
-      "id": 6,
-      "title": "Namespaces",
+      "id": 7,
+      "title": "\u041f\u0440\u043e\u0441\u0442\u0440\u0430\u043d\u0441\u0442\u0432\u0430 \u0438\u043c\u0451\u043d",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -422,7 +441,7 @@
       "description": "",
       "gridPos": {
         "x": 20,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -433,7 +452,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -442,7 +461,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -476,8 +496,8 @@
       ]
     },
     {
-      "id": 7,
-      "title": "CPU used",
+      "id": 8,
+      "title": "CPU \u00b7 \u0437\u0430\u0433\u0440\u0443\u0437\u043a\u0430",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -486,7 +506,7 @@
       "description": "",
       "gridPos": {
         "x": 0,
-        "y": 4,
+        "y": 6,
         "w": 12,
         "h": 8
       },
@@ -497,7 +517,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -508,6 +528,7 @@
             ]
           },
           "max": 100,
+          "decimals": 1,
           "custom": {
             "drawStyle": "line",
             "lineInterpolation": "smooth",
@@ -547,8 +568,8 @@
       ]
     },
     {
-      "id": 8,
-      "title": "Load average",
+      "id": 9,
+      "title": "\u041e\u0447\u0435\u0440\u0435\u0434\u044c \u0437\u0430\u0434\u0430\u0447 CPU \u00b7 load average",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -557,7 +578,7 @@
       "description": "",
       "gridPos": {
         "x": 12,
-        "y": 4,
+        "y": 6,
         "w": 12,
         "h": 8
       },
@@ -568,7 +589,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -605,7 +626,7 @@
         {
           "refId": "A",
           "expr": "node_load1",
-          "legendFormat": "1 minute",
+          "legendFormat": "1 \u043c\u0438\u043d\u0443\u0442\u0430",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -617,7 +638,7 @@
         {
           "refId": "B",
           "expr": "node_load5",
-          "legendFormat": "5 minutes",
+          "legendFormat": "5 \u043c\u0438\u043d\u0443\u0442",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -629,7 +650,7 @@
         {
           "refId": "C",
           "expr": "node_load15",
-          "legendFormat": "15 minutes",
+          "legendFormat": "15 \u043c\u0438\u043d\u0443\u0442",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -641,8 +662,8 @@
       ]
     },
     {
-      "id": 9,
-      "title": "Memory capacity",
+      "id": 10,
+      "title": "\u041f\u0430\u043c\u044f\u0442\u044c \u00b7 \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d\u043e \u0438 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -651,7 +672,7 @@
       "description": "",
       "gridPos": {
         "x": 0,
-        "y": 12,
+        "y": 14,
         "w": 12,
         "h": 8
       },
@@ -662,7 +683,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -699,7 +720,7 @@
         {
           "refId": "A",
           "expr": "node_memory_MemAvailable_bytes",
-          "legendFormat": "Available",
+          "legendFormat": "\u0414\u043e\u0441\u0442\u0443\u043f\u043d\u043e",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -711,7 +732,7 @@
         {
           "refId": "B",
           "expr": "node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes",
-          "legendFormat": "Used",
+          "legendFormat": "\u0418\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d\u043e",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -723,8 +744,8 @@
       ]
     },
     {
-      "id": 10,
-      "title": "Disk throughput",
+      "id": 11,
+      "title": "\u0414\u0438\u0441\u043a \u00b7 \u0447\u0442\u0435\u043d\u0438\u0435 \u0438 \u0437\u0430\u043f\u0438\u0441\u044c",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -733,7 +754,7 @@
       "description": "",
       "gridPos": {
         "x": 12,
-        "y": 12,
+        "y": 14,
         "w": 12,
         "h": 8
       },
@@ -744,7 +765,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -781,7 +802,7 @@
         {
           "refId": "A",
           "expr": "sum(rate(node_disk_read_bytes_total{device!~\"loop.*|ram.*\"}[$__rate_interval]))",
-          "legendFormat": "Read",
+          "legendFormat": "\u0427\u0442\u0435\u043d\u0438\u0435",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -793,7 +814,7 @@
         {
           "refId": "B",
           "expr": "sum(rate(node_disk_written_bytes_total{device!~\"loop.*|ram.*\"}[$__rate_interval]))",
-          "legendFormat": "Write",
+          "legendFormat": "\u0417\u0430\u043f\u0438\u0441\u044c",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -805,8 +826,8 @@
       ]
     },
     {
-      "id": 11,
-      "title": "Network \u00b7 physical interface",
+      "id": 12,
+      "title": "\u0421\u0435\u0442\u044c \u00b7 \u0432\u0445\u043e\u0434\u044f\u0449\u0438\u0439 \u0438 \u0438\u0441\u0445\u043e\u0434\u044f\u0449\u0438\u0439 \u043f\u043e\u0442\u043e\u043a",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -815,7 +836,7 @@
       "description": "",
       "gridPos": {
         "x": 0,
-        "y": 20,
+        "y": 22,
         "w": 12,
         "h": 8
       },
@@ -826,7 +847,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -863,7 +884,7 @@
         {
           "refId": "A",
           "expr": "sum(rate(node_network_receive_bytes_total{device=~\"eth.*|en.*\"}[$__rate_interval]))",
-          "legendFormat": "Receive",
+          "legendFormat": "\u0412\u0445\u043e\u0434\u044f\u0449\u0438\u0439",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -875,7 +896,7 @@
         {
           "refId": "B",
           "expr": "sum(rate(node_network_transmit_bytes_total{device=~\"eth.*|en.*\"}[$__rate_interval]))",
-          "legendFormat": "Transmit",
+          "legendFormat": "\u0418\u0441\u0445\u043e\u0434\u044f\u0449\u0438\u0439",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -887,17 +908,17 @@
       ]
     },
     {
-      "id": 12,
-      "title": "Pod CPU \u00b7 top 8",
+      "id": 13,
+      "title": "CPU \u043f\u043e Pod \u00b7 \u0442\u043e\u043f-8",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u0418\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d\u0438\u0435 CPU \u0432 \u044f\u0434\u0440\u0430\u0445: 1 \u0441\u043e\u043e\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0443\u0435\u0442 \u043e\u0434\u043d\u043e\u043c\u0443 \u043f\u043e\u043b\u043d\u043e\u0441\u0442\u044c\u044e \u0437\u0430\u043d\u044f\u0442\u043e\u043c\u0443 \u044f\u0434\u0440\u0443. \u0421\u0440\u0430\u0432\u043d\u0438\u0432\u0430\u0439\u0442\u0435 \u0441 \u043b\u0438\u043c\u0438\u0442\u043e\u043c \u043a\u043e\u043d\u0442\u0435\u0439\u043d\u0435\u0440\u0430 \u0438 \u0440\u0435\u0441\u0443\u0440\u0441\u0430\u043c\u0438 \u0441\u0435\u0440\u0432\u0435\u0440\u0430.",
       "gridPos": {
         "x": 12,
-        "y": 20,
+        "y": 22,
         "w": 12,
         "h": 8
       },
@@ -908,7 +929,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -957,8 +978,8 @@
       ]
     },
     {
-      "id": 13,
-      "title": "Pod memory \u00b7 top 8",
+      "id": 14,
+      "title": "RAM \u043f\u043e Pod \u00b7 \u0442\u043e\u043f-8",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -967,7 +988,7 @@
       "description": "",
       "gridPos": {
         "x": 0,
-        "y": 28,
+        "y": 30,
         "w": 12,
         "h": 8
       },
@@ -978,7 +999,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1027,8 +1048,8 @@
       ]
     },
     {
-      "id": 14,
-      "title": "Restarts \u00b7 last hour",
+      "id": 15,
+      "title": "\u041f\u0435\u0440\u0435\u0437\u0430\u043f\u0443\u0441\u043a\u0438 \u0437\u0430 \u0447\u0430\u0441",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -1037,7 +1058,7 @@
       "description": "",
       "gridPos": {
         "x": 12,
-        "y": 28,
+        "y": 30,
         "w": 12,
         "h": 8
       },
@@ -1048,7 +1069,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1097,8 +1118,8 @@
       ]
     },
     {
-      "id": 15,
-      "title": "Pod phases",
+      "id": 16,
+      "title": "\u0421\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u044f Pod",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -1107,7 +1128,7 @@
       "description": "",
       "gridPos": {
         "x": 0,
-        "y": 36,
+        "y": 38,
         "w": 12,
         "h": 8
       },
@@ -1118,7 +1139,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1167,8 +1188,8 @@
       ]
     },
     {
-      "id": 16,
-      "title": "Deployment replicas unavailable",
+      "id": 17,
+      "title": "\u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u044b\u0435 \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u044b \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0439",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -1177,7 +1198,7 @@
       "description": "",
       "gridPos": {
         "x": 12,
-        "y": 36,
+        "y": 38,
         "w": 12,
         "h": 8
       },
@@ -1188,7 +1209,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [

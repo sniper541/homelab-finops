@@ -1,7 +1,7 @@
 {
   "uid": "finops-postgresql",
-  "title": "05 PostgreSQL",
-  "description": "Read-only pg_monitor collector. Query text and application data are never exported.",
+  "title": "05 \u0411\u0430\u0437\u0430 \u0434\u0430\u043d\u043d\u044b\u0445 PostgreSQL",
+  "description": "\u0421\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 PostgreSQL: \u0441\u043e\u0435\u0434\u0438\u043d\u0435\u043d\u0438\u044f, \u043d\u0430\u0433\u0440\u0443\u0437\u043a\u0430 \u0438 \u0431\u043b\u043e\u043a\u0438\u0440\u043e\u0432\u043a\u0438. \u0422\u0435\u043a\u0441\u0442\u044b SQL \u0438 \u0444\u0438\u043d\u0430\u043d\u0441\u043e\u0432\u044b\u0435 \u0434\u0430\u043d\u043d\u044b\u0435 \u0432 \u043c\u0435\u0442\u0440\u0438\u043a\u0438 \u043d\u0435 \u043f\u043e\u043f\u0430\u0434\u0430\u044e\u0442.",
   "tags": [
     "finops",
     "platform"
@@ -28,16 +28,32 @@
   "panels": [
     {
       "id": 1,
-      "title": "PostgreSQL reachable",
+      "type": "text",
+      "title": "",
+      "transparent": true,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 2
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "\u0421\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 PostgreSQL: \u0441\u043e\u0435\u0434\u0438\u043d\u0435\u043d\u0438\u044f, \u043d\u0430\u0433\u0440\u0443\u0437\u043a\u0430 \u0438 \u0431\u043b\u043e\u043a\u0438\u0440\u043e\u0432\u043a\u0438. \u0422\u0435\u043a\u0441\u0442\u044b SQL \u0438 \u0444\u0438\u043d\u0430\u043d\u0441\u043e\u0432\u044b\u0435 \u0434\u0430\u043d\u043d\u044b\u0435 \u0432 \u043c\u0435\u0442\u0440\u0438\u043a\u0438 \u043d\u0435 \u043f\u043e\u043f\u0430\u0434\u0430\u044e\u0442."
+      }
+    },
+    {
+      "id": 2,
+      "title": "\u0411\u0430\u0437\u0430 \u0434\u0430\u043d\u043d\u044b\u0445 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0430",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u0420\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u2014 \u043c\u0435\u0442\u0440\u0438\u043a\u0430 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e\u0441\u0442\u0438 \u0440\u0430\u0432\u043d\u0430 1. \u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e \u2014 0. \u041f\u0440\u0438 \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0438\u0438 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439 \u043f\u0440\u043e\u0432\u0435\u0440\u044c\u0442\u0435 \u0441\u0431\u043e\u0440\u0449\u0438\u043a \u043c\u0435\u0442\u0440\u0438\u043a \u0438 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 Pod.",
       "gridPos": {
         "x": 0,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -48,7 +64,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -62,16 +78,17 @@
               }
             ]
           },
+          "decimals": 0,
           "mappings": [
             {
               "type": "value",
               "options": {
                 "0": {
-                  "text": "DOWN",
+                  "text": "\u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e",
                   "color": "red"
                 },
                 "1": {
-                  "text": "UP",
+                  "text": "\u0420\u0430\u0431\u043e\u0442\u0430\u0435\u0442",
                   "color": "green"
                 }
               }
@@ -110,8 +127,8 @@
       ]
     },
     {
-      "id": 2,
-      "title": "Connections \u00b7 all databases",
+      "id": 3,
+      "title": "\u0421\u043e\u0435\u0434\u0438\u043d\u0435\u043d\u0438\u044f \u00b7 \u0432\u0441\u0435 \u0431\u0430\u0437\u044b",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -120,7 +137,7 @@
       "description": "",
       "gridPos": {
         "x": 4,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -131,7 +148,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -140,7 +157,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -174,8 +192,8 @@
       ]
     },
     {
-      "id": 3,
-      "title": "Active \u00b7 finops",
+      "id": 4,
+      "title": "\u0410\u043a\u0442\u0438\u0432\u043d\u044b\u0435 \u0441\u043e\u0435\u0434\u0438\u043d\u0435\u043d\u0438\u044f \u00b7 FinOps",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -184,7 +202,7 @@
       "description": "",
       "gridPos": {
         "x": 8,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -195,7 +213,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -204,7 +222,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -238,8 +257,8 @@
       ]
     },
     {
-      "id": 4,
-      "title": "Connection limit",
+      "id": 5,
+      "title": "\u041b\u0438\u043c\u0438\u0442 \u0441\u043e\u0435\u0434\u0438\u043d\u0435\u043d\u0438\u0439",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -248,7 +267,7 @@
       "description": "",
       "gridPos": {
         "x": 12,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -259,7 +278,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -268,7 +287,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -302,8 +322,8 @@
       ]
     },
     {
-      "id": 5,
-      "title": "Database size",
+      "id": 6,
+      "title": "\u0420\u0430\u0437\u043c\u0435\u0440 \u0431\u0430\u0437\u044b FinOps",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -312,7 +332,7 @@
       "description": "",
       "gridPos": {
         "x": 16,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -323,7 +343,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -366,17 +386,17 @@
       ]
     },
     {
-      "id": 6,
-      "title": "Long-running transactions",
+      "id": 7,
+      "title": "\u0414\u043b\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0435 \u0442\u0440\u0430\u043d\u0437\u0430\u043a\u0446\u0438\u0438",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u041f\u0440\u0435\u0434\u0443\u043f\u0440\u0435\u0436\u0434\u0435\u043d\u0438\u0435 \u043e\u0442 1, \u0432\u044b\u0441\u043e\u043a\u0438\u0439 \u0443\u0440\u043e\u0432\u0435\u043d\u044c \u043e\u0442 3.",
       "gridPos": {
         "x": 20,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -387,7 +407,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -404,7 +424,8 @@
                 "value": 3
               }
             ]
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -438,8 +459,8 @@
       ]
     },
     {
-      "id": 7,
-      "title": "Connections by state",
+      "id": 8,
+      "title": "\u0421\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u044f \u0441\u043e\u0435\u0434\u0438\u043d\u0435\u043d\u0438\u0439",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -448,7 +469,7 @@
       "description": "",
       "gridPos": {
         "x": 0,
-        "y": 4,
+        "y": 6,
         "w": 12,
         "h": 8
       },
@@ -459,7 +480,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -508,8 +529,8 @@
       ]
     },
     {
-      "id": 8,
-      "title": "Transactions",
+      "id": 9,
+      "title": "\u0422\u0440\u0430\u043d\u0437\u0430\u043a\u0446\u0438\u0438 \u00b7 \u0444\u0438\u043a\u0441\u0430\u0446\u0438\u044f \u0438 \u043e\u0442\u043a\u0430\u0442",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -518,7 +539,7 @@
       "description": "",
       "gridPos": {
         "x": 12,
-        "y": 4,
+        "y": 6,
         "w": 12,
         "h": 8
       },
@@ -529,7 +550,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -566,7 +587,7 @@
         {
           "refId": "A",
           "expr": "rate(pg_stat_database_xact_commit{datname=\"finops\"}[$__rate_interval])",
-          "legendFormat": "Commits",
+          "legendFormat": "\u0417\u0430\u0444\u0438\u043a\u0441\u0438\u0440\u043e\u0432\u0430\u043d\u044b",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -578,7 +599,7 @@
         {
           "refId": "B",
           "expr": "rate(pg_stat_database_xact_rollback{datname=\"finops\"}[$__rate_interval])",
-          "legendFormat": "Rollbacks",
+          "legendFormat": "\u041e\u0442\u043c\u0435\u043d\u0435\u043d\u044b",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -590,8 +611,8 @@
       ]
     },
     {
-      "id": 9,
-      "title": "Cache hit ratio",
+      "id": 10,
+      "title": "\u0427\u0442\u0435\u043d\u0438\u0435 \u0438\u0437 \u043a\u0435\u0448\u0430 \u00b7 \u0434\u043e\u043b\u044f \u043f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u0439",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -600,7 +621,7 @@
       "description": "",
       "gridPos": {
         "x": 0,
-        "y": 12,
+        "y": 14,
         "w": 12,
         "h": 8
       },
@@ -611,7 +632,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -622,6 +643,7 @@
             ]
           },
           "max": 100,
+          "decimals": 1,
           "custom": {
             "drawStyle": "line",
             "lineInterpolation": "smooth",
@@ -649,7 +671,7 @@
         {
           "refId": "A",
           "expr": "100 * rate(pg_stat_database_blks_hit{datname=\"finops\"}[$__rate_interval]) / clamp_min(rate(pg_stat_database_blks_hit{datname=\"finops\"}[$__rate_interval]) + rate(pg_stat_database_blks_read{datname=\"finops\"}[$__rate_interval]), 0.001)",
-          "legendFormat": "Hit ratio",
+          "legendFormat": "\u041f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u044f \u0432 \u043a\u0435\u0448",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -661,8 +683,8 @@
       ]
     },
     {
-      "id": 10,
-      "title": "Rows read / written",
+      "id": 11,
+      "title": "\u0421\u0442\u0440\u043e\u043a\u0438 \u00b7 \u0447\u0442\u0435\u043d\u0438\u0435 \u0438 \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u0435",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -671,7 +693,7 @@
       "description": "",
       "gridPos": {
         "x": 12,
-        "y": 12,
+        "y": 14,
         "w": 12,
         "h": 8
       },
@@ -682,7 +704,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -719,7 +741,7 @@
         {
           "refId": "A",
           "expr": "rate(pg_stat_database_tup_returned{datname=\"finops\"}[$__rate_interval])",
-          "legendFormat": "Read",
+          "legendFormat": "\u0427\u0442\u0435\u043d\u0438\u0435",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -731,7 +753,7 @@
         {
           "refId": "B",
           "expr": "rate(pg_stat_database_tup_inserted{datname=\"finops\"}[$__rate_interval])",
-          "legendFormat": "Inserted",
+          "legendFormat": "\u0414\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u043e",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -743,7 +765,7 @@
         {
           "refId": "C",
           "expr": "rate(pg_stat_database_tup_updated{datname=\"finops\"}[$__rate_interval])",
-          "legendFormat": "Updated",
+          "legendFormat": "\u041e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u043e",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -755,7 +777,7 @@
         {
           "refId": "D",
           "expr": "rate(pg_stat_database_tup_deleted{datname=\"finops\"}[$__rate_interval])",
-          "legendFormat": "Deleted",
+          "legendFormat": "\u0423\u0434\u0430\u043b\u0435\u043d\u043e",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -767,8 +789,8 @@
       ]
     },
     {
-      "id": 11,
-      "title": "Locks by mode",
+      "id": 12,
+      "title": "\u0411\u043b\u043e\u043a\u0438\u0440\u043e\u0432\u043a\u0438 \u043f\u043e \u0442\u0438\u043f\u0443",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -777,7 +799,7 @@
       "description": "",
       "gridPos": {
         "x": 0,
-        "y": 20,
+        "y": 22,
         "w": 12,
         "h": 8
       },
@@ -788,7 +810,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -837,8 +859,8 @@
       ]
     },
     {
-      "id": 12,
-      "title": "Deadlocks \u00b7 last hour",
+      "id": 13,
+      "title": "\u0412\u0437\u0430\u0438\u043c\u043d\u044b\u0435 \u0431\u043b\u043e\u043a\u0438\u0440\u043e\u0432\u043a\u0438 \u0437\u0430 \u0447\u0430\u0441",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -847,7 +869,7 @@
       "description": "",
       "gridPos": {
         "x": 12,
-        "y": 20,
+        "y": 22,
         "w": 12,
         "h": 8
       },
@@ -858,7 +880,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -895,7 +917,7 @@
         {
           "refId": "A",
           "expr": "increase(pg_stat_database_deadlocks{datname=\"finops\"}[1h])",
-          "legendFormat": "Deadlocks",
+          "legendFormat": "\u0412\u0437\u0430\u0438\u043c\u043d\u044b\u0435 \u0431\u043b\u043e\u043a\u0438\u0440\u043e\u0432\u043a\u0438",
           "range": true,
           "instant": false,
           "format": "time_series",

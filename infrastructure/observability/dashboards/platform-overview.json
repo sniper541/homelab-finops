@@ -1,7 +1,7 @@
 {
   "uid": "finops-platform-overview",
-  "title": "01 Platform Overview",
-  "description": "Single-node homelab \u00b7 availability, capacity and traffic. Kafka RF=1 is not high availability.",
+  "title": "01 \u041e\u0431\u0437\u043e\u0440 \u043f\u043b\u0430\u0442\u0444\u043e\u0440\u043c\u044b",
+  "description": "\u041e\u0434\u0438\u043d \u0441\u0435\u0440\u0432\u0435\u0440: \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e\u0441\u0442\u044c \u0441\u0435\u0440\u0432\u0438\u0441\u043e\u0432, \u0437\u0430\u043f\u0430\u0441 \u0440\u0435\u0441\u0443\u0440\u0441\u043e\u0432 \u0438 \u043f\u043e\u0442\u043e\u043a \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432. Kafka \u0441 \u043e\u0434\u043d\u043e\u0439 \u043a\u043e\u043f\u0438\u0435\u0439 \u0434\u0430\u043d\u043d\u044b\u0445 \u043d\u0435 \u043e\u0431\u0435\u0441\u043f\u0435\u0447\u0438\u0432\u0430\u0435\u0442 \u043e\u0442\u043a\u0430\u0437\u043e\u0443\u0441\u0442\u043e\u0439\u0447\u0438\u0432\u043e\u0441\u0442\u044c.",
   "tags": [
     "finops",
     "platform"
@@ -28,16 +28,32 @@
   "panels": [
     {
       "id": 1,
-      "title": "Node ready",
+      "type": "text",
+      "title": "",
+      "transparent": true,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 2
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "\u041e\u0434\u0438\u043d \u0441\u0435\u0440\u0432\u0435\u0440: \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e\u0441\u0442\u044c \u0441\u0435\u0440\u0432\u0438\u0441\u043e\u0432, \u0437\u0430\u043f\u0430\u0441 \u0440\u0435\u0441\u0443\u0440\u0441\u043e\u0432 \u0438 \u043f\u043e\u0442\u043e\u043a \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432. Kafka \u0441 \u043e\u0434\u043d\u043e\u0439 \u043a\u043e\u043f\u0438\u0435\u0439 \u0434\u0430\u043d\u043d\u044b\u0445 \u043d\u0435 \u043e\u0431\u0435\u0441\u043f\u0435\u0447\u0438\u0432\u0430\u0435\u0442 \u043e\u0442\u043a\u0430\u0437\u043e\u0443\u0441\u0442\u043e\u0439\u0447\u0438\u0432\u043e\u0441\u0442\u044c."
+      }
+    },
+    {
+      "id": 2,
+      "title": "\u0421\u0435\u0440\u0432\u0435\u0440 \u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u0420\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u2014 \u043c\u0435\u0442\u0440\u0438\u043a\u0430 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e\u0441\u0442\u0438 \u0440\u0430\u0432\u043d\u0430 1. \u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e \u2014 0. \u041f\u0440\u0438 \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0438\u0438 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439 \u043f\u0440\u043e\u0432\u0435\u0440\u044c\u0442\u0435 \u0441\u0431\u043e\u0440\u0449\u0438\u043a \u043c\u0435\u0442\u0440\u0438\u043a \u0438 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 Pod.",
       "gridPos": {
         "x": 0,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -48,7 +64,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -62,16 +78,17 @@
               }
             ]
           },
+          "decimals": 0,
           "mappings": [
             {
               "type": "value",
               "options": {
                 "0": {
-                  "text": "DOWN",
+                  "text": "\u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e",
                   "color": "red"
                 },
                 "1": {
-                  "text": "UP",
+                  "text": "\u0420\u0430\u0431\u043e\u0442\u0430\u0435\u0442",
                   "color": "green"
                 }
               }
@@ -110,17 +127,17 @@
       ]
     },
     {
-      "id": 2,
-      "title": "CPU used",
+      "id": 3,
+      "title": "CPU \u00b7 \u0437\u0430\u0433\u0440\u0443\u0437\u043a\u0430",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u041f\u0440\u0435\u0434\u0443\u043f\u0440\u0435\u0436\u0434\u0435\u043d\u0438\u0435 \u043e\u0442 80, \u0432\u044b\u0441\u043e\u043a\u0438\u0439 \u0443\u0440\u043e\u0432\u0435\u043d\u044c \u043e\u0442 90.",
       "gridPos": {
         "x": 4,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -131,7 +148,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -149,7 +166,8 @@
               }
             ]
           },
-          "max": 100
+          "max": 100,
+          "decimals": 1
         },
         "overrides": []
       },
@@ -183,17 +201,17 @@
       ]
     },
     {
-      "id": 3,
-      "title": "Memory used",
+      "id": 4,
+      "title": "RAM \u00b7 \u0437\u0430\u043d\u044f\u0442\u043e",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u041f\u0440\u0435\u0434\u0443\u043f\u0440\u0435\u0436\u0434\u0435\u043d\u0438\u0435 \u043e\u0442 80, \u0432\u044b\u0441\u043e\u043a\u0438\u0439 \u0443\u0440\u043e\u0432\u0435\u043d\u044c \u043e\u0442 90.",
       "gridPos": {
         "x": 8,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -204,7 +222,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -222,7 +240,8 @@
               }
             ]
           },
-          "max": 100
+          "max": 100,
+          "decimals": 1
         },
         "overrides": []
       },
@@ -256,17 +275,17 @@
       ]
     },
     {
-      "id": 4,
-      "title": "Root disk used",
+      "id": 5,
+      "title": "\u0414\u0438\u0441\u043a \u00b7 \u0437\u0430\u043d\u044f\u0442\u043e",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u041f\u0440\u0435\u0434\u0443\u043f\u0440\u0435\u0436\u0434\u0435\u043d\u0438\u0435 \u043e\u0442 80, \u0432\u044b\u0441\u043e\u043a\u0438\u0439 \u0443\u0440\u043e\u0432\u0435\u043d\u044c \u043e\u0442 90.",
       "gridPos": {
         "x": 12,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -277,7 +296,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -295,7 +314,8 @@
               }
             ]
           },
-          "max": 100
+          "max": 100,
+          "decimals": 1
         },
         "overrides": []
       },
@@ -329,8 +349,8 @@
       ]
     },
     {
-      "id": 5,
-      "title": "Running pods",
+      "id": 6,
+      "title": "\u0420\u0430\u0431\u043e\u0442\u0430\u044e\u0449\u0438\u0435 Pod",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -339,7 +359,7 @@
       "description": "",
       "gridPos": {
         "x": 16,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -350,7 +370,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -359,7 +379,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -393,17 +414,17 @@
       ]
     },
     {
-      "id": 6,
-      "title": "Restarts \u00b7 last hour",
+      "id": 7,
+      "title": "\u041f\u0435\u0440\u0435\u0437\u0430\u043f\u0443\u0441\u043a\u0438 \u0437\u0430 \u0447\u0430\u0441",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u041f\u0440\u0435\u0434\u0443\u043f\u0440\u0435\u0436\u0434\u0435\u043d\u0438\u0435 \u043e\u0442 1, \u0432\u044b\u0441\u043e\u043a\u0438\u0439 \u0443\u0440\u043e\u0432\u0435\u043d\u044c \u043e\u0442 5.",
       "gridPos": {
         "x": 20,
-        "y": 0,
+        "y": 2,
         "w": 4,
         "h": 4
       },
@@ -414,7 +435,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -431,7 +452,8 @@
                 "value": 5
               }
             ]
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -465,17 +487,17 @@
       ]
     },
     {
-      "id": 7,
-      "title": "All API replicas reachable",
+      "id": 8,
+      "title": "\u0412\u0441\u0435 \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u044b API \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u044b",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u0420\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u2014 \u043c\u0435\u0442\u0440\u0438\u043a\u0430 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e\u0441\u0442\u0438 \u0440\u0430\u0432\u043d\u0430 1. \u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e \u2014 0. \u041f\u0440\u0438 \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0438\u0438 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439 \u043f\u0440\u043e\u0432\u0435\u0440\u044c\u0442\u0435 \u0441\u0431\u043e\u0440\u0449\u0438\u043a \u043c\u0435\u0442\u0440\u0438\u043a \u0438 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 Pod.",
       "gridPos": {
         "x": 0,
-        "y": 4,
+        "y": 6,
         "w": 4,
         "h": 4
       },
@@ -486,7 +508,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -500,16 +522,17 @@
               }
             ]
           },
+          "decimals": 0,
           "mappings": [
             {
               "type": "value",
               "options": {
                 "0": {
-                  "text": "DOWN",
+                  "text": "\u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e",
                   "color": "red"
                 },
                 "1": {
-                  "text": "UP",
+                  "text": "\u0420\u0430\u0431\u043e\u0442\u0430\u0435\u0442",
                   "color": "green"
                 }
               }
@@ -548,17 +571,17 @@
       ]
     },
     {
-      "id": 8,
-      "title": "Kafka broker",
+      "id": 9,
+      "title": "Kafka \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0430",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u0420\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u2014 \u043c\u0435\u0442\u0440\u0438\u043a\u0430 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e\u0441\u0442\u0438 \u0440\u0430\u0432\u043d\u0430 1. \u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e \u2014 0. \u041f\u0440\u0438 \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0438\u0438 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439 \u043f\u0440\u043e\u0432\u0435\u0440\u044c\u0442\u0435 \u0441\u0431\u043e\u0440\u0449\u0438\u043a \u043c\u0435\u0442\u0440\u0438\u043a \u0438 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 Pod.",
       "gridPos": {
         "x": 4,
-        "y": 4,
+        "y": 6,
         "w": 4,
         "h": 4
       },
@@ -569,7 +592,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -583,16 +606,17 @@
               }
             ]
           },
+          "decimals": 0,
           "mappings": [
             {
               "type": "value",
               "options": {
                 "0": {
-                  "text": "DOWN",
+                  "text": "\u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e",
                   "color": "red"
                 },
                 "1": {
-                  "text": "UP",
+                  "text": "\u0420\u0430\u0431\u043e\u0442\u0430\u0435\u0442",
                   "color": "green"
                 }
               }
@@ -631,17 +655,17 @@
       ]
     },
     {
-      "id": 9,
+      "id": 10,
       "title": "PostgreSQL",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u0420\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u2014 \u043c\u0435\u0442\u0440\u0438\u043a\u0430 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e\u0441\u0442\u0438 \u0440\u0430\u0432\u043d\u0430 1. \u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e \u2014 0. \u041f\u0440\u0438 \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0438\u0438 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439 \u043f\u0440\u043e\u0432\u0435\u0440\u044c\u0442\u0435 \u0441\u0431\u043e\u0440\u0449\u0438\u043a \u043c\u0435\u0442\u0440\u0438\u043a \u0438 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 Pod.",
       "gridPos": {
         "x": 8,
-        "y": 4,
+        "y": 6,
         "w": 4,
         "h": 4
       },
@@ -652,7 +676,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -666,16 +690,17 @@
               }
             ]
           },
+          "decimals": 0,
           "mappings": [
             {
               "type": "value",
               "options": {
                 "0": {
-                  "text": "DOWN",
+                  "text": "\u041d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e",
                   "color": "red"
                 },
                 "1": {
-                  "text": "UP",
+                  "text": "\u0420\u0430\u0431\u043e\u0442\u0430\u0435\u0442",
                   "color": "green"
                 }
               }
@@ -714,17 +739,17 @@
       ]
     },
     {
-      "id": 10,
-      "title": "Pods not ready",
+      "id": 11,
+      "title": "Pod \u043d\u0435 \u0433\u043e\u0442\u043e\u0432\u044b",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u041f\u0440\u0435\u0434\u0443\u043f\u0440\u0435\u0436\u0434\u0435\u043d\u0438\u0435 \u043e\u0442 1, \u0432\u044b\u0441\u043e\u043a\u0438\u0439 \u0443\u0440\u043e\u0432\u0435\u043d\u044c \u043e\u0442 3.",
       "gridPos": {
         "x": 12,
-        "y": 4,
+        "y": 6,
         "w": 4,
         "h": 4
       },
@@ -735,7 +760,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -752,7 +777,8 @@
                 "value": 3
               }
             ]
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -786,17 +812,17 @@
       ]
     },
     {
-      "id": 11,
-      "title": "Firing alerts",
+      "id": 12,
+      "title": "\u041f\u0440\u043e\u0431\u043b\u0435\u043c\u044b \u0442\u0440\u0435\u0431\u0443\u044e\u0442 \u0432\u043d\u0438\u043c\u0430\u043d\u0438\u044f",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u041f\u0440\u0435\u0434\u0443\u043f\u0440\u0435\u0436\u0434\u0435\u043d\u0438\u0435 \u043e\u0442 1, \u0432\u044b\u0441\u043e\u043a\u0438\u0439 \u0443\u0440\u043e\u0432\u0435\u043d\u044c \u043e\u0442 3.",
       "gridPos": {
         "x": 16,
-        "y": 4,
+        "y": 6,
         "w": 4,
         "h": 4
       },
@@ -807,7 +833,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -824,7 +850,8 @@
                 "value": 3
               }
             ]
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -858,8 +885,8 @@
       ]
     },
     {
-      "id": 12,
-      "title": "Database connections",
+      "id": 13,
+      "title": "\u0421\u043e\u0435\u0434\u0438\u043d\u0435\u043d\u0438\u044f \u0441 \u0431\u0430\u0437\u043e\u0439",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -868,7 +895,7 @@
       "description": "",
       "gridPos": {
         "x": 20,
-        "y": 4,
+        "y": 6,
         "w": 4,
         "h": 4
       },
@@ -879,7 +906,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -888,7 +915,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "decimals": 0
         },
         "overrides": []
       },
@@ -922,17 +950,17 @@
       ]
     },
     {
-      "id": 13,
-      "title": "API traffic & server errors",
+      "id": 14,
+      "title": "API \u00b7 \u0437\u0430\u043f\u0440\u043e\u0441\u044b \u0438 \u043e\u0448\u0438\u0431\u043a\u0438",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u0421\u0440\u0435\u0434\u043d\u0435\u0435 \u0447\u0438\u0441\u043b\u043e \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432 \u0432 \u0441\u0435\u043a\u0443\u043d\u0434\u0443 \u0437\u0430 \u0432\u044b\u0431\u0440\u0430\u043d\u043d\u043e\u0435 \u043e\u043a\u043d\u043e. \u041d\u043e\u043b\u044c \u043f\u0440\u0438 \u0440\u0430\u0431\u043e\u0442\u0430\u044e\u0449\u0435\u043c \u0441\u0431\u043e\u0440\u0449\u0438\u043a\u0435 \u043e\u0437\u043d\u0430\u0447\u0430\u0435\u0442 \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0438\u0435 \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432.",
       "gridPos": {
         "x": 0,
-        "y": 8,
+        "y": 10,
         "w": 12,
         "h": 8
       },
@@ -943,7 +971,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -980,7 +1008,7 @@
         {
           "refId": "A",
           "expr": "(sum(rate(finops_http_requests_total[$__rate_interval]))) or (0 * min(up{job=\"monitoring/finops-api\"}))",
-          "legendFormat": "All requests",
+          "legendFormat": "\u0412\u0441\u0435 \u0437\u0430\u043f\u0440\u043e\u0441\u044b",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -1004,17 +1032,17 @@
       ]
     },
     {
-      "id": 14,
-      "title": "API response time \u00b7 p95",
+      "id": 15,
+      "title": "API \u00b7 \u0432\u0440\u0435\u043c\u044f \u043e\u0442\u0432\u0435\u0442\u0430 p95",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "No samples means no completed requests in the rate window, not zero latency.",
+      "description": "p95: 95% \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432 \u0432\u044b\u043f\u043e\u043b\u043d\u0438\u043b\u0438\u0441\u044c \u0431\u044b\u0441\u0442\u0440\u0435\u0435 \u044d\u0442\u043e\u0433\u043e \u0432\u0440\u0435\u043c\u0435\u043d\u0438. \u041c\u0435\u043d\u044c\u0448\u0435 \u2014 \u043b\u0443\u0447\u0448\u0435. \u0415\u0441\u043b\u0438 \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432 \u043d\u0435\u0442, \u0437\u0430\u0434\u0435\u0440\u0436\u043a\u0430 \u043d\u0435 \u0432\u044b\u0447\u0438\u0441\u043b\u044f\u0435\u0442\u0441\u044f.",
       "gridPos": {
         "x": 12,
-        "y": 8,
+        "y": 10,
         "w": 12,
         "h": 8
       },
@@ -1025,7 +1053,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No traffic",
+          "noValue": "\u041d\u0435\u0442 \u0442\u0440\u0430\u0444\u0438\u043a\u0430",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1074,8 +1102,8 @@
       ]
     },
     {
-      "id": 15,
-      "title": "Memory by workload \u00b7 top 6",
+      "id": 16,
+      "title": "\u041a\u0442\u043e \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u0442 RAM \u00b7 \u0442\u043e\u043f-6",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -1084,7 +1112,7 @@
       "description": "",
       "gridPos": {
         "x": 0,
-        "y": 16,
+        "y": 18,
         "w": 12,
         "h": 8
       },
@@ -1095,7 +1123,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1144,17 +1172,17 @@
       ]
     },
     {
-      "id": 16,
-      "title": "Kafka lag \u00b7 transactions",
+      "id": 17,
+      "title": "Kafka \u00b7 \u043e\u0442\u0441\u0442\u0430\u0432\u0430\u043d\u0438\u0435 \u043e\u0431\u0440\u0430\u0431\u043e\u0442\u043a\u0438",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Only committed partitions. -1 means there is no committed offset; see Kafka dashboard.",
+      "description": "\u0427\u0438\u0441\u043b\u043e \u0435\u0449\u0451 \u043d\u0435 \u043e\u0431\u0440\u0430\u0431\u043e\u0442\u0430\u043d\u043d\u044b\u0445 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0439 \u0432 \u043f\u0430\u0440\u0442\u0438\u0446\u0438\u044f\u0445 \u0441 \u0441\u043e\u0445\u0440\u0430\u043d\u0451\u043d\u043d\u043e\u0439 \u043f\u043e\u0437\u0438\u0446\u0438\u0435\u0439. \u041f\u043e\u0434\u0440\u043e\u0431\u043d\u043e\u0441\u0442\u0438 \u0438 \u043f\u0443\u0441\u0442\u044b\u0435 \u043f\u0430\u0440\u0442\u0438\u0446\u0438\u0438 \u2014 \u043d\u0430 \u0434\u0430\u0448\u0431\u043e\u0440\u0434\u0435 Kafka.",
       "gridPos": {
         "x": 12,
-        "y": 16,
+        "y": 18,
         "w": 12,
         "h": 8
       },
@@ -1165,7 +1193,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1202,7 +1230,7 @@
         {
           "refId": "A",
           "expr": "kafka_consumergroup_lag{topic=\"transactions\",consumergroup=\"finops-analytics\"} >= 0",
-          "legendFormat": "Partition {{partition}}",
+          "legendFormat": "\u041f\u0430\u0440\u0442\u0438\u0446\u0438\u044f {{partition}}",
           "range": true,
           "instant": false,
           "format": "time_series",
@@ -1214,17 +1242,17 @@
       ]
     },
     {
-      "id": 17,
-      "title": "CPU by workload \u00b7 top 6",
+      "id": 18,
+      "title": "\u041a\u0442\u043e \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u0442 CPU \u00b7 \u0442\u043e\u043f-6",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
+      "description": "\u0418\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d\u0438\u0435 CPU \u0432 \u044f\u0434\u0440\u0430\u0445: 1 \u0441\u043e\u043e\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0443\u0435\u0442 \u043e\u0434\u043d\u043e\u043c\u0443 \u043f\u043e\u043b\u043d\u043e\u0441\u0442\u044c\u044e \u0437\u0430\u043d\u044f\u0442\u043e\u043c\u0443 \u044f\u0434\u0440\u0443. \u0421\u0440\u0430\u0432\u043d\u0438\u0432\u0430\u0439\u0442\u0435 \u0441 \u043b\u0438\u043c\u0438\u0442\u043e\u043c \u043a\u043e\u043d\u0442\u0435\u0439\u043d\u0435\u0440\u0430 \u0438 \u0440\u0435\u0441\u0443\u0440\u0441\u0430\u043c\u0438 \u0441\u0435\u0440\u0432\u0435\u0440\u0430.",
       "gridPos": {
         "x": 0,
-        "y": 24,
+        "y": 26,
         "w": 12,
         "h": 8
       },
@@ -1235,7 +1263,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1284,8 +1312,8 @@
       ]
     },
     {
-      "id": 18,
-      "title": "Alerts requiring attention",
+      "id": 19,
+      "title": "\u0427\u0442\u043e \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u0432\u043d\u0438\u043c\u0430\u043d\u0438\u044f",
       "type": "table",
       "datasource": {
         "type": "prometheus",
@@ -1294,7 +1322,7 @@
       "description": "",
       "gridPos": {
         "x": 12,
-        "y": 24,
+        "y": 26,
         "w": 12,
         "h": 8
       },
@@ -1305,7 +1333,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "\u041d\u0435\u0442 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u0439",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1323,7 +1351,7 @@
         "cellHeight": "sm",
         "sortBy": [
           {
-            "displayName": "Alert",
+            "displayName": "\u041f\u0440\u043e\u0431\u043b\u0435\u043c\u0430",
             "desc": false
           }
         ]
@@ -1331,7 +1359,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "count by(alertname,severity) (ALERTS{alertstate=\"firing\",severity=~\"warning|critical\"}) or label_replace(vector(0), \"alertname\", \"No firing warning or critical alerts\", \"\", \"\")",
+          "expr": "count by(alertname,severity) (ALERTS{alertstate=\"firing\",severity=~\"warning|critical\"}) or label_replace(vector(0), \"alertname\", \"\u041d\u0435\u0442 \u0430\u043a\u0442\u0438\u0432\u043d\u044b\u0445 \u043f\u0440\u0435\u0434\u0443\u043f\u0440\u0435\u0436\u0434\u0435\u043d\u0438\u0439 \u0438 \u043a\u0440\u0438\u0442\u0438\u0447\u0435\u0441\u043a\u0438\u0445 \u043e\u0448\u0438\u0431\u043e\u043a\", \"\", \"\")",
           "legendFormat": "",
           "range": false,
           "instant": true,
@@ -1350,9 +1378,9 @@
               "Time": true
             },
             "renameByName": {
-              "alertname": "Alert",
-              "severity": "Severity",
-              "Value": "Instances"
+              "alertname": "\u041f\u0440\u043e\u0431\u043b\u0435\u043c\u0430",
+              "severity": "\u0423\u0440\u043e\u0432\u0435\u043d\u044c",
+              "Value": "\u041e\u0431\u044a\u0435\u043a\u0442\u043e\u0432"
             }
           }
         }
