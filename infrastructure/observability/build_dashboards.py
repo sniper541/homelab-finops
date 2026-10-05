@@ -166,7 +166,7 @@ def main():
     dashboard('postgresql', '05 База данных PostgreSQL', 'Состояние PostgreSQL: соединения, нагрузка и блокировки. Тексты SQL и финансовые данные в метрики не попадают.', [
         stat('База данных доступна', 'min(pg_up)', health=True), stat('Соединения · все базы', 'sum(pg_stat_database_numbackends)'),
         stat('Активные соединения · FinOps', 'sum(pg_stat_activity_count{datname="finops",state="active"})'), stat('Лимит соединений', 'max(pg_settings_max_connections)'),
-        stat('Размер базы FinOps', 'pg_database_size_bytes{datname="finops"}', 'bytes'), stat('Длительные транзакции', 'sum(pg_long_running_transactions)', thresholds=(1,3)),
+        stat('Размер базы FinOps', 'pg_database_size_bytes{datname="finops"}', 'bytes'), stat('Самая долгая транзакция', 'max(pg_stat_activity_max_tx_duration{datname="finops"})', 's', thresholds=(60,300)),
         chart('Состояния соединений', 'short', (f'sum by(state) (pg_stat_activity_count{pg})', '{{state}}')),
         chart('Транзакции · фиксация и откат', 'ops', (f'rate(pg_stat_database_xact_commit{pg}[$__rate_interval])', 'Зафиксированы'), (f'rate(pg_stat_database_xact_rollback{pg}[$__rate_interval])', 'Отменены')),
         chart('Чтение из кеша · доля попаданий', 'percent', (f'100 * rate(pg_stat_database_blks_hit{pg}[$__rate_interval]) / clamp_min(rate(pg_stat_database_blks_hit{pg}[$__rate_interval]) + rate(pg_stat_database_blks_read{pg}[$__rate_interval]), 0.001)', 'Попадания в кеш')),
