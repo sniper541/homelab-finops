@@ -367,7 +367,7 @@
     },
     {
       "id": 6,
-      "title": "Long transactions \u00b7 > 5 min",
+      "title": "Long-running transactions",
       "type": "stat",
       "datasource": {
         "type": "prometheus",

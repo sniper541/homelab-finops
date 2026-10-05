@@ -37,6 +37,7 @@ def dashboard(slug, title, description, specs, variables=()):
         fields = {'unit': unit, 'min': 0, 'color': {'mode': 'palette-classic'},
                   'noValue': 'No samples', 'thresholds': {'mode': 'absolute', 'steps': [{'color': 'blue', 'value': None}]}}
         if extra.get('negative'): fields.pop('min')
+        if any('histogram_quantile' in q for q, _ in queries): fields['noValue'] = 'No traffic'
         if unit == 'percent': fields['max'] = 100
         if extra.get('health'):
             fields.update({'mappings': [{'type': 'value', 'options': {'0': {'text': 'DOWN', 'color': 'red'}, '1': {'text': 'UP', 'color': 'green'}}}],
@@ -149,7 +150,7 @@ def main():
     dashboard('postgresql', '05 PostgreSQL', 'Read-only pg_monitor collector. Query text and application data are never exported.', [
         stat('PostgreSQL reachable', 'min(pg_up)', health=True), stat('Connections · all databases', 'sum(pg_stat_database_numbackends)'),
         stat('Active · finops', 'sum(pg_stat_activity_count{datname="finops",state="active"})'), stat('Connection limit', 'max(pg_settings_max_connections)'),
-        stat('Database size', 'pg_database_size_bytes{datname="finops"}', 'bytes'), stat('Long transactions · > 5 min', 'sum(pg_long_running_transactions)', thresholds=(1,3)),
+        stat('Database size', 'pg_database_size_bytes{datname="finops"}', 'bytes'), stat('Long-running transactions', 'sum(pg_long_running_transactions)', thresholds=(1,3)),
         chart('Connections by state', 'short', (f'sum by(state) (pg_stat_activity_count{pg})', '{{state}}')),
         chart('Transactions', 'ops', (f'rate(pg_stat_database_xact_commit{pg}[$__rate_interval])', 'Commits'), (f'rate(pg_stat_database_xact_rollback{pg}[$__rate_interval])', 'Rollbacks')),
         chart('Cache hit ratio', 'percent', (f'100 * rate(pg_stat_database_blks_hit{pg}[$__rate_interval]) / clamp_min(rate(pg_stat_database_blks_hit{pg}[$__rate_interval]) + rate(pg_stat_database_blks_read{pg}[$__rate_interval]), 0.001)', 'Hit ratio')),

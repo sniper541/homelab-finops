@@ -572,7 +572,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "noValue": "No samples",
+          "noValue": "No traffic",
           "thresholds": {
             "mode": "absolute",
             "steps": [

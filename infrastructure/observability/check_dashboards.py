@@ -31,7 +31,7 @@ for path in sorted((Path(__file__).parent / 'dashboards').glob('*.json')):
                 if not finite:
                     # Lazy HTTP label creation means idle/newly deployed APIs
                     # have no endpoint series; never fabricate request traffic.
-                    if 'finops_http_' in expr:
+                    if 'finops_http_' in expr or ('histogram_quantile' in expr and rows):
                         print('IDLE HTTP:', path.stem, panel['title'])
                     elif 'kafka_consumergroup_lag' in expr:
                         print('NO COMMITTED PARTITION:', path.stem, panel['title'])
