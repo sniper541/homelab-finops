@@ -27,11 +27,13 @@ def variable(name, query):
 
 def dashboard(slug, title, description, specs, variables=()):
     panels = [{'id': 1, 'type': 'text', 'title': '', 'transparent': True,
-               'gridPos': {'x': 0, 'y': 0, 'w': 24, 'h': 2},
+               'gridPos': {'x': 0, 'y': 0, 'w': 24, 'h': 3},
                'options': {'mode': 'markdown', 'content': description}}]
-    y, x = 2, 0
+    y, x = 3, 0
+    stat_width = 6 if sum(s[0] == 'stat' for s in specs) % 4 == 0 else 8
     for spec in specs:
         kind, name, unit, queries, width, *rest = spec
+        if kind == 'stat': width = stat_width
         extra = rest[0] if rest else {}
         height = 4 if kind == 'stat' else 8
         if x + width > 24:
