@@ -21,6 +21,10 @@ spec:
       targetRevision: main
       ref: values
 
+    - repoURL: https://github.com/sniper541/homelab-finops.git
+      targetRevision: main
+      path: infrastructure/observability
+
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring

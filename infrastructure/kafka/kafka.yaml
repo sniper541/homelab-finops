@@ -38,6 +38,13 @@ spec:
 
     metadataVersion: "4.3-IV0"
 
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          name: finops-kafka-metrics
+          key: kafka-metrics-config.yml
+
     listeners:
       - name: plain
         port: 9092
@@ -57,3 +64,14 @@ spec:
   entityOperator:
     topicOperator: {}
     userOperator: {}
+
+  kafkaExporter:
+    topicRegex: transactions
+    groupRegex: finops-analytics
+    resources:
+      requests:
+        cpu: 20m
+        memory: 32Mi
+      limits:
+        cpu: 200m
+        memory: 128Mi

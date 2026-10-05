@@ -71,12 +71,16 @@ spec:
           ports:
             - name: http
               containerPort: 8000
+            - name: metrics
+              containerPort: 9001
 
           envFrom:
             - configMapRef:
                 name: finops-api-config
 
           env:
+            - name: METRICS_PORT
+              value: "9001"
             - name: POSTGRES_DB
               value: finops
             - name: POSTGRES_CREDENTIALS_FILE

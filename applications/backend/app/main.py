@@ -9,13 +9,15 @@ from typing import Literal
 from app.auth import bot_telegram_id, get_bot_user, get_current_user
 from app.database import get_connection
 from app.kafka import publish_transaction_created
+from app.metrics import HTTPMetrics, metrics_lifespan
 
 def reject_identity_override(request: Request):
     if "user_id" in request.query_params:
         raise HTTPException(status_code=422, detail="user_id is not a client-selectable identity")
 
 
-app = FastAPI(title="FinOps API", dependencies=[Depends(reject_identity_override)])
+app = FastAPI(title="FinOps API", dependencies=[Depends(reject_identity_override)], lifespan=metrics_lifespan)
+app.add_middleware(HTTPMetrics)
 bot = APIRouter(prefix="/bot", tags=["Telegram service"])
 
 

@@ -5,3 +5,4 @@ psycopg[binary]==3.2.9
 PyJWT[crypto]==2.13.0
 confluent-kafka==2.11.1
 alembic==1.16.5
+prometheus-client==0.26.0
