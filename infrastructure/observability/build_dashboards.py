@@ -48,13 +48,17 @@ def dashboard(slug, title, description, specs, variables=()):
             fields['color'] = {'mode': 'thresholds'}
             options = {'reduceOptions': {'calcs': ['lastNotNull'], 'fields': '', 'values': False}, 'orientation': 'auto',
                        'textMode': 'auto', 'colorMode': 'value', 'graphMode': 'none', 'justifyMode': 'auto'}
-        else:
+        elif kind == 'timeseries':
             fields['custom'] = {'drawStyle': 'line', 'lineInterpolation': 'smooth', 'lineWidth': 2, 'fillOpacity': 8,
                                 'showPoints': 'never', 'spanNulls': False, 'axisCenteredZero': False}
+        else:
+            options = {'showHeader': True, 'cellHeight': 'sm', 'sortBy': [{'displayName': 'Alert', 'desc': False}]}
         panel = {'id': len(panels) + 1, 'title': name, 'type': kind, 'datasource': DS,
                  'description': extra.get('description', ''), 'gridPos': {'x': x, 'y': y, 'w': width, 'h': height},
                  'fieldConfig': {'defaults': fields, 'overrides': []}, 'options': options,
-                 'targets': [{'refId': chr(65+i), 'expr': q, 'legendFormat': legend, 'range': kind != 'stat', 'instant': kind == 'stat', 'datasource': DS} for i, (q, legend) in enumerate(queries)]}
+                 'targets': [{'refId': chr(65+i), 'expr': q, 'legendFormat': legend, 'range': kind == 'timeseries', 'instant': kind != 'timeseries', 'format': 'table' if kind == 'table' else 'time_series', 'datasource': DS} for i, (q, legend) in enumerate(queries)]}
+        if kind == 'table':
+            panel['transformations'] = [{'id': 'organize', 'options': {'excludeByName': {'Time': True}, 'renameByName': {'alertname': 'Alert', 'severity': 'Severity', 'Value': 'Instances'}}}]
         panels.append(panel)
         x += width
         previous_height = height
@@ -93,6 +97,8 @@ def main():
         chart('API response time · p95', 's', (P95, 'p95'), description='No samples means no completed requests in the rate window, not zero latency.'),
         chart('Memory by workload · top 6', 'bytes', ('topk(6, sum by(namespace,pod) (container_memory_working_set_bytes{container!="",container!="POD",pod!=""}))', '{{namespace}} / {{pod}}')),
         chart('Kafka lag · transactions', 'short', ('kafka_consumergroup_lag{topic="transactions",consumergroup="finops-analytics"} >= 0', 'Partition {{partition}}'), description='Only committed partitions. -1 means there is no committed offset; see Kafka dashboard.'),
+        chart('CPU by workload · top 6', 'cores', ('topk(6, sum by(namespace,pod) (rate(container_cpu_usage_seconds_total{container!="",container!="POD",pod!=""}[$__rate_interval])))', '{{namespace}} / {{pod}}')),
+        ('table', 'Alerts requiring attention', 'short', [('count by(alertname,severity) (ALERTS{alertstate="firing",severity=~"warning|critical"}) or label_replace(vector(0), "alertname", "No firing warning or critical alerts", "", "")', '')], 12),
     ])
     dashboard('kubernetes-node', '02 Kubernetes & Node', 'Node capacity, workload health and resource consumers.', [
         stat('CPU used', CPU, 'percent', thresholds=(80, 90)), stat('Memory available', 'sum(node_memory_MemAvailable_bytes)', 'bytes'),

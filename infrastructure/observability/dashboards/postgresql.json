@@ -101,6 +101,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -164,6 +165,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -227,6 +229,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -290,6 +293,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -353,6 +357,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -424,6 +429,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -493,6 +499,7 @@
           "legendFormat": "{{state}}",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -562,6 +569,7 @@
           "legendFormat": "Commits",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -573,6 +581,7 @@
           "legendFormat": "Rollbacks",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -643,6 +652,7 @@
           "legendFormat": "Hit ratio",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -712,6 +722,7 @@
           "legendFormat": "Read",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -723,6 +734,7 @@
           "legendFormat": "Inserted",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -734,6 +746,7 @@
           "legendFormat": "Updated",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -745,6 +758,7 @@
           "legendFormat": "Deleted",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -814,6 +828,7 @@
           "legendFormat": "{{mode}}",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -883,6 +898,7 @@
           "legendFormat": "Deadlocks",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"

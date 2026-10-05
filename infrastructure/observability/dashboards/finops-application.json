@@ -82,6 +82,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -145,6 +146,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -208,6 +210,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -271,6 +274,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -334,6 +338,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -397,6 +402,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -466,6 +472,7 @@
           "legendFormat": "{{method}} {{route}}",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -535,6 +542,7 @@
           "legendFormat": "{{status}}",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -604,6 +612,7 @@
           "legendFormat": "p50",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -615,6 +624,7 @@
           "legendFormat": "p95",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -626,6 +636,7 @@
           "legendFormat": "p99",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -696,6 +707,7 @@
           "legendFormat": "5xx / all",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -765,6 +777,7 @@
           "legendFormat": "{{pod}}",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -834,6 +847,7 @@
           "legendFormat": "{{pod}}",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -903,6 +917,7 @@
           "legendFormat": "Accepted",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -914,6 +929,7 @@
           "legendFormat": "Rejected",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -983,6 +999,7 @@
           "legendFormat": "{{pod}}",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"

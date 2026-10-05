@@ -101,6 +101,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -164,6 +165,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -227,6 +229,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -298,6 +301,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -369,6 +373,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -432,6 +437,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -501,6 +507,7 @@
           "legendFormat": "Messages",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -570,6 +577,7 @@
           "legendFormat": "In",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -581,6 +589,7 @@
           "legendFormat": "Out",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -650,6 +659,7 @@
           "legendFormat": "Partition {{partition}}",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -719,6 +729,7 @@
           "legendFormat": "finops-analytics",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -787,6 +798,7 @@
           "legendFormat": "Partition {{partition}}",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -856,6 +868,7 @@
           "legendFormat": "Partition {{partition}}",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -925,6 +938,7 @@
           "legendFormat": "Working set",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -994,6 +1008,7 @@
           "legendFormat": "CPU",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"

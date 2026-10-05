@@ -125,6 +125,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -188,6 +189,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -251,6 +253,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -314,6 +317,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -396,6 +400,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -459,6 +464,7 @@
           "legendFormat": "",
           "range": false,
           "instant": true,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -528,6 +534,7 @@
           "legendFormat": "{{service}}",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -597,6 +604,7 @@
           "legendFormat": "{{code}}",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -666,6 +674,7 @@
           "legendFormat": "{{service}}",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -735,6 +744,7 @@
           "legendFormat": "{{service}}",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -804,6 +814,7 @@
           "legendFormat": "Incoming",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -815,6 +826,7 @@
           "legendFormat": "Outgoing",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -884,6 +896,7 @@
           "legendFormat": "{{entrypoint}}",
           "range": true,
           "instant": false,
+          "format": "time_series",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
