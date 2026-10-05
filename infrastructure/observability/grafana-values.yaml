@@ -9,6 +9,8 @@ serviceAccount:
   name: grafana
   automountServiceAccountToken: false
 automountServiceAccountToken: false
+rbac:
+  create: false
 securityContext:
   runAsNonRoot: true
   runAsUser: 472
@@ -61,9 +63,6 @@ extraContainerVolumes:
             path: token
             audience: vault
             expirationSeconds: 3600
-extraEmptyDirMounts:
-  - name: tmp
-    mountPath: /tmp
 extraVolumeMounts:
   - name: platform-dashboards
     mountPath: /var/lib/grafana/dashboards/finops
