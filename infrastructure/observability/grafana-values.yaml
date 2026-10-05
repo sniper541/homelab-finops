@@ -29,6 +29,13 @@ startupProbe:
     port: 3000
   periodSeconds: 5
   failureThreshold: 120
+readinessProbe:
+  httpGet:
+    path: /api/health
+    port: grafana
+  timeoutSeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
 initChownData:
   enabled: false
 resources:

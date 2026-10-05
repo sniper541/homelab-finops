@@ -58,7 +58,7 @@ def dashboard(slug, title, description, specs, variables=()):
                        'textMode': 'auto', 'colorMode': 'value', 'graphMode': 'none', 'justifyMode': 'auto'}
         elif kind == 'timeseries':
             fields['custom'] = {'drawStyle': 'line', 'lineInterpolation': 'smooth', 'lineWidth': 2, 'fillOpacity': 8,
-                                'showPoints': 'never', 'spanNulls': False, 'axisCenteredZero': False}
+                                'showPoints': 'never', 'spanNulls': False, 'axisCenteredZero': False, 'axisSoftMax': 1}
         else:
             options = {'showHeader': True, 'cellHeight': 'sm', 'sortBy': [{'displayName': 'Проблема', 'desc': False}]}
         hint = extra.get('description', '')
@@ -106,17 +106,17 @@ def main():
         stat('Диск · занято', DISK, 'percent', thresholds=(80, 90)),
         stat('Работающие Pod', 'sum(kube_pod_status_phase{phase="Running"})'),
         stat('Перезапуски за час', 'sum(increase(kube_pod_container_status_restarts_total[1h]))', thresholds=(1, 5)),
-        stat('Все экземпляры API доступны', f'min({UP})', health=True),
+        stat('API · все экземпляры', f'min({UP})', health=True),
         stat('Kafka доступна', 'min(up{job="monitoring/kafka-broker"})', health=True),
         stat('PostgreSQL', 'min(pg_up)', health=True),
         stat('Pod не готовы', 'sum(kube_pod_status_ready{condition="false"} * on(namespace,pod,uid) (kube_pod_status_phase{phase=~"Pending|Running|Unknown"} == 1))', thresholds=(1, 3)),
-        stat('Проблемы требуют внимания', 'count(ALERTS{alertstate="firing",severity=~"warning|critical"}) or vector(0)', thresholds=(1, 3)),
+        stat('Активные проблемы', 'count(ALERTS{alertstate="firing",severity=~"warning|critical"}) or vector(0)', thresholds=(1, 3)),
         stat('Соединения с базой', 'sum(pg_stat_database_numbackends)'),
         chart('API · запросы и ошибки', 'reqps', (HTTP_RATE, 'Все запросы'), (f'sum(rate({API}{{status=~"5.."}}[$__rate_interval])) or {ZERO}', '5xx')),
         chart('API · время ответа p95', 's', (P95, 'p95'), description='p95: 95% запросов выполнились быстрее этого времени. Меньше — лучше. Если запросов нет, задержка не вычисляется.'),
-        chart('Кто использует RAM · топ-6', 'bytes', ('topk(6, sum by(namespace,pod) (container_memory_working_set_bytes{container!="",container!="POD",pod!=""}))', '{{namespace}} / {{pod}}')),
+        chart('Кто использует RAM · топ-6', 'bytes', ('topk(6, sum by(namespace,container) (container_memory_working_set_bytes{container!="",container!="POD",pod!=""}))', '{{namespace}} / {{container}}')),
         chart('Kafka · отставание обработки', 'short', ('kafka_consumergroup_lag{topic="transactions",consumergroup="finops-analytics"} >= 0', 'Партиция {{partition}}'), description='Число ещё не обработанных сообщений в партициях с сохранённой позицией. Подробности и пустые партиции — на дашборде Kafka.'),
-        chart('Кто использует CPU · топ-6', 'cores', ('topk(6, sum by(namespace,pod) (rate(container_cpu_usage_seconds_total{container!="",container!="POD",pod!=""}[$__rate_interval])))', '{{namespace}} / {{pod}}')),
+        chart('Кто использует CPU · топ-6', 'cores', ('topk(6, sum by(namespace,container) (rate(container_cpu_usage_seconds_total{container!="",container!="POD",pod!=""}[$__rate_interval])))', '{{namespace}} / {{container}}')),
         ('table', 'Что требует внимания', 'short', [('count by(alertname,severity) (ALERTS{alertstate="firing",severity=~"warning|critical"}) or label_replace(vector(0), "alertname", "Нет активных предупреждений и критических ошибок", "", "")', '')], 12),
     ])
     dashboard('kubernetes-node', '02 Сервер и Kubernetes', 'Ресурсы сервера и состояние приложений. Выберите пространство имён или Pod, чтобы сузить поиск проблемы.', [
@@ -133,6 +133,8 @@ def main():
         chart('Перезапуски за час', 'short', ('sum by(pod) (increase(kube_pod_container_status_restarts_total{namespace=~"$namespace",pod=~"$pod"}[1h]))', '{{pod}}')),
         chart('Состояния Pod', 'short', ('sum by(phase) (kube_pod_status_phase{namespace=~"$namespace",pod=~"$pod"})', '{{phase}}')),
         chart('Недоступные экземпляры приложений', 'short', ('kube_deployment_status_replicas_unavailable{namespace=~"$namespace"}', '{{namespace}} / {{deployment}}')),
+        chart('CPU · ожидание диска', 'percent', ('100 * avg(rate(node_cpu_seconds_total{mode="iowait"}[$__rate_interval]))', 'Ожидание I/O'), description='Высокое значение означает, что задачи ждут диск. Это может задерживать DNS, вход и проверки здоровья, даже когда CPU не занят вычислениями.'),
+        chart('Диск · среднее время операции', 's', ('sum(rate(node_disk_read_time_seconds_total{device=~"sd.*|vd.*|nvme.*"}[$__rate_interval])) / clamp_min(sum(rate(node_disk_reads_completed_total{device=~"sd.*|vd.*|nvme.*"}[$__rate_interval])), 0.001)', 'Чтение'), ('sum(rate(node_disk_write_time_seconds_total{device=~"sd.*|vd.*|nvme.*"}[$__rate_interval])) / clamp_min(sum(rate(node_disk_writes_completed_total{device=~"sd.*|vd.*|nvme.*"}[$__rate_interval])), 0.001)', 'Запись')),
     ], [variable('namespace', 'label_values(kube_pod_info, namespace)'), variable('pod', 'label_values(kube_pod_info{namespace=~"$namespace"}, pod)')])
     dashboard('finops-application', '03 Приложение FinOps', 'Реальные запросы API без проверок здоровья. Параметры URL и содержимое запросов не записываются. При отсутствии трафика время ответа не вычисляется.', [
         stat('Доступные экземпляры API', f'sum({UP})'), stat('Запросы в секунду', HTTP_RATE, 'reqps'),
@@ -170,18 +172,18 @@ def main():
         stat('Активные соединения · FinOps', 'sum(pg_stat_activity_count{datname="finops",state="active"})'), stat('Лимит соединений', 'max(pg_settings_max_connections)'),
         stat('Размер базы FinOps', 'pg_database_size_bytes{datname="finops"}', 'bytes'), stat('Самая долгая транзакция', 'max(pg_stat_activity_max_tx_duration{datname="finops"})', 's', thresholds=(60,300)),
         chart('Состояния соединений', 'short', (f'sum by(state) (pg_stat_activity_count{pg})', '{{state}}')),
-        chart('Транзакции · фиксация и откат', 'ops', (f'rate(pg_stat_database_xact_commit{pg}[$__rate_interval])', 'Зафиксированы'), (f'rate(pg_stat_database_xact_rollback{pg}[$__rate_interval])', 'Отменены')),
-        chart('Чтение из кеша · доля попаданий', 'percent', (f'100 * rate(pg_stat_database_blks_hit{pg}[$__rate_interval]) / clamp_min(rate(pg_stat_database_blks_hit{pg}[$__rate_interval]) + rate(pg_stat_database_blks_read{pg}[$__rate_interval]), 0.001)', 'Попадания в кеш')),
-        chart('Строки · чтение и изменение', 'ops', *[(f'rate(pg_stat_database_tup_{suffix}{pg}[$__rate_interval])', label) for suffix,label in [('returned','Чтение'),('inserted','Добавлено'),('updated','Обновлено'),('deleted','Удалено')]]),
+        chart('Транзакции · фиксация и откат', 'ops', (f'sum(rate(pg_stat_database_xact_commit{pg}[$__rate_interval]))', 'Зафиксированы'), (f'sum(rate(pg_stat_database_xact_rollback{pg}[$__rate_interval]))', 'Отменены')),
+        chart('Чтение из кеша · доля попаданий', 'percent', (f'100 * sum(rate(pg_stat_database_blks_hit{pg}[$__rate_interval])) / clamp_min(sum(rate(pg_stat_database_blks_hit{pg}[$__rate_interval])) + sum(rate(pg_stat_database_blks_read{pg}[$__rate_interval])), 0.001)', 'Попадания в кеш')),
+        chart('Строки · чтение и изменение', 'ops', *[(f'sum(rate(pg_stat_database_tup_{suffix}{pg}[$__rate_interval]))', label) for suffix,label in [('returned','Чтение'),('inserted','Добавлено'),('updated','Обновлено'),('deleted','Удалено')]]),
         chart('Блокировки по типу', 'short', (f'sum by(mode) (pg_locks_count{pg})', '{{mode}}')),
-        chart('Взаимные блокировки за час', 'short', (f'increase(pg_stat_database_deadlocks{pg}[1h])', 'Взаимные блокировки')),
+        chart('Взаимные блокировки за час', 'short', (f'sum(increase(pg_stat_database_deadlocks{pg}[1h]))', 'Взаимные блокировки')),
     ])
     group='{topic="transactions",consumergroup="finops-analytics"}'
     dashboard('kafka', '06 Очередь событий Kafka', 'Один брокер, одна копия данных. События transactions обрабатывает группа finops-analytics. Отказоустойчивого кластера пока нет.', [
         stat('Брокер Kafka доступен', 'min(up{job="monitoring/kafka-broker"})', health=True), stat('Топики · весь кластер', 'max(kafka_controller_kafkacontroller_globaltopiccount)'),
-        stat('Партиции · transactions', 'kafka_topic_partitions{topic="transactions"}'), stat('Партиции с неполными копиями', 'sum(kafka_server_replicamanager_underreplicatedpartitions)', thresholds=(1,2)),
+        stat('Партиции · transactions', 'kafka_topic_partitions{topic="transactions"}'), stat('Неполные копии партиций', 'sum(kafka_server_replicamanager_underreplicatedpartitions)', thresholds=(1,2)),
         stat('Недоступные партиции', 'sum(kafka_controller_kafkacontroller_offlinepartitionscount)', thresholds=(1,2)),
-        stat('Партиции без сохранённой позиции', f'count(kafka_consumergroup_current_offset{group} < 0) or (0 * max(kafka_brokers))', description='У пустой партиции может ещё не быть сохранённой позиции. Это нормальное состояние, а не отрицательное отставание.'),
+        stat('Партиции без позиции', f'count(kafka_consumergroup_current_offset{group} < 0) or (0 * max(kafka_brokers))', description='У пустой партиции может ещё не быть сохранённой позиции. Это нормальное состояние, а не отрицательное отставание.'),
         chart('Поступление сообщений · все топики', 'ops', ('rate(kafka_server_brokertopicmetrics_messagesin_total{topic=""}[$__rate_interval])', 'Сообщения')),
         chart('Kafka · входящий и исходящий поток', 'Bps', ('rate(kafka_server_brokertopicmetrics_bytesin_total{topic=""}[$__rate_interval])', 'Входящий'), ('rate(kafka_server_brokertopicmetrics_bytesout_total{topic=""}[$__rate_interval])', 'Исходящий')),
         chart('Отставание обработчика · по партициям', 'short', (f'kafka_consumergroup_lag{group} >= 0', 'Партиция {{partition}}'), description='Показаны партиции с сохранённой позицией. Если их нет, проверьте график позиций ниже. Отсутствие данных не означает нулевое отставание.'),

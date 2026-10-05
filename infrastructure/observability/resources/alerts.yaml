@@ -9,6 +9,22 @@ spec:
   groups:
     - name: finops.platform
       rules:
+        - alert: FinOpsNodeHighIOWait
+          expr: avg by(instance) (rate(node_cpu_seconds_total{mode="iowait"}[5m])) > 0.2
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: Узел долго ожидает диск
+            description: Более 20% времени CPU уходит на ожидание диска. Проверьте диск и нагрузку хоста VirtualBox; возможны тайм-ауты DNS и проверок здоровья.
+        - alert: FinOpsFrequentPodRestarts
+          expr: sum by(namespace,pod) (increase(kube_pod_container_status_restarts_total[15m])) > 5
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'Частые перезапуски {{ $labels.pod }}'
+            description: Более пяти перезапусков контейнеров Pod за 15 минут. Проверьте события Kubernetes, лимиты памяти и задержки диска.
         # Node, filesystem, CrashLoop and deployment alerts are already supplied
         # by kube-prometheus-stack. These rules add application-specific signals.
         - alert: FinOpsAPIDown

@@ -496,7 +496,8 @@
             "fillOpacity": 8,
             "showPoints": "never",
             "spanNulls": false,
-            "axisCenteredZero": false
+            "axisCenteredZero": false,
+            "axisSoftMax": 1
           }
         },
         "overrides": []
@@ -566,7 +567,8 @@
             "fillOpacity": 8,
             "showPoints": "never",
             "spanNulls": false,
-            "axisCenteredZero": false
+            "axisCenteredZero": false,
+            "axisSoftMax": 1
           }
         },
         "overrides": []
@@ -585,7 +587,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "rate(pg_stat_database_xact_commit{datname=\"finops\"}[$__rate_interval])",
+          "expr": "sum(rate(pg_stat_database_xact_commit{datname=\"finops\"}[$__rate_interval]))",
           "legendFormat": "\u0417\u0430\u0444\u0438\u043a\u0441\u0438\u0440\u043e\u0432\u0430\u043d\u044b",
           "range": true,
           "instant": false,
@@ -597,7 +599,7 @@
         },
         {
           "refId": "B",
-          "expr": "rate(pg_stat_database_xact_rollback{datname=\"finops\"}[$__rate_interval])",
+          "expr": "sum(rate(pg_stat_database_xact_rollback{datname=\"finops\"}[$__rate_interval]))",
           "legendFormat": "\u041e\u0442\u043c\u0435\u043d\u0435\u043d\u044b",
           "range": true,
           "instant": false,
@@ -650,7 +652,8 @@
             "fillOpacity": 8,
             "showPoints": "never",
             "spanNulls": false,
-            "axisCenteredZero": false
+            "axisCenteredZero": false,
+            "axisSoftMax": 1
           }
         },
         "overrides": []
@@ -669,7 +672,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "100 * rate(pg_stat_database_blks_hit{datname=\"finops\"}[$__rate_interval]) / clamp_min(rate(pg_stat_database_blks_hit{datname=\"finops\"}[$__rate_interval]) + rate(pg_stat_database_blks_read{datname=\"finops\"}[$__rate_interval]), 0.001)",
+          "expr": "100 * sum(rate(pg_stat_database_blks_hit{datname=\"finops\"}[$__rate_interval])) / clamp_min(sum(rate(pg_stat_database_blks_hit{datname=\"finops\"}[$__rate_interval])) + sum(rate(pg_stat_database_blks_read{datname=\"finops\"}[$__rate_interval])), 0.001)",
           "legendFormat": "\u041f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u044f \u0432 \u043a\u0435\u0448",
           "range": true,
           "instant": false,
@@ -720,7 +723,8 @@
             "fillOpacity": 8,
             "showPoints": "never",
             "spanNulls": false,
-            "axisCenteredZero": false
+            "axisCenteredZero": false,
+            "axisSoftMax": 1
           }
         },
         "overrides": []
@@ -739,7 +743,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "rate(pg_stat_database_tup_returned{datname=\"finops\"}[$__rate_interval])",
+          "expr": "sum(rate(pg_stat_database_tup_returned{datname=\"finops\"}[$__rate_interval]))",
           "legendFormat": "\u0427\u0442\u0435\u043d\u0438\u0435",
           "range": true,
           "instant": false,
@@ -751,7 +755,7 @@
         },
         {
           "refId": "B",
-          "expr": "rate(pg_stat_database_tup_inserted{datname=\"finops\"}[$__rate_interval])",
+          "expr": "sum(rate(pg_stat_database_tup_inserted{datname=\"finops\"}[$__rate_interval]))",
           "legendFormat": "\u0414\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u043e",
           "range": true,
           "instant": false,
@@ -763,7 +767,7 @@
         },
         {
           "refId": "C",
-          "expr": "rate(pg_stat_database_tup_updated{datname=\"finops\"}[$__rate_interval])",
+          "expr": "sum(rate(pg_stat_database_tup_updated{datname=\"finops\"}[$__rate_interval]))",
           "legendFormat": "\u041e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u043e",
           "range": true,
           "instant": false,
@@ -775,7 +779,7 @@
         },
         {
           "refId": "D",
-          "expr": "rate(pg_stat_database_tup_deleted{datname=\"finops\"}[$__rate_interval])",
+          "expr": "sum(rate(pg_stat_database_tup_deleted{datname=\"finops\"}[$__rate_interval]))",
           "legendFormat": "\u0423\u0434\u0430\u043b\u0435\u043d\u043e",
           "range": true,
           "instant": false,
@@ -826,7 +830,8 @@
             "fillOpacity": 8,
             "showPoints": "never",
             "spanNulls": false,
-            "axisCenteredZero": false
+            "axisCenteredZero": false,
+            "axisSoftMax": 1
           }
         },
         "overrides": []
@@ -896,7 +901,8 @@
             "fillOpacity": 8,
             "showPoints": "never",
             "spanNulls": false,
-            "axisCenteredZero": false
+            "axisCenteredZero": false,
+            "axisSoftMax": 1
           }
         },
         "overrides": []
@@ -915,7 +921,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "increase(pg_stat_database_deadlocks{datname=\"finops\"}[1h])",
+          "expr": "sum(increase(pg_stat_database_deadlocks{datname=\"finops\"}[1h]))",
           "legendFormat": "\u0412\u0437\u0430\u0438\u043c\u043d\u044b\u0435 \u0431\u043b\u043e\u043a\u0438\u0440\u043e\u0432\u043a\u0438",
           "range": true,
           "instant": false,

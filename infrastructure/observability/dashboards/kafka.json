@@ -258,7 +258,7 @@
     },
     {
       "id": 5,
-      "title": "\u041f\u0430\u0440\u0442\u0438\u0446\u0438\u0438 \u0441 \u043d\u0435\u043f\u043e\u043b\u043d\u044b\u043c\u0438 \u043a\u043e\u043f\u0438\u044f\u043c\u0438",
+      "title": "\u041d\u0435\u043f\u043e\u043b\u043d\u044b\u0435 \u043a\u043e\u043f\u0438\u0438 \u043f\u0430\u0440\u0442\u0438\u0446\u0438\u0439",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -404,7 +404,7 @@
     },
     {
       "id": 7,
-      "title": "\u041f\u0430\u0440\u0442\u0438\u0446\u0438\u0438 \u0431\u0435\u0437 \u0441\u043e\u0445\u0440\u0430\u043d\u0451\u043d\u043d\u043e\u0439 \u043f\u043e\u0437\u0438\u0446\u0438\u0438",
+      "title": "\u041f\u0430\u0440\u0442\u0438\u0446\u0438\u0438 \u0431\u0435\u0437 \u043f\u043e\u0437\u0438\u0446\u0438\u0438",
       "type": "stat",
       "datasource": {
         "type": "prometheus",
@@ -506,7 +506,8 @@
             "fillOpacity": 8,
             "showPoints": "never",
             "spanNulls": false,
-            "axisCenteredZero": false
+            "axisCenteredZero": false,
+            "axisSoftMax": 1
           }
         },
         "overrides": []
@@ -576,7 +577,8 @@
             "fillOpacity": 8,
             "showPoints": "never",
             "spanNulls": false,
-            "axisCenteredZero": false
+            "axisCenteredZero": false,
+            "axisSoftMax": 1
           }
         },
         "overrides": []
@@ -658,7 +660,8 @@
             "fillOpacity": 8,
             "showPoints": "never",
             "spanNulls": false,
-            "axisCenteredZero": false
+            "axisCenteredZero": false,
+            "axisSoftMax": 1
           }
         },
         "overrides": []
@@ -728,7 +731,8 @@
             "fillOpacity": 8,
             "showPoints": "never",
             "spanNulls": false,
-            "axisCenteredZero": false
+            "axisCenteredZero": false,
+            "axisSoftMax": 1
           }
         },
         "overrides": []
@@ -797,7 +801,8 @@
             "fillOpacity": 8,
             "showPoints": "never",
             "spanNulls": false,
-            "axisCenteredZero": false
+            "axisCenteredZero": false,
+            "axisSoftMax": 1
           }
         },
         "overrides": []
@@ -867,7 +872,8 @@
             "fillOpacity": 8,
             "showPoints": "never",
             "spanNulls": false,
-            "axisCenteredZero": false
+            "axisCenteredZero": false,
+            "axisSoftMax": 1
           }
         },
         "overrides": []
@@ -937,7 +943,8 @@
             "fillOpacity": 8,
             "showPoints": "never",
             "spanNulls": false,
-            "axisCenteredZero": false
+            "axisCenteredZero": false,
+            "axisSoftMax": 1
           }
         },
         "overrides": []
@@ -1007,7 +1014,8 @@
             "fillOpacity": 8,
             "showPoints": "never",
             "spanNulls": false,
-            "axisCenteredZero": false
+            "axisCenteredZero": false,
+            "axisSoftMax": 1
           }
         },
         "overrides": []
