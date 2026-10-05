@@ -1,0 +1,93 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: finops-platform
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  groups:
+    - name: finops.platform
+      rules:
+        # Node, filesystem, CrashLoop and deployment alerts are already supplied
+        # by kube-prometheus-stack. These rules add application-specific signals.
+        - alert: FinOpsAPIDown
+          expr: sum(up{job="monitoring/finops-api"}) == 0 or absent(up{job="monitoring/finops-api"})
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: No FinOps API metrics endpoint is reachable
+            description: Check API pod readiness, the metrics listener on port 9001 and the PodMonitor before diagnosing a public outage.
+        - alert: FinOpsAPIHigh5xxRate
+          expr: sum(rate(finops_http_requests_total{status=~"5.."}[5m])) / sum(rate(finops_http_requests_total[5m])) > 0.05 and sum(increase(finops_http_requests_total[5m])) >= 20
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: API server errors exceed 5%
+            description: More than 5% of requests fail with 5xx, with at least 20 requests per five minutes. Check API logs and downstream dependencies.
+        - alert: FinOpsAPIHighLatency
+          expr: histogram_quantile(0.95, sum by(le) (rate(finops_http_request_duration_seconds_bucket[5m]))) > 1 and sum(increase(finops_http_requests_total[5m])) >= 20
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: API p95 response time exceeds one second
+            description: Sustained latency with meaningful traffic. Check PostgreSQL, Kafka and node resource pressure.
+        - alert: FinOpsPostgreSQLDown
+          expr: min(pg_up) == 0 or absent(pg_up)
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: PostgreSQL monitoring connection is unavailable
+            description: Check postgres-0, exporter readiness and its Vault-injected monitoring credential.
+        - alert: FinOpsPostgreSQLConnectionPressure
+          expr: sum(pg_stat_database_numbackends) / max(pg_settings_max_connections) > 0.8
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: PostgreSQL uses over 80% of its connection limit
+            description: Inspect application connection pools and idle transactions before raising max_connections.
+        - alert: FinOpsKafkaConsumerLag
+          expr: sum(clamp_min(kafka_consumergroup_lag{topic="transactions",consumergroup="finops-analytics"}, 0)) > 100
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: FinOps analytics consumer is more than 100 messages behind
+            description: Inspect the consumer workload and PostgreSQL. Uncommitted empty partitions are excluded from this count.
+        - alert: FinOpsKafkaBrokerUnavailable
+          expr: sum(up{job="monitoring/kafka-broker"}) == 0 or absent(up{job="monitoring/kafka-broker"})
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: The single Kafka broker is unreachable
+            description: This homelab has one broker and replication factor 1. Check the Strimzi Kafka resource, pod, PVC and node memory.
+        - alert: FinOpsKafkaUncommittedBacklog
+          expr: (kafka_topic_partition_current_offset{topic="transactions"} > 100) and on(topic,partition) (kafka_consumergroup_current_offset{topic="transactions",consumergroup="finops-analytics"} < 0)
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: A non-empty Kafka partition has no committed consumer offset
+            description: More than 100 log offsets exist but finops-analytics has never committed this partition. Inspect consumer membership and processing errors.
+        - alert: FinOpsNodeMemoryPressure
+          expr: 1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes > 0.9
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: Node memory usage exceeds 90%
+            description: Review the largest workloads. Increase VM memory to 16 GiB before adding Loki and Alloy.
+        - alert: FinOpsTargetDown
+          expr: up{job=~"monitoring/finops-api|monitoring/kafka-broker|monitoring/kafka-exporter|monitoring/traefik|postgres-exporter|grafana"} == 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: 'Monitoring target {{ $labels.job }} is down'
+            description: 'Prometheus cannot scrape {{ $labels.instance }}. Check workload readiness and monitor configuration.'

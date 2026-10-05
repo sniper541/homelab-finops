@@ -3,3 +3,16 @@ kind: Kustomization
 resources:
   - resources/monitors.yaml
   - resources/postgres-exporter.yaml
+  - resources/alerts.yaml
+configMapGenerator:
+  - name: finops-grafana-dashboards
+    namespace: monitoring
+    files:
+      - dashboards/platform-overview.json
+      - dashboards/kubernetes-node.json
+      - dashboards/finops-application.json
+      - dashboards/edge-web.json
+      - dashboards/postgresql.json
+      - dashboards/kafka.json
+generatorOptions:
+  disableNameSuffixHash: true
